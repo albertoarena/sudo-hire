@@ -44,7 +44,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   5. Click the icon.
   6. Click somewhere else on the screen.
 - Expected: no window opens on start. No Sudo Hire icon in the dock. A new icon in the menu bar shows the tooltip "Sudo Hire". The click opens a small panel (about 400 x 600) with the text "Sudo Hire". The panel closes when you click elsewhere.
-- Result: not run
+- Result: passed 2026-10-28
 
 ## M1: Cloud setup script in a real cloud environment
 
