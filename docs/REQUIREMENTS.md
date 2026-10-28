@@ -1,6 +1,6 @@
 # Sudo Hire: requirements (v1)
 
-Status: draft, revised 2026-10-28 (sources, unknown eligibility, milestones). Location in the repository: `docs/REQUIREMENTS.md`.
+Status: draft, revised 2026-10-28 (sources, unknown eligibility, milestones, decimal timezones, expiry date). Location in the repository: `docs/REQUIREMENTS.md`.
 
 ## 1. Purpose
 
@@ -55,7 +55,7 @@ One source class that reads a list of companies set by the user. Each entry is `
 | Greenhouse | `https://boards-api.greenhouse.io/v1/boards/<slug>/jobs` | JSON | 200 |
 | Lever | `https://api.lever.co/v0/postings/<slug>?mode=json` | JSON | 200 |
 | Ashby | `https://api.ashbyhq.com/posting-api/job-board/<slug>` | JSON | 200 |
-| Personio | `https://<slug>.jobs.personio.de/xml` | XML | 200, response shape to verify with a real company |
+| Personio | `https://<slug>.jobs.personio.de/xml` | XML | 200, shape checked with a real company in M1. No link field: see `docs/DECISIONS.md` |
 
 - Min interval: 6 hours per company.
 - Attribution: "via <Company> careers". `source_url` and `apply_url` are the company's own links.
@@ -102,12 +102,13 @@ One normalised job. Changes need approval (see `AGENTS.md`).
 | `work_mode` | enum | `remote`, `hybrid`, `onsite`, `unknown` |
 | `eligibility` | object | See section 6 |
 | `office_location` | string, nullable | Free text, for hybrid and on-site |
-| `timezone_min`, `timezone_max` | int, nullable | UTC offsets in hours |
+| `timezone_min`, `timezone_max` | decimal, nullable | UTC offsets in hours, e.g. -9.5 or 5.75 |
 | `salary` | object, nullable | See section 7 |
 | `contract_type` | enum | `full_time`, `part_time`, `contract`, `unknown` |
 | `seniority` | enum | `junior`, `mid`, `senior`, `lead`, `unknown` |
 | `posted_at` | datetime | |
 | `fetched_at` | datetime | |
+| `expires_at` | datetime, nullable | When the source says the job closes. Hide the job after this date |
 | `attribution` | string | e.g. "via RemoteOK" |
 | `fingerprint` | string | For deduplication (section 9) |
 
@@ -282,5 +283,5 @@ M4 and M5 can run in parallel with M2 and M3.
 - License: MIT?
 - UI design for the menu bar list and settings.
 - Spatie Event Sourcing is not planned for v1 (local app, simple state). Reconsider for the Premium server.
-- Personio: confirm the XML shape with a real company slug in M2.
+- Personio: check the built job link (`/job/<id>`) with a real job in M2.
 - Himalayas: check the PHP volume of the search endpoint in M3.
