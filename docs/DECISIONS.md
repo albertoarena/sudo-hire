@@ -368,3 +368,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: a cloud session commits freely on its branch. Before the first push, it shows all commit messages and the pull request text for one approval. Each later push needs a yes for its new messages. Local sessions keep the approval for each commit.
 - Reason: with five cloud sessions in parallel, an approval for each commit stops the work most of the time. The human still approves all text before it leaves the session.
 - Replaces: none
+
+## 2026-10-29: Dependencies install on PHP 8.3
+
+- Milestone: prep for M2 to M5
+- Decision: `composer.json` requires PHP `^8.3` and pins `config.platform.php` to 8.3.0. The lock now has Symfony 7.4, Pest 4 and PHPUnit 12. Laravel 13 and NativePHP 2.4 are unchanged. CI runs Pest and PHPStan on PHP 8.3 and 8.4. The app still bundles PHP 8.4.
+- Reason: the cloud container has PHP 8.3 and cannot install 8.4. With the old lock (Symfony 8, Pest 5, PHPUnit 13), no test could run in a cloud session. Test first must work there too.
+- Replaces: "PHP 8.4 as the minimum in `composer.json`" from the M1 brief
+
