@@ -383,3 +383,63 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: the setup script runs before the repository is cloned. The M1 script exited at once outside the repository, so it did nothing in a real cloud session. A network secret does not help Composer: GitHub refuses package downloads that the session's repository access does not cover.
 - Replaces: the M1 version of `scripts/cloud-setup.sh`
 
+
+## 2026-10-29: ATS reader design
+
+- Milestone: M2
+- Decision: the `ats` source reads its companies through the `CompanyList` interface. `DatabaseCompanyList` (the `ats_companies` table) is the default binding. A remote list (Premium) can implement the same interface. One reader class for each ATS is behind the one source. Each raw item is an `AtsItem` with its company entry and the fetch time.
+- Decision: a company is skipped for 6 hours after each read, also after a failed read. A failing company stores its error (for example "HTTP 404") and the reader continues with the next company.
+- Decision: a slug can only have letters, digits, dots, dashes and underscores. The Personio slug becomes part of a host name, so other characters could change the link.
+- Decision: the commands are `ats:add <ats>:<slug> [--name=]`, `ats:remove <ats>:<slug>` and `ats:list`. The display name is stored in the table and can be changed there. There is no rename command yet.
+- Reason: the brief asks for a list that a remote list can replace, and for a reader that a failing company cannot stop. Never read a company more often than the interval, also after an error.
+- Replaces: none
+
+## 2026-10-29: Contract test checks that each job has an attribution
+
+- Milestone: M2
+- Decision: `JobSourceContractTest` checks that each job has a non-empty attribution. It no longer checks that the job attribution is the same as `JobSource::attribution()`. It still checks that the job source is the source key. The `JobSource` interface is unchanged.
+- Reason: ATS jobs use "via <Company> careers" (REQUIREMENTS section 4), so each company gives a different text. `AtsSource::attribution()` gives "via company careers" for the source as a whole. Approved by the project owner in the M2 session.
+- Replaces: none
+
+## 2026-10-29: ATS endpoint parameters
+
+- Milestone: M2
+- Decision: Greenhouse uses `?content=true` and Ashby uses `?includeCompensation=true` on the endpoints of REQUIREMENTS section 4. Lever uses `?mode=json`. Personio uses `/xml`. Jobicy uses `?count=50&tag=php`.
+- Reason: without these parameters, Greenhouse gives no `content` and Ashby gives no `compensation`. The fixtures have both fields, and the field mapping uses them.
+- Replaces: none
+
+## 2026-10-29: Source fields that wait for a parser
+
+- Milestone: M2
+- Decision: until the parsers exist (M4, M4b, M5), these fields stay `unknown` or `null`: Greenhouse location, LaraJobs location and salary, Jobicy `jobGeo`, Ashby locations (country names), Personio work mode, Lever salary text, and the seniority from the title for all sources except Personio and Jobicy.
+- Decision: Lever `country` gives a restricted eligibility only for a remote job, as in the field mapping. A hybrid or on-site Lever job gives `unknown` eligibility and its office locations.
+- Decision: when Lever `descriptionPlain` is empty, the reader uses the HTML `description` as plain text. Two of three fixture jobs have an empty `descriptionPlain`.
+- Decision: a Personio description is the "name: value" pairs, joined by an empty line. The part named "URL" is skipped.
+- Decision: Lever `salaryRange` and the Jobicy salary fields have no original text. The reader builds `raw` from the fields, e.g. "100000 - 125000 USD yearly". A salary with a bad currency gives no salary. The job is not skipped.
+- Decision: the Lever `salaryRange` intervals (`per-year-salary`, `per-month-salary`, `per-day-wage`, `per-hour-wage`) come from the Lever API documentation as it was known. No fixture has a `salaryRange`. Other intervals give `unknown`.
+- Reason: the brief says to use only structured fields in M2. A wrong value is worse than `unknown`, because `unknown` goes to the "Location not stated" group.
+- Replaces: none
+
+## 2026-10-29: Source terms of the ATS reader
+
+- Milestone: M2
+- Decision: the ATS reader uses the public job board APIs of Greenhouse, Lever, Ashby and Personio. Each job keeps the company's own job link and apply link. The attribution is "via <Company> careers".
+- Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms.
+- Source terms: Greenhouse says that "Job Board data is publicly available": GET endpoints need no authentication. Lever says published postings are public and "may be scraped by third parties". Ashby serves the published postings for career pages. Personio publishes no terms for the XML feed, which is the company's own public feed. None states an attribution or a rate limit. The app keeps each company's links and reads each company at most every 6 hours.
+- Checked on: 2026-10-29
+
+## 2026-10-29: Source terms of LaraJobs
+
+- Milestone: M2
+- Decision: the LaraJobs source reads `https://larajobs.com/feed` every 2 hours. Source and apply links are the LaraJobs job page. The attribution is "via LaraJobs".
+- Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms.
+- Source terms: LaraJobs publishes no terms page (`/terms` returns 404) and no rules for the public feed. The project owner accepts the feed as it is. Each job links to its LaraJobs page, which forwards to the employer's apply page. The app shows "via LaraJobs" and reads the feed at most every 2 hours.
+- Checked on: 2026-10-29
+
+## 2026-10-29: Source terms of Jobicy
+
+- Milestone: M2
+- Decision: the Jobicy source reads `https://jobicy.com/api/v2/remote-jobs?count=50&tag=php` every hour. Source and apply links are the Jobicy job page. The attribution is "via Jobicy".
+- Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms. The fixture response of 2026-10-28 says: "Please ensure Jobicy is clearly credited with a direct link to the source, and all application buttons redirect to the original job URL provided in this feed." The source follows this text.
+- Source terms: apply links "must continue to direct users to the original job pages on Jobicy". Credit Jobicy and do not present its listings as your own. "Start a new automated pass no more than once per hour." Commercial use is allowed. The source follows all of these.
+- Checked on: 2026-10-29

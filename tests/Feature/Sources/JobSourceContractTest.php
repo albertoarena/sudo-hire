@@ -28,9 +28,10 @@ it('normalises every item or throws SkipItem', function (JobSource $source) {
             continue;
         }
 
+        // A job can have its own attribution, e.g. "via GitLab careers" from the ATS source.
         expect($job)->toBeInstanceOf(NormalisedJob::class)
             ->and($job->source)->toBe($source->key())
-            ->and($job->attribution)->toBe($source->attribution());
+            ->and(trim($job->attribution))->not->toBe('');
     }
 
     expect($items)->toBeGreaterThan(0);
