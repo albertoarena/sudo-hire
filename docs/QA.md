@@ -69,7 +69,10 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. In the cloud session, run `git config user.email`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
   4. In the cloud session, run `composer install --no-interaction --ignore-platform-req=php`.
 - Expected: the email from `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
-- Result: not run
+- Result: partly passed 2026-10-29, in the M3 cloud session (branch m3/remotive-himalayas-wwr). Step 2 was not visible from inside the session.
+  - `git config user.email` gave `noreply@anthropic.com`: `~/.gitconfig` has the Claude name and email. `git var GIT_AUTHOR_IDENT` and `git var GIT_COMMITTER_IDENT` gave the owner's name and email, because the `GIT_*` variables win over the file. Commits get the correct identity.
+  - `git config commit.gpgsign` gave `false`. `echo $COMPOSER_ALLOW_SUPERUSER` gave `1`. `~/.claude/settings.json` had the `attribution` block.
+  - `composer install --no-interaction` installed 134 of 135 packages from git source. `phpstan/phpstan` failed with HTTP 403 on its `api.github.com` zipball. The zip workaround in `AGENTS.md` fixed it.
 
 ## M2: Source terms and endpoints
 
