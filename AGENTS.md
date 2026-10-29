@@ -47,7 +47,7 @@ These apply to every commit and pull request.
   - Keep the articles ("the", "a"). Do not use slang or idioms.
 - Before every commit, check the staged files:
   - Run `git diff --cached --name-only` and read the list. Do not commit generated or local files: `storage/` (only its `.gitignore` files), `bootstrap/cache/`, `public/build/`, `vendor/`, `node_modules/`, `nativephp/`, `.env`, `*.sqlite`, `*.log`, and tool folders such as `.impeccable/`.
-  - Run `git grep --cached -nE '/(Users|home)/[A-Za-z]'`. It must find nothing: no local paths in git.
+  - Run `git grep --cached -nE '/(Users|home)/[A-Za-z]' -- ':!scripts/cloud-setup.sh'`. It must find nothing: no local paths in git. The setup script is skipped because it names container paths.
   - When you copy files from a skeleton or a template, keep its nested `.gitignore` files. Do not use `git add -f`.
   - If a file must stay local, add it to `.gitignore` in the same commit.
 - Before you push, run `git log --format='%an <%ae>%n%B' origin/main..HEAD` and check that no commit carries a trailer. Do not use `git log --grep` for this check: it also matches a body that only mentions a trailer.
@@ -76,7 +76,8 @@ Cannot: menu bar, windows, macOS notifications, permission prompts, `osascript`,
 ## Container workarounds (Linux cloud sessions)
 
 - Run Composer with `COMPOSER_ALLOW_SUPERUSER=1` (the container runs as root).
-- The container may have PHP 8.3. Do not try to install PHP 8.4: the PPA, php.net, Docker and static builds are blocked. Use `composer install --ignore-platform-req=php`. CI proves the real version.
+- The container may have PHP 8.3. Do not try to install PHP 8.4: the PPA, php.net, Docker and static builds are blocked. The lock file installs and runs on PHP 8.3, so tests run here. CI runs PHP 8.3 and 8.4.
+- Never add a package that needs PHP 8.4. `composer.json` pins the platform to PHP 8.3, so Composer refuses it.
 - PHPStan has no git source. If it does not install, build the zip from its tag and place it in Composer's cache. Do not skip PHPStan silently: report it.
 - Run PHPStan with `--memory-limit=2G`.
 - Run `npm run build` before Pest. Without a Vite manifest, page tests return 500.
