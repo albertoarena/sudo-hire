@@ -361,3 +361,10 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: a new milestone M4b gives seniority and contract type from the job title. It runs in parallel with M2 to M5. M6 connects it to the sources, and a structured source field wins over the title.
 - Reason: no milestone owned the "title parser" rows of the field mapping, and M6 is already the largest milestone.
 - Replaces: none
+
+## 2026-10-29: Cloud sessions use one commit approval before the push
+
+- Milestone: prep for M2 to M5
+- Decision: a cloud session commits freely on its branch. Before the first push, it shows all commit messages and the pull request text for one approval. Each later push needs a yes for its new messages. Local sessions keep the approval for each commit.
+- Reason: with five cloud sessions in parallel, an approval for each commit stops the work most of the time. The human still approves all text before it leaves the session.
+- Replaces: none
