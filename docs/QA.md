@@ -139,3 +139,15 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Run `php artisan tinker --execute='$b = (new App\Sources\NormaliseItems)(new App\Sources\Himalayas\HimalayasSource, now()->subDay()); dump(count($b->jobs));'`
 - Expected: step 1 shows more than 0 jobs for each source and 0 skipped, or skip reasons that make sense. The Himalayas apply link ends with `?utm_source=api`. Each apply link opens the job page at the board. Step 3 shows fewer or the same number of Himalayas jobs as step 1. Run step 1 at most once for Remotive on a day: it allows 4 requests a day.
 - Result: passed 2026-10-29 (step 1: Remotive 12 jobs, Himalayas 151, We Work Remotely 8, 0 skipped; the three apply links open the job pages, Himalayas with `?utm_source=api`; step 3: 94 Himalayas jobs)
+
+## M5: ECB rates terms and live fetch
+
+- Added: 2026-10-29, branch m5/salary-parser
+- Why manual: the cloud session cannot reach the ECB website. Tests use the fixture `tests/Fixtures/ecb/eurofxref-daily.xml` only.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`, `php artisan migrate`.
+- Steps:
+  1. Read the ECB page on the euro foreign exchange reference rates and the ECB copyright notice on reuse.
+  2. Run `php artisan tinker --execute='$r = app(App\Currency\ExchangeRates::class); dump($r->refresh(), $r->rateDate()?->toDateString(), $r->converter()->convert(100, "EUR", "USD"));'`
+  3. Run the same command again.
+- Expected: the terms allow the use in the app when the ECB is named as the source, or the decision entry "Exchange rates come from the ECB directly" says what must change. Step 2 shows `true`, the date of the last TARGET working day and a value near 100 times the USD rate. Step 3 shows `false` and the same date.
+- Result: not run
