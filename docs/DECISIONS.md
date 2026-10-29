@@ -369,10 +369,17 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: with five cloud sessions in parallel, an approval for each commit stops the work most of the time. The human still approves all text before it leaves the session.
 - Replaces: none
 
+## 2026-10-29: Dependencies install on PHP 8.3
+
+- Milestone: prep for M2 to M5
+- Decision: `composer.json` requires PHP `^8.3` and pins `config.platform.php` to 8.3.0. The lock now has Symfony 7.4, Pest 4 and PHPUnit 12. Laravel 13 and NativePHP 2.4 are unchanged. CI runs Pest and PHPStan on PHP 8.3 and 8.4. The app still bundles PHP 8.4.
+- Reason: the cloud container has PHP 8.3 and cannot install 8.4. With the old lock (Symfony 8, Pest 5, PHPUnit 13), no test could run in a cloud session. Test first must work there too.
+- Replaces: "PHP 8.4 as the minimum in `composer.json`" from the M1 brief
+
 ## 2026-10-29: Cloud setup script does not depend on the repository
 
 - Milestone: prep for M2 to M5
-- Decision: `scripts/cloud-setup.sh` turns off AI attribution in `~/.claude/settings.json` and commit signing, and sets the git identity from the `GIT_*` variables. It does not install packages. The environment holds the variables, `COMPOSER_ALLOW_SUPERUSER=1` and a GitHub network secret.
-- Reason: the setup script runs before the repository is cloned. The M1 script exited at once outside the repository, so it did nothing in a real cloud session. Without a GitHub secret, Composer could not download PHPStan.
+- Decision: `scripts/cloud-setup.sh` turns off AI attribution in `~/.claude/settings.json` and commit signing, and sets the git identity from the `GIT_*` variables. It does not install packages. The environment holds the `GIT_*` variables and `COMPOSER_ALLOW_SUPERUSER=1`.
+- Reason: the setup script runs before the repository is cloned. The M1 script exited at once outside the repository, so it did nothing in a real cloud session. A network secret does not help Composer: GitHub refuses package downloads that the session's repository access does not cover.
 - Replaces: the M1 version of `scripts/cloud-setup.sh`
 
