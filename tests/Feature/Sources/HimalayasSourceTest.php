@@ -100,6 +100,26 @@ it('stops at the first page with no job newer than $since', function () {
         ]);
 });
 
+it('reads the next laravel page when every job on a page was found by the php search', function () {
+    Http::fake([
+        'himalayas.app/jobs/api/search?q=php&page=1' => Http::response(himalayasPage('shared', 20)),
+        'himalayas.app/jobs/api/search?q=php&page=2' => Http::response(himalayasPage('php-two', 3)),
+        'himalayas.app/jobs/api/search?q=laravel&page=1' => Http::response(himalayasPage('shared', 20)),
+        'himalayas.app/jobs/api/search?q=laravel&page=2' => Http::response(himalayasPage('laravel-two', 3)),
+    ]);
+
+    $items = iterator_to_array((new HimalayasSource)->fetch(CarbonImmutable::parse('2026-10-27T00:00:00Z')), false);
+
+    expect($items)->toHaveCount(26)
+        ->and($items[25]['guid'])->toBe('https://himalayas.app/companies/acme/jobs/laravel-two-3')
+        ->and(himalayasRequests())->toBe([
+            'https://himalayas.app/jobs/api/search?q=php&page=1',
+            'https://himalayas.app/jobs/api/search?q=php&page=2',
+            'https://himalayas.app/jobs/api/search?q=laravel&page=1',
+            'https://himalayas.app/jobs/api/search?q=laravel&page=2',
+        ]);
+});
+
 it('reads at most 5 pages for each search', function () {
     Http::fake(fn (Request $request) => Http::response(himalayasPage(md5($request->url()), 20)));
 

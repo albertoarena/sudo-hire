@@ -71,6 +71,8 @@ final class HimalayasSource implements JobSource
                 $hasNewer = false;
 
                 foreach ($jobs as $job) {
+                    // Before the duplicate check: a page of jobs seen in an earlier search still counts as new.
+                    $hasNewer = $hasNewer || $since === null || ! is_numeric($job['pubDate'] ?? null) || (int) $job['pubDate'] >= $since->getTimestamp();
                     $guid = is_string($job['guid'] ?? null) ? $job['guid'] : null;
 
                     if ($guid !== null) {
@@ -80,8 +82,6 @@ final class HimalayasSource implements JobSource
 
                         $seen[$guid] = true;
                     }
-
-                    $hasNewer = $hasNewer || $since === null || ! is_numeric($job['pubDate'] ?? null) || (int) $job['pubDate'] >= $since->getTimestamp();
 
                     yield $job;
                 }
