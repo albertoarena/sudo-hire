@@ -1,6 +1,6 @@
 # Sudo Hire: requirements (v1)
 
-Status: draft, revised 2026-10-28 (sources, unknown eligibility, milestones, decimal timezones, expiry date). Location in the repository: `docs/REQUIREMENTS.md`.
+Status: draft, revised 2026-10-29 (Personio link and Himalayas search checked). Location in the repository: `docs/REQUIREMENTS.md`.
 
 ## 1. Purpose
 
@@ -55,7 +55,7 @@ One source class that reads a list of companies set by the user. Each entry is `
 | Greenhouse | `https://boards-api.greenhouse.io/v1/boards/<slug>/jobs` | JSON | 200 |
 | Lever | `https://api.lever.co/v0/postings/<slug>?mode=json` | JSON | 200 |
 | Ashby | `https://api.ashbyhq.com/posting-api/job-board/<slug>` | JSON | 200 |
-| Personio | `https://<slug>.jobs.personio.de/xml` | XML | 200, shape checked with a real company in M1. No link field: see `docs/DECISIONS.md` |
+| Personio | `https://<slug>.jobs.personio.de/xml` | XML | 200, shape checked with a real company in M1. No link field: the built job link was checked on 2026-10-29 (see `docs/DECISIONS.md`) |
 
 - Min interval: 6 hours per company.
 - Attribution: "via <Company> careers". `source_url` and `apply_url` are the company's own links.
@@ -269,6 +269,7 @@ Tag, CI builds, signs and notarises a **draft** GitHub release. A human installs
 | M2 | Sources: ATS reader (Greenhouse, Lever, Ashby, Personio), LaraJobs, Jobicy | Cloud |
 | M3 | Sources: Remotive, Himalayas, We Work Remotely | Cloud |
 | M4 | Eligibility parser and country/region table | Cloud |
+| M4b | Title parser: seniority and contract type from the job title | Cloud |
 | M5 | Salary parser, exchange rates, conversion | Cloud |
 | M6 | Filters, deduplication, storage, retention, `source_runs` stats | Cloud |
 | M6b | `php artisan hire:scan`: fetch due sources, filter, print matches, one summary notification through `osascript`. Runs from cron or launchd, no NativePHP needed | Cloud + Mac check |
@@ -276,12 +277,10 @@ Tag, CI builds, signs and notarises a **draft** GitHub release. A human installs
 | M8 | Menu bar UI and settings | Mac or cloud + Mac check |
 | M9 | Signing, notarisation, release flow | Mac |
 
-M4 and M5 can run in parallel with M2 and M3.
+M4, M4b and M5 can run in parallel with M2 and M3. A local prep pull request comes first.
 
 ## 17. Open questions
 
 - License: MIT?
 - UI design for the menu bar list and settings.
 - Spatie Event Sourcing is not planned for v1 (local app, simple state). Reconsider for the Premium server.
-- Personio: check the built job link (`/job/<id>`) with a real job in M2.
-- Himalayas: check the PHP volume of the search endpoint in M3.
