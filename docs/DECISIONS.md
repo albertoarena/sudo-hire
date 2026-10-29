@@ -451,3 +451,47 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: the platform adds the footer to pull requests from cloud sessions, also when the session sends a body without it. Attribution settings in the container do not stop it. Hard rule 6 forbids the footer.
 - Replaces: none
 
+
+## 2026-10-29: M3 endpoints and paging
+
+- Milestone: M3
+- Decision: Remotive reads `https://remotive.com/api/remote-jobs?search=php`, one request for each fetch, every 6 hours. `search=laravel` is not read: it would double the requests.
+- Decision: Himalayas reads only the search endpoint, `https://himalayas.app/jobs/api/search?q=php&page=N` and the same with `q=laravel`. The browse feed (`nextCursor`) is not used: it is not filtered. A job found by both searches is read once (same `guid`).
+- Decision: each Himalayas search stops at a page with fewer than 20 jobs, at a page with no job newer than `$since`, or after 5 pages. The jobs of the last page are still read. Search is sorted by relevance, not by date, so `$since` cannot stop inside a page.
+- Decision: We Work Remotely reads `https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss` every 2 hours.
+- Reason: the project owner chose these options in the M3 session. Remotive advises at most 4 requests a day. `q=php` has about 73 pages, so a first fetch without a limit would send about 90 requests.
+- Replaces: none
+
+## 2026-10-29: M3 source fields that wait for a parser
+
+- Milestone: M3
+- Decision: until the parsers exist (M4, M4b, M5), these fields stay `unknown` or `null`: Remotive `candidate_required_location` and `salary`, a Himalayas `locationRestrictions` list that is not empty, the We Work Remotely `country` list and every region other than "Anywhere in the World", and the seniority from the title for Remotive and We Work Remotely.
+- Decision: Himalayas salary has no original text. The source builds `raw` from the fields, e.g. "5500 - 7000 EUR monthly", as for Jobicy. A `salaryPeriod` other than `annual` or `monthly` gives `unknown`. A Himalayas `seniority` value that is not in the mapping is ignored.
+- Decision: a Himalayas job with no `applicationLink` uses its `guid` page as the apply link (see "Apply link is the link the source gives"). A timezone offset outside -12 to 14, or an expiry date before the posted date, makes the job fail the schema, so it is skipped.
+- Decision: We Work Remotely `type` and Himalayas `employmentType` give the contract type. These are fixed values from the field mapping, so they need no parser.
+- Reason: the brief says to use only structured fields in M3. A wrong value is worse than `unknown`.
+- Replaces: none
+
+## 2026-10-29: Source terms of Remotive
+
+- Milestone: M3
+- Decision: the Remotive source reads `https://remotive.com/api/remote-jobs?search=php` every 6 hours. Source and apply links are the Remotive job page. The attribution is "via Remotive".
+- Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms. The fixture response of 2026-10-28 has a legal notice: "Please link back to the URL found on Remotive AND mention Remotive as a source". It also says: "we advise max. 4 times a day". It forbids sending the jobs to third party job sites, and it forbids showing them to collect sign-ups or email addresses. The source follows this text. The app shows jobs only to its own user.
+- Source terms: not checked: blocked in the cloud session. See `docs/QA.md`, "M3: Source terms and endpoints".
+- Checked on: not checked
+
+## 2026-10-29: Source terms of Himalayas
+
+- Milestone: M3
+- Decision: the Himalayas source reads the search endpoint every 2 hours, at most 5 pages for each search. The source link is the Himalayas job page (`guid`). The apply link is `applicationLink`, unchanged, with its `utm_source=api` parameter. The attribution is "via Himalayas". `expiryDate` gives `expires_at`.
+- Reason: REQUIREMENTS section 4 and the M1 entries say: credit Himalayas, link back, keep the apply link, and remove expired jobs. The source follows these rules. The expiry filter is in M6.
+- Source terms: not checked: blocked in the cloud session. See `docs/QA.md`, "M3: Source terms and endpoints".
+- Checked on: not checked
+
+## 2026-10-29: Source terms of We Work Remotely
+
+- Milestone: M3
+- Decision: the We Work Remotely source reads the back-end category RSS feed every 2 hours. Source and apply links are the We Work Remotely job page. The attribution is "via We Work Remotely".
+- Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms. The feed has `<ttl>60</ttl>`, so a 2 hour interval is within its own refresh time.
+- Source terms: not checked: blocked in the cloud session. See `docs/QA.md`, "M3: Source terms and endpoints".
+- Checked on: not checked
