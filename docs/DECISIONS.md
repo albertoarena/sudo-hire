@@ -376,3 +376,10 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: the cloud container has PHP 8.3 and cannot install 8.4. With the old lock (Symfony 8, Pest 5, PHPUnit 13), no test could run in a cloud session. Test first must work there too.
 - Replaces: "PHP 8.4 as the minimum in `composer.json`" from the M1 brief
 
+## 2026-10-29: Cloud setup script does not depend on the repository
+
+- Milestone: prep for M2 to M5
+- Decision: `scripts/cloud-setup.sh` turns off AI attribution in `~/.claude/settings.json` and commit signing, and sets the git identity from the `GIT_*` variables. It does not install packages. The environment holds the `GIT_*` variables and `COMPOSER_ALLOW_SUPERUSER=1`.
+- Reason: the setup script runs before the repository is cloned. The M1 script exited at once outside the repository, so it did nothing in a real cloud session. A network secret does not help Composer: GitHub refuses package downloads that the session's repository access does not cover.
+- Replaces: the M1 version of `scripts/cloud-setup.sh`
+

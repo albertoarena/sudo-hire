@@ -57,3 +57,17 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Run `grep -c COMPOSER_ALLOW_SUPERUSER ~/.bashrc`.
 - Expected: `false`, `1`, both folders exist, and the count is `1` (the line is not added twice).
 - Result: not run
+
+## Prep: Cloud environment setup script
+
+- Added: 2026-10-29, branch prep/cloud-setup-env
+- Why manual: tests run the script with temporary home folders, not in the real cloud container.
+- Setup: the Sudo Hire cloud environment with `scripts/cloud-setup.sh` as its setup script, the `GIT_*` variables and `COMPOSER_ALLOW_SUPERUSER=1`.
+- Steps:
+  1. Start a new cloud session on this repository, with this environment.
+  2. Check that the start panel shows "Ran setup script" in green.
+  3. In the cloud session, run `git config user.email`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
+  4. In the cloud session, run `composer install --no-interaction --ignore-platform-req=php`.
+- Expected: the email from `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
+- Result: not run
+
