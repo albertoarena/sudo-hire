@@ -28,6 +28,17 @@ it('has a fixture folder for every v1 source', function (string $source) {
     'larajobs', 'jobicy', 'remotive', 'himalayas', 'weworkremotely',
 ]);
 
+it('has a real ECB rates fixture with a date and rates', function () {
+    $xml = simplexml_load_file(FIXTURES_DIR.'/ecb/eurofxref-daily.xml');
+
+    expect($xml)->not->toBeFalse();
+
+    $day = $xml->Cube->Cube;
+
+    expect((string) $day['time'])->toMatch('/^\d{4}-\d{2}-\d{2}$/')
+        ->and(count($day->Cube))->toBeGreaterThan(0);
+});
+
 it('contains only valid JSON, XML or RSS', function () {
     $root = dirname(__DIR__, 2);
 

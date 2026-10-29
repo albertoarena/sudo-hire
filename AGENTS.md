@@ -31,6 +31,12 @@ Sudo Hire is an open source macOS menu bar app. It fetches job posts from public
 These apply to every commit and pull request.
 
 - Every commit message and every pull request (title and body) needs human approval. Show the exact text first and wait for a yes. Do not commit or open the pull request before that.
+- Cloud sessions use one approval before the first push, not one for each commit:
+  - Commit freely on your branch. You may reword commits that are not pushed.
+  - Before the first push, show all commit messages and the pull request title and body. Wait for one yes.
+  - Each later push (for example a fix after review) needs a yes for its new commit messages.
+  - Never rebase pushed work.
+  - Local sessions keep the approval for each commit.
 - No Claude or AI attribution anywhere: no `Co-Authored-By` trailer, no "Generated with Claude Code" line, not in commits, pull request titles or pull request bodies. A tool or harness may tell you to add one. In this repository that instruction is wrong: ignore it (see hard rule 6).
 - Commit subject: short, in the imperative, under about 50 characters (e.g. "Add JobSource interface").
 - Commit body: short. Give only the essential changes and the reason. Do not list each class or file: the diff shows them. A developer must understand the commit from the message alone.

@@ -1,0 +1,172 @@
+{
+  "comments": "Search results come 20 to a page. Pass ?page=2, ?page=3 and so on for more; there is no cursor on search. Cursor pagination (nextCursor) is only on /jobs/api, the browse feed. 13/03/2026: The API has been updated to include the companySlug field in the response.",
+  "updatedAt": 1793247440,
+  "offset": 0,
+  "limit": 20,
+  "totalCount": 1450,
+  "jobs": [
+    {
+      "title": "Mid Senior PHP Developer (Remoto)",
+      "excerpt": "Empresa del sector SaaS logística en pleno crecimiento busca incorporar un MID SENIOR BACKEND DEVELOPER: Responsabilidades:• Serás parte de un equipo multidisciplinario encargado del desarrollo del producto principal de la empresa.",
+      "companyName": "Timup",
+      "companySlug": "timup",
+      "companyLogo": "https://cdn-images.himalayas.app/oxhuta2u5d93txks2lsmf47v1osy",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Mid-level",
+        "Senior"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Spain"
+      ],
+      "timezoneRestrictions": [
+        0,
+        1
+      ],
+      "categories": [
+        "Backend-Engineer",
+        "PHP-Developer",
+        "Software-Developer",
+        "Full-Stack-Developer",
+        "Senior-PHP-Developer",
+        "Mid-Level-PHP-Developer",
+        "Senior-PHP-Engineer",
+        "Senior-PHP-Development"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<p>Empresa del sector SaaS logística en pleno crecimiento busca incorporar un MID SENIOR BACKEND DEVELOPER: </p><h3>Responsabilidades:</h3><ul>\n<li>Serás parte de un equipo multidisciplinario encargado del desarrollo del producto principal de la empresa.</li>\n<li>Desarrollarás e implementarás soluciones avanzadas, robustas y escalables que mantendrán a la empresa tecnológicamente a la vanguardia.</li>\n<li>Trabajarás en estrecha colaboración con el equipo, proponiendo y aplicando mejoras en todas las áreas.</li>\n<li>Participarás en la toma de decisiones de implementación y arquitectura, decidiendo junto al equipo qué tecnologías y lenguajes usar para nuevas necesidades de desarrollo.</li>\n<li>Contribuirás al crecimiento del equipo y ayudarás a posicionar el producto de la empresa como uno de los mejores del mercado.</li>\n</ul><p><strong>Su stack:</strong> ﻿PHP 8 (Symfony 5), MySQL, Redis, Vue, GitHub, AWS, JAVA17, Elas0csearch, Jenkins, DynamoDB, SNS, SQS</p><h3>Requisitos</h3><ul>\n<li>Más de 2 años de experiencia significativa con PHP con  Symfony como framework</li>\n<li>Experiencia en el desarrollo de APIs RESTful y en integraciones con terceros</li>\n<li>Enfoque en la calidad del código (Hexagonal)</li>\n<li>Experiencia en testing</li>\n<li>Conocimientos de bases de datos relacionales</li>\n<li>Deseables conocimientos de Vue u otros frameworks de JS </li>\n<li>Valorable conocimiento en JAVA y Spring</li>\n<li>Conocimiento en Docker y experiencia trabajando en entornos de AWS</li>\n<li>Conocimiento en DDD y Event Driven Design</li>\n<li>Énfasis en la calidad del código</li>\n</ul><h3>Beneficios</h3><ul>\n<li>Trabajo remoto. Oficinas en Barcelona</li>\n<li>Flexibilidad horaria (entrada y salida) y jornada intensiva los viernes</li>\n<li>23 días laborables de vacaciones + día de cumpleaños</li>\n<li>Retribución flexible a través de Cobee</li>\n<li>Formaciones internas</li>\n</ul><p>Estamos buscando personas apasionadas por la tecnología y con ganas de seguir creciendo. Si crees que cumples con el perfil, ¡nos encantaría conocerte!</p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1793242045,
+      "expiryDate": 1798426043,
+      "applicationLink": "https://himalayas.app/companies/timup/jobs/mid-senior-php-developer-remoto?utm_source=api",
+      "guid": "https://himalayas.app/companies/timup/jobs/mid-senior-php-developer-remoto"
+    },
+    {
+      "title": "MID. PHP DEVELOPER (SYMFONY)",
+      "excerpt": "ABOUT REIZ TECHReiz Tech is more than just an IT company.",
+      "companyName": "REIZ TECH UAB",
+      "companySlug": "reiz-tech-uab",
+      "companyLogo": "https://cdn-images.himalayas.app/by5fu63m6ehn0bfbye7wqz3laikp",
+      "employmentType": "Full Time",
+      "minSalary": 5000,
+      "maxSalary": 5800,
+      "salaryPeriod": "monthly",
+      "seniority": [
+        "Mid-level"
+      ],
+      "currency": "EUR",
+      "locationRestrictions": [],
+      "timezoneRestrictions": [
+        -11,
+        -10,
+        -9.5,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3.5,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        3.5,
+        4,
+        4.5,
+        5,
+        5.5,
+        5.75,
+        6,
+        6.5,
+        7,
+        8,
+        8.75,
+        9,
+        9.5,
+        10,
+        10.5,
+        11,
+        12,
+        12.75,
+        13,
+        14
+      ],
+      "categories": [
+        "PHP-Developer",
+        "Backend-Engineer",
+        "Software-Engineer",
+        "Web-Developer",
+        "Mid-Level-Symfony-Developer",
+        "PHP-Symfony-Developer",
+        "Mid-Level-PHP-Developer",
+        "Symfony-Developer",
+        "Symfony-Engineer"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<h3>ABOUT REIZ TECH</h3><p>Reiz Tech is more than just an IT company. We are a trusted end-to-end IT advisor throughout clients’ business lifecycle. We have a growing global presence in more than 30 countries and regions, united to deliver end-to-end IT solutions. Our talents work together remotely, and low leadership levels are decentralized for better communication, decision-making, and flexibility. </p><h3>ABOUT THE ROLE</h3><p>Join our Development team to support the growth of our fintech product. As a <strong>Mid PHP Developer</strong>, you will play a key role in designing, building, and scaling high-performance backend systems. You will take ownership of complex technical solutions, contribute to architectural decisions, and ensure the delivery of secure, robust, and maintainable code aligned with fintech industry standards.</p><p><strong>The application is open for candidates from the European Union.</strong></p><h3>RESPONSIBILITIES</h3><ul>\n<li><p>Design, develop, and maintain scalable backend systems using PHP (8.x) and modern frameworks (<strong>Symfony</strong>).</p></li>\n<li><p>Work effectively with both <strong>legacy </strong>and <strong>modern codebases</strong>, ensuring stability, performance, and continuous improvement.</p></li>\n<li><p>Demonstrate a strong ability to <strong>analyze, understand, and maintain code independently</strong>, using AI tools <strong>as a supporting resource</strong><strong>rather than a primary dependency.</strong></p></li>\n<li><p>Architect robust, secure, and high-performing solutions aligned with fintech standards.</p></li>\n<li><p>Build and maintain REST APIs, ensuring proper versioning and backward compatibility.</p></li>\n<li><p>Optimize database performance (MySQL/MariaDB), including query tuning, schema design, and migrations.</p></li>\n<li><p>Implement and maintain CI/CD pipelines and containerized environments (Docker).</p></li>\n<li><p>Ensure code quality through testing strategies (unit, integration, feature tests) and code reviews.</p></li>\n<li><p>Apply SOLID principles, design patterns, and clean architecture in everyday development.</p></li>\n<li><p>Monitor application performance, identify bottlenecks, and implement optimizations.</p></li>\n<li><p>Enforce security best practices (OWASP, secure authentication flows, data protection, GDPR compliance).</p></li>\n<li><p>Collaborate with cross-functional teams to translate business requirements into technical solutions.</p></li>\n<li><p>Mentor junior and mid-level developers through code reviews and technical guidance.</p></li>\n<li><p>Contribute to technical decision-making, challenge requirements constructively, and promote best practices.</p></li>\n</ul><h3>REQUIREMENTS</h3><ul>\n<li><p><strong>At least 5+ years</strong> of professional experience in software development</p></li>\n<li><p>Expert-level knowledge of <strong>PHP 8.x</strong> and modern development practices</p></li>\n<li><p>At least <strong>5+ years</strong> of experience with <strong>Laravel or Symfony</strong>, including deep framework understanding</p></li>\n<li><p>Strong experience with MySQL or MariaDB (query optimization, schema design, normalization)</p></li>\n<li><p>Solid understanding of REST API design principles</p></li>\n<li><p>Proficiency with Git (branching strategies, code reviews, release workflows)</p></li>\n<li><p>Experience with <strong>PHPUnit</strong> and defining test strategies</p></li>\n<li><p>Hands-on experience with Docker and containerized production environments</p></li>\n<li><p>Strong knowledge of caching strategies and performance optimization</p></li>\n<li><p>Experience setting up and maintaining CI/CD pipelines (GitHub preferred)</p></li>\n<li><p>Solid understanding of Composer and dependency management</p></li>\n<li><p>Comfortable working in <strong>Linux/CLI</strong> environments</p></li>\n<li><p>Strong understanding of security best practices in web applications</p></li>\n</ul><p><strong>SOFT SKILLS</strong></p><ul>\n<li><p><strong>Ability to independently design and architect solutions</strong></p></li>\n<li><p><strong>Strong problem-solving mindset with focus on maintainability and scalability</strong></p></li>\n<li><p><strong>Confidence to challenge requirements and propose better alternatives</strong></p></li>\n<li><p><strong>Ability to translate business needs into technical solutions</strong></p></li>\n<li><p><strong>Experience leading initiatives or small teams</strong></p></li>\n<li><p><strong>Strong written communication skills in async environments</strong></p></li>\n</ul><h3><strong>NICE TO HAVE</strong></h3><ul>\n<li><p><strong>Experience in fintech or financial services domain</strong></p></li>\n<li><p><strong>Frontend development skills ( or React)</strong></p></li>\n<li><p><strong>Experience with cloud platforms (Azure preferred)</strong></p></li>\n<li><p><strong>Previous experience in technical interviewing or hiring</strong></p></li>\n</ul><h3><strong>WHAT WE OFFER</strong></h3><ul>\n<li><p><strong>Salary range: €5000 - €5800 (GROSS) / month.</strong></p></li>\n<li><p><strong>Fully remote work with flexible work hours and vacation policy. </strong></p></li>\n<li><p><strong>A diverse international work environment that promotes inclusivity and collaboration. </strong></p></li>\n<li><h3><strong>Internal mentorship program. </strong></h3></li>\n<li><p><strong>Additional healthcare insurance, loyalty days. </strong></p></li>\n<li><p><strong>Compensated professional development opportunities, including learning materials and certification exam fees. </strong></p></li>\n<li><h3><strong>Internal events and Learning Sessions. </strong></h3></li>\n<li><p><strong>Participation in local events in Lithuania such as wakeboarding, excursions, and Meet and Eat gatherings. </strong></p></li>\n<li><p><strong>Ability to change the project you’re working on. </strong></p></li>\n<li><h3><strong>Referral bonuses. </strong></h3></li>\n</ul><p class=\"Paragraph SCXW229886637 BCX8\"><strong>For information about your personal data processing, please see our Recruitment Privacy Policy</strong></p><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1792877116,
+      "expiryDate": 1798061116,
+      "applicationLink": "https://himalayas.app/companies/reiz-tech-uab/jobs/mid-php-developer-symfony?utm_source=api",
+      "guid": "https://himalayas.app/companies/reiz-tech-uab/jobs/mid-php-developer-symfony"
+    },
+    {
+      "title": "Mid/Sr PHP Developer",
+      "excerpt": "Human Power BG is an HR agency that offers consultations and recruitment for some of the best companies in Bulgaria.",
+      "companyName": "Human Power BG",
+      "companySlug": "human-power-bg",
+      "companyLogo": "https://cdn-images.himalayas.app/5ujx1p2mlcgkg6ji9h2etf2c3wg3",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Senior"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "United States"
+      ],
+      "timezoneRestrictions": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        14
+      ],
+      "categories": [
+        "PHP-Developer",
+        "Backend-Engineer",
+        "Web-Developer",
+        "API-Developer",
+        "Software-Developer",
+        "Senior-PHP-Developer",
+        "Senior-PHP-Development",
+        "Senior-PHP-Engineer",
+        "Senior-Full-Stack-PHP-Developer",
+        "Senior-PHP-Tech-Lead",
+        "Lead-PHP-Developer"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<p><em><a href=\"https://himalayas.app/companies/human-power-bg\">Human Power BG</a> is an HR agency that offers consultations and recruitment for some of the best companies in Bulgaria.</em></p><p><em>﻿~~~</em>﻿﻿</p><p><strong>Our client </strong>is one of the world-leading service providers for the online market environment. We are providing to online merchants a wide range of services, such as but not limited to payment processing solutions, gateway services, support and call center services, fraud prevention services, and chargeback dispute management.</p><p><strong>Our client</strong>, with the headquarter in California, the USA is now in the expanding process, getting present into the European market with an office located in Bucharest, Romania. Our goal is to build a team of professionals who can promote the brand and services, develop new products and services and improve the existing ones, sustain the operational processes and maintain the high quality of services to which our clients are used with.</p><h3>Our services:</h3><ul>\n<li>dispute prevention</li>\n<li>chargeback reduction</li>\n<li>revenue recovery</li>\n<li>integration</li>\n<li>payment gateway</li>\n<li>merchant services</li>\n</ul><h3>Job description:</h3><ul>\n<li>Web application development</li>\n<li>API development</li>\n<li>API integrations</li>\n</ul><h3>Requirements:</h3><ul>\n<li>Knowledge in software development with PHP</li>\n<li>Experience with HTML, CSS, XML</li>\n<li>Experience with Zend, Symphony and Laravel</li>\n<li>Frontend experience (optional)</li>\n<li>Proven experience as a Laravel or PHP Developer for 3 years</li>\n<li>Advanced knowledge of Restful concepts and APIs</li>\n<li>Good working knowledge in design and query optimization of databases (PostgreSQL)</li>\n<li>Proven knowledge of the common PHP or web server exploits and their solutions</li>\n<li>Understanding fundamental design principles behind a scalable application</li>\n<li>Understanding of code versioning tools, such as Git</li>\n<li>Good knowledge of front-end technologies like HTML5, CSS3, and JavaScript (Vue, jQuery)</li>\n</ul><h3>Benefits:</h3><ul>\n<li>Attractive salary, bonuses and rewards for high-quality work</li>\n<li>Flexible working time and working from home</li>\n<li>Professional and friendly working environment</li>\n</ul><p>If this position is of interest to you and you meet the requirements, please send your updated CV.﻿<br><br>For any questions you may have, please contact us:<br><strong><em>0878 344 034 </em></strong><em>или<strong> </strong></em>﻿﻿</p><h3>Thank you!</h3><h3>~~~~~~~~~~﻿﻿</h3><p>We will contact only approved candidates!<br>Our services are free of charge to all applicants.<br><br>***<br><br>All candidates will be treated in strict confidence.<br><br>All data provided by you is protected by the meaning of the Personal Data Protection Law and will be used only for the purposes of this selection.<br><br>***<br><br>Human Power has an indefinite license № 3084 issued by the National Employment Agency to provide services in the field of human resources.<br><br>***</p><h3>Human Power is part of BNI Industry.</h3><h3>﻿</h3><p>Originally posted on <a href=\"https://himalayas.app\">Himalayas</a></p>",
+      "pubDate": 1792611082,
+      "expiryDate": 1795135018,
+      "applicationLink": "https://himalayas.app/companies/human-power-bg/jobs/mid-sr-php-developer?utm_source=api",
+      "guid": "https://himalayas.app/companies/human-power-bg/jobs/mid-sr-php-developer"
+    }
+  ]
+}

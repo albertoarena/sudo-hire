@@ -331,3 +331,40 @@ The Himalayas terms ask to remove expired jobs: the filters hide a job after `ex
 | none | `salary`, `seniority` | `null` and the title parser |
 
 Not used: `state` (company headquarters), `media:content`.
+
+## 2026-10-29: Personio job link checked
+
+- Milestone: prep for M2
+- Decision: the built link `https://<slug>.jobs.personio.de/job/<id>` is correct. The fixture job 2807356 at `ottonova` returned 200 with the job title in the page. An unknown id returned 404.
+- Reason: closes the open question from the entry "Personio links are built from slug and id".
+- Replaces: none
+- Checked on: 2026-10-29
+
+## 2026-10-29: Himalayas search has enough PHP jobs
+
+- Milestone: prep for M3
+- Decision: M3 uses the Himalayas search endpoint with `q=php` and `q=laravel`. On 2026-10-29, `q=php` had a total count of 1452 and `q=laravel` 361. On the first page, 16 of 20 (`php`) and 18 of 20 (`laravel`) jobs had PHP or Laravel in the title or categories.
+- Reason: closes the open question in `docs/REQUIREMENTS.md` section 17. The total count includes matches in the description, so the first page is the better measure. Search pages use `?page=`, 20 jobs to a page.
+- Replaces: none
+- Checked on: 2026-10-29
+
+## 2026-10-29: Shared helpers and fixtures before the cloud sessions
+
+- Milestone: prep for M2 to M5
+- Decision: a local pull request adds the HTML to plain text helper (`App\Sources\Support\HtmlToText`), one real ECB daily rates file, and real job titles for the M4b title parser (six trimmed files). An email address in the Cloudflare file is replaced with "[email removed]". The cloud milestones use them and do not edit `app/Sources/Support/`.
+- Reason: M2 and M3 run in parallel and both need the helper. The ECB file and the extra titles need network access that a cloud session may not have.
+- Replaces: none
+
+## 2026-10-29: Title parser is a separate milestone
+
+- Milestone: prep for M4b
+- Decision: a new milestone M4b gives seniority and contract type from the job title. It runs in parallel with M2 to M5. M6 connects it to the sources, and a structured source field wins over the title.
+- Reason: no milestone owned the "title parser" rows of the field mapping, and M6 is already the largest milestone.
+- Replaces: none
+
+## 2026-10-29: Cloud sessions use one commit approval before the push
+
+- Milestone: prep for M2 to M5
+- Decision: a cloud session commits freely on its branch. Before the first push, it shows all commit messages and the pull request text for one approval. Each later push needs a yes for its new messages. Local sessions keep the approval for each commit.
+- Reason: with five cloud sessions in parallel, an approval for each commit stops the work most of the time. The human still approves all text before it leaves the session.
+- Replaces: none
