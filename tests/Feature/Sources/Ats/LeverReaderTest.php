@@ -147,6 +147,18 @@ it('uses the salary range when the posting has one', function (string $interval,
     ['one-time', 'unknown'],
 ]);
 
+it('reads the salary range of real postings', function (int $index, array $salary) {
+    $company = CompanyEntry::parse('lever:matchgroup', 'Match Group');
+    $item = JobFields::json('lever/postings-salary.json')[$index];
+
+    $job = (new LeverReader)->normalise(new AtsItem($company, $item, $this->fetchedAt));
+
+    expect(JobFields::of($job)['salary'])->toBe($salary);
+})->with([
+    'per year' => [0, ['min' => 150000.0, 'max' => 180000.0, 'currency' => 'USD', 'period' => 'year', 'raw' => '150000 - 180000 USD per-year-salary']],
+    'per hour' => [1, ['min' => 35.0, 'max' => 38.0, 'currency' => 'CAD', 'period' => 'hour', 'raw' => '35 - 38 CAD per-hour-wage']],
+]);
+
 it('gives no salary for a salary range with no amount or currency', function (array $range) {
     $job = (new LeverReader)->normalise(new AtsItem($this->company, leverItem(0, ['salaryRange' => $range]), $this->fetchedAt));
 

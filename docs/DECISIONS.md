@@ -425,21 +425,21 @@ Not used: `state` (company headquarters), `media:content`.
 - Milestone: M2
 - Decision: the ATS reader uses the public job board APIs of Greenhouse, Lever, Ashby and Personio. Each job keeps the company's own job link and apply link. The attribution is "via <Company> careers".
 - Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms.
-- Source terms: not checked: blocked in the cloud session. The endpoints and the terms pages of all four ATS return 403 from the session proxy. See the QA entry "M2: Source terms and endpoints".
-- Checked on: not checked
+- Source terms: Greenhouse says that "Job Board data is publicly available": GET endpoints need no authentication. Lever says published postings are public and "may be scraped by third parties". Ashby serves the published postings for career pages. Personio publishes no terms for the XML feed, which is the company's own public feed. None states an attribution or a rate limit. The app keeps each company's links and reads each company at most every 6 hours.
+- Checked on: 2026-10-29
 
 ## 2026-10-29: Source terms of LaraJobs
 
 - Milestone: M2
 - Decision: the LaraJobs source reads `https://larajobs.com/feed` every 2 hours. Source and apply links are the LaraJobs job page. The attribution is "via LaraJobs".
 - Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms.
-- Source terms: not checked: blocked in the cloud session. See the QA entry "M2: Source terms and endpoints".
-- Checked on: not checked
+- Source terms: LaraJobs publishes no terms page (`/terms` returns 404) and no rules for the public feed. The project owner accepts the feed as it is. Each job links to its LaraJobs page, which forwards to the employer's apply page. The app shows "via LaraJobs" and reads the feed at most every 2 hours.
+- Checked on: 2026-10-29
 
 ## 2026-10-29: Source terms of Jobicy
 
 - Milestone: M2
 - Decision: the Jobicy source reads `https://jobicy.com/api/v2/remote-jobs?count=50&tag=php` every hour. Source and apply links are the Jobicy job page. The attribution is "via Jobicy".
 - Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms. The fixture response of 2026-10-28 says: "Please ensure Jobicy is clearly credited with a direct link to the source, and all application buttons redirect to the original job URL provided in this feed." The source follows this text.
-- Source terms: not checked: blocked in the cloud session. The terms page and the API return 403 from the session proxy. See the QA entry "M2: Source terms and endpoints".
-- Checked on: not checked
+- Source terms: apply links "must continue to direct users to the original job pages on Jobicy". Credit Jobicy and do not present its listings as your own. "Start a new automated pass no more than once per hour." Commercial use is allowed. The source follows all of these.
+- Checked on: 2026-10-29

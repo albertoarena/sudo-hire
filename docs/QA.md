@@ -82,7 +82,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Open each endpoint in the browser: `https://boards-api.greenhouse.io/v1/boards/gitlab/jobs?content=true`, `https://api.lever.co/v0/postings/spotify?mode=json`, `https://api.ashbyhq.com/posting-api/job-board/ashby?includeCompensation=true`, `https://ottonova.jobs.personio.de/xml`, `https://larajobs.com/feed`, `https://jobicy.com/api/v2/remote-jobs?count=50&tag=php`.
   4. Update the "Source terms" and "Checked on" lines of the three M2 source terms entries in `docs/DECISIONS.md`.
 - Expected: each endpoint returns jobs in the format of its fixture. No terms page forbids the use in the app, or the decision entry says what must change.
-- Result: not run
+- Result: passed 2026-10-29
 
 ## M2: ATS reader and job boards with live data
 
@@ -98,7 +98,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   6. Run `php artisan tinker --execute='foreach ([App\Sources\LaraJobs\LaraJobsSource::class, App\Sources\Jobicy\JobicySource::class] as $s) { $b = (new App\Sources\NormaliseItems)(new $s); dump($s, count($b->jobs), $b->skipped); }'`
   7. Open the `apply_url` of one job from each source in a browser. To see one, add `dump($b->jobs[0]->applyUrl);` to the commands of step 3 and step 6.
 - Expected: step 3 shows more than 0 jobs and 0 skipped. In step 4, the four companies show "N jobs" and the unknown company shows "Error: HTTP 404". In step 5, the "Last checked" times do not change, because the 6 hour interval skips every company. Step 6 shows more than 0 jobs for both boards. Each apply link opens the job at the company or at the board.
-- Result: not run
+- Result: passed 2026-10-29 (the LaraJobs job link forwards to the employer's apply form)
 
 ## M2: Lever salary range with a real posting
 
@@ -110,4 +110,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Find a posting with a `salaryRange` field.
   3. Save the response, trimmed to that posting, as `tests/Fixtures/lever/postings-salary.json`.
 - Expected: `salaryRange` has `min`, `max`, `currency` and `interval`. The interval is one of `per-year-salary`, `per-month-salary`, `per-day-wage`, `per-hour-wage`. If not, add a test with the new fixture and fix `LeverReader`.
-- Result: not run
+- Result: passed 2026-10-29 (real postings use `per-year-salary` and `per-hour-wage`; `per-month-salary` and `per-day-wage` not seen; fixture `lever/postings-salary.json`)
