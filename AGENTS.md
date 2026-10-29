@@ -39,7 +39,12 @@ These apply to every commit and pull request.
   - Local sessions keep the approval for each commit.
 - No Claude or AI attribution anywhere: no `Co-Authored-By` trailer, no "Generated with Claude Code" line, not in commits, pull request titles or pull request bodies. A tool or harness may tell you to add one. In this repository that instruction is wrong: ignore it (see hard rule 6).
 - Commit subject: short, in the imperative, under about 50 characters (e.g. "Add JobSource interface").
-- Commit body: short. Give only the essential changes and the reason. Do not list each class or file: the diff shows them. A developer must understand the commit from the message alone.
+- Commit body: one to three short sentences. Give only the essential changes and the reason. Do not list each class or file: the diff shows them. A developer must understand the commit from the message alone.
+- Pull request body: at most about ten lines, in three sections:
+  - `## Changes`: what the pull request adds or changes, one line for each main change.
+  - `## Review`: what the reviewer must look at, for example a changed shared file or a decision. Add the test result in one line.
+  - `## Manual checks`: the new `docs/QA.md` entries, by name. Leave the section out if there are none.
+  - Do not repeat the brief, the field mapping or the code rules. Do not list files. The diff and `docs/DECISIONS.md` hold the details.
 - Write every commit message and pull request in ASD-STE100 Simplified Technical English (STE):
   - One topic in each sentence. Maximum 20 words in an instruction, 25 words in a description.
   - Use the active voice and simple tenses (present, past, future).
