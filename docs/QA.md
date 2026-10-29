@@ -69,7 +69,10 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. In the cloud session, run `git config user.email`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
   4. In the cloud session, run `composer install --no-interaction --ignore-platform-req=php`.
 - Expected: the email from `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
-- Result: not run
+- Result: partly passed 2026-10-29, in the M3 cloud session (branch m3/remotive-himalayas-wwr). Step 2 was not visible from inside the session.
+  - `git config user.email` gave `noreply@anthropic.com`: `~/.gitconfig` has the Claude name and email. `git var GIT_AUTHOR_IDENT` and `git var GIT_COMMITTER_IDENT` gave the owner's name and email, because the `GIT_*` variables win over the file. Commits get the correct identity.
+  - `git config commit.gpgsign` gave `false`. `echo $COMPOSER_ALLOW_SUPERUSER` gave `1`. `~/.claude/settings.json` had the `attribution` block.
+  - `composer install --no-interaction` installed 134 of 135 packages from git source. `phpstan/phpstan` failed with HTTP 403 on its `api.github.com` zipball. The zip workaround in `AGENTS.md` fixed it.
 
 ## M2: Source terms and endpoints
 
@@ -111,3 +114,28 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Save the response, trimmed to that posting, as `tests/Fixtures/lever/postings-salary.json`.
 - Expected: `salaryRange` has `min`, `max`, `currency` and `interval`. The interval is one of `per-year-salary`, `per-month-salary`, `per-day-wage`, `per-hour-wage`. If not, add a test with the new fixture and fix `LeverReader`.
 - Result: passed 2026-10-29 (real postings use `per-year-salary` and `per-hour-wage`; `per-month-salary` and `per-day-wage` not seen; fixture `lever/postings-salary.json`)
+
+## M3: Source terms and endpoints
+
+- Added: 2026-10-29, branch m3/remotive-himalayas-wwr
+- Why manual: the cloud session cannot reach Remotive, Himalayas or We Work Remotely, or their terms pages.
+- Setup: a browser on a Mac with normal internet access.
+- Steps:
+  1. Read the Remotive API terms (`https://remotive.com/api-documentation`), the Himalayas API terms (`https://himalayas.app/api`) and the We Work Remotely terms of service.
+  2. For each source, note the attribution, the rate limit and any restriction on the use in a desktop app.
+  3. Open each endpoint in the browser: `https://remotive.com/api/remote-jobs?search=php`, `https://himalayas.app/jobs/api/search?q=php&page=1`, `https://himalayas.app/jobs/api/search?q=php&page=2`, `https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss`.
+  4. Update the "Source terms" and "Checked on" lines of the three M3 source terms entries in `docs/DECISIONS.md`.
+- Expected: each endpoint returns jobs in the format of its fixture. Himalayas page 2 has other jobs than page 1, 20 to a page. No terms page forbids the use in the app, or the decision entry says what must change.
+- Result: passed 2026-10-29 (all endpoints return jobs in the fixture format; Himalayas pages 1 and 2 have 20 different jobs each; the three terms are in the M3 source terms entries; the Himalayas use in a single-user app is accepted by the project owner)
+
+## M3: Remotive, Himalayas and We Work Remotely with live data
+
+- Added: 2026-10-29, branch m3/remotive-himalayas-wwr
+- Why manual: tests use fixtures only. The cloud session cannot reach the sources.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`.
+- Steps:
+  1. Run `php artisan tinker --execute='foreach ([App\Sources\Remotive\RemotiveSource::class, App\Sources\Himalayas\HimalayasSource::class, App\Sources\WeWorkRemotely\WeWorkRemotelySource::class] as $s) { $b = (new App\Sources\NormaliseItems)(new $s); dump($s, count($b->jobs), $b->skipped, $b->skipReasons, $b->jobs[0]->applyUrl ?? null); }'`
+  2. Open the three apply links from step 1 in a browser.
+  3. Run `php artisan tinker --execute='$b = (new App\Sources\NormaliseItems)(new App\Sources\Himalayas\HimalayasSource, now()->subDay()); dump(count($b->jobs));'`
+- Expected: step 1 shows more than 0 jobs for each source and 0 skipped, or skip reasons that make sense. The Himalayas apply link ends with `?utm_source=api`. Each apply link opens the job page at the board. Step 3 shows fewer or the same number of Himalayas jobs as step 1. Run step 1 at most once for Remotive on a day: it allows 4 requests a day.
+- Result: passed 2026-10-29 (step 1: Remotive 12 jobs, Himalayas 151, We Work Remotely 8, 0 skipped; the three apply links open the job pages, Himalayas with `?utm_source=api`; step 3: 94 Himalayas jobs)

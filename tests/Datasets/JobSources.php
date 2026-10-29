@@ -2,8 +2,11 @@
 
 use App\Sources\Ats\AtsSource;
 use App\Sources\Ats\CompanyEntry;
+use App\Sources\Himalayas\HimalayasSource;
 use App\Sources\Jobicy\JobicySource;
 use App\Sources\LaraJobs\LaraJobsSource;
+use App\Sources\Remotive\RemotiveSource;
+use App\Sources\WeWorkRemotely\WeWorkRemotelySource;
 use Illuminate\Support\Facades\Http;
 use Tests\Fakes\FakeSource;
 use Tests\Fakes\InMemoryCompanyList;
@@ -39,5 +42,20 @@ dataset('job sources', [
         Http::fake(['jobicy.com/*' => Http::response(JobFields::fixture('jobicy/remote-jobs.json'))]);
 
         return new JobicySource;
+    },
+    'remotive' => function () {
+        Http::fake(['remotive.com/*' => Http::response(JobFields::fixture('remotive/remote-jobs.json'))]);
+
+        return new RemotiveSource;
+    },
+    'himalayas' => function () {
+        Http::fake(['himalayas.app/*' => Http::response(JobFields::fixture('himalayas/search.json'))]);
+
+        return new HimalayasSource;
+    },
+    'weworkremotely' => function () {
+        Http::fake(['weworkremotely.com/*' => Http::response(JobFields::fixture('weworkremotely/back-end.rss'))]);
+
+        return new WeWorkRemotelySource;
     },
 ]);
