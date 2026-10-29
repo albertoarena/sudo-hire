@@ -126,7 +126,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Open each endpoint in the browser: `https://remotive.com/api/remote-jobs?search=php`, `https://himalayas.app/jobs/api/search?q=php&page=1`, `https://himalayas.app/jobs/api/search?q=php&page=2`, `https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss`.
   4. Update the "Source terms" and "Checked on" lines of the three M3 source terms entries in `docs/DECISIONS.md`.
 - Expected: each endpoint returns jobs in the format of its fixture. Himalayas page 2 has other jobs than page 1, 20 to a page. No terms page forbids the use in the app, or the decision entry says what must change.
-- Result: not run
+- Result: passed 2026-10-29 (all endpoints return jobs in the fixture format; Himalayas pages 1 and 2 have 20 different jobs each; the three terms are in the M3 source terms entries; the Himalayas use in a single-user app is accepted by the project owner)
 
 ## M3: Remotive, Himalayas and We Work Remotely with live data
 
@@ -138,4 +138,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Open the three apply links from step 1 in a browser.
   3. Run `php artisan tinker --execute='$b = (new App\Sources\NormaliseItems)(new App\Sources\Himalayas\HimalayasSource, now()->subDay()); dump(count($b->jobs));'`
 - Expected: step 1 shows more than 0 jobs for each source and 0 skipped, or skip reasons that make sense. The Himalayas apply link ends with `?utm_source=api`. Each apply link opens the job page at the board. Step 3 shows fewer or the same number of Himalayas jobs as step 1. Run step 1 at most once for Remotive on a day: it allows 4 requests a day.
-- Result: not run
+- Result: passed 2026-10-29 (step 1: Remotive 12 jobs, Himalayas 151, We Work Remotely 8, 0 skipped; the three apply links open the job pages, Himalayas with `?utm_source=api`; step 3: 94 Himalayas jobs)
