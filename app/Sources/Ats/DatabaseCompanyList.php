@@ -12,13 +12,12 @@ final class DatabaseCompanyList implements CompanyList
 {
     public function companies(): array
     {
-        return AtsCompany::query()
+        return array_values(AtsCompany::query()
             ->where('enabled', true)
             ->orderBy('id')
             ->get()
             ->map(fn (AtsCompany $company) => $company->toEntry())
-            ->values()
-            ->all();
+            ->all());
     }
 
     public function lastCheckedAt(CompanyEntry $company): ?CarbonImmutable
