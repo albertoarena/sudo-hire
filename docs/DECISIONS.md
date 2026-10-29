@@ -534,3 +534,24 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the parser tests for timezone-only text ("CET", "UTC+1 ±2", "USA timezones") are plain unit tests, marked "not from a fixture". All other rows of the fixture table come from a file in `tests/Fixtures/`, and a test checks that the string is in that file.
 - Reason: no source gives timezone-only text in a location field. The project owner checked 9 sources live on 2026-10-29. The cloud session cannot reach the job boards to save a new response.
 - Replaces: none
+
+## 2026-10-29: Title parser rules
+
+- Milestone: M4b
+- Decision: `TitleParser::parse()` reads one job title into a `Seniority` and a `ContractType`. It is pure: no I/O. Words match as whole words, case-insensitive. "Leading" does not match "Lead", and "Seniority" does not match "Senior". "SR." and "Sr" match.
+- Decision: seniority words. "Junior", "Jr", "Entry level", "Graduate", "Intern" give `junior`. "Mid", "Mid-level", "Intermediate" give `mid`. "Senior", "Sr" give `senior`. "Lead", "Principal", "Staff", "Head of", "Manager", "Director", "VP" give `lead` (see "Values with no enum case map to existing cases").
+- Decision: when a title has two or more levels, the lowest level wins: "Mid/Sr" gives `mid`, "Senior Principal / Director" gives `senior`. This is the same rule as the Himalayas `seniority[]` list.
+- Decision: contract type words. "Contract", "Contractor", "Freelance" give `contract`. "Part-time", "Part time", "Parttime" give `part_time`. "Full-time", "Full time", "Fulltime" give `full_time`. "Permanent" is not in the list: in "Graphic Designer (Permanent work from home)" it describes the remote setup.
+- Decision: a title with no word from the lists gives `unknown`, never a guess. German words (e.g. "Werkstudent") are not in the lists. The Personio `seniority` field covers German jobs.
+- Known false positive: "Manager" gives `lead`, but "Product Manager" or "Account Manager" is often not a lead role.
+- Reason: the field mapping sends the seniority of most sources, and the contract type of none, to the title parser. A wrong value is worse than `unknown`. In M6 a structured source field wins over the title.
+- Replaces: none
+
+## 2026-10-29: Synthetic titles for the title parser
+
+- Milestone: M4b
+- Decision: the title parser tests have one dataset of invented titles, `syntheticTitles`. The project owner approved this exception to the real strings rule (REQUIREMENTS section 14).
+- Decision: the dataset is limited to list words that no fixture title has, one row for each word or spelling: "Jr", "Entry level", "Graduate", "Part-time", "Part time", "Parttime", "Full-time", "Full time", "Fulltime". It also has the near-miss words "Leading" and "Seniority". When a real title has one of these words, the real title replaces the synthetic row.
+- Decision: all other rows come from `tests/Fixtures/`. A test checks that each row is a real title of its file, and that every fixture title has a row.
+- Reason: the cloud session cannot reach the job boards to save new responses, and every list word needs a test.
+- Replaces: none
