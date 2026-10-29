@@ -2,6 +2,8 @@
 
 use App\Sources\Ats\AtsSource;
 use App\Sources\Ats\CompanyEntry;
+use App\Sources\Jobicy\JobicySource;
+use App\Sources\LaraJobs\LaraJobsSource;
 use Illuminate\Support\Facades\Http;
 use Tests\Fakes\FakeSource;
 use Tests\Fakes\InMemoryCompanyList;
@@ -27,5 +29,15 @@ dataset('job sources', [
             fn (string $entry) => CompanyEntry::parse($entry),
             ['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova'],
         )));
+    },
+    'larajobs' => function () {
+        Http::fake(['larajobs.com/*' => Http::response(JobFields::fixture('larajobs/feed.xml'))]);
+
+        return new LaraJobsSource;
+    },
+    'jobicy' => function () {
+        Http::fake(['jobicy.com/*' => Http::response(JobFields::fixture('jobicy/remote-jobs.json'))]);
+
+        return new JobicySource;
     },
 ]);

@@ -2,8 +2,8 @@
 
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\CompanyEntry;
-use App\Sources\Ats\ReadFailed;
 use App\Sources\Ats\Readers\PersonioReader;
+use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\Request;
