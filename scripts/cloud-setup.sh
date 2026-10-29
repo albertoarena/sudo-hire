@@ -6,7 +6,6 @@
 # The environment also needs:
 #   - variables GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL, GIT_COMMITTER_NAME,
 #     GIT_COMMITTER_EMAIL and COMPOSER_ALLOW_SUPERUSER=1
-#   - a GitHub network secret, so Composer can download packages
 #
 # CLOUD_SETUP_HOMES overrides the home folders (used by the tests).
 # The session may run as root, as claude or as another user, so the
