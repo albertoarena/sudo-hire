@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss">
+  <channel>
+    <title>We Work Remotely: Back-End Programming Jobs</title>
+    <link>https://weworkremotely.com/categories/remote-back-end-programming-jobs.rss</link>
+    <description>We Work Remotely: Back-End Programming Jobs</description>
+    <language>en-US</language>
+    <ttl>60</ttl>
+    <item>
+      <media:content url="https://wwr-pro.s3.amazonaws.com/logos/0017/1267/logo.gif" type="image/png"/>
+      <title>Twikey: Senior Java Developer</title>
+      <region>Anywhere in the World</region>
+      <country>🇦🇩 Andorra, 🇦🇱 Albania, 🇦🇹 Austria, 🇧🇦 Bosnia and Herzegovina, 🇧🇬 Bulgaria, 🇨🇭 Switzerland, 🇨🇿 Czechia, 🇩🇪 Germany, 🇩🇰 Denmark, 🇪🇪 Estonia, 🇪🇸 Spain, 🇫🇮 Finland, 🇫🇷 France, 🇬🇧 United Kingdom of Great Britain and Northern Ireland, 🇬🇷 Greece, 🇭🇷 Croatia, 🇭🇺 Hungary, 🇮🇹 Italy, 🇱🇹 Lithuania, 🇲🇩 Moldova (Republic of), 🇲🇪 Montenegro, 🇲🇰 North Macedonia, 🇳🇱 Netherlands, 🇳🇴 Norway, 🇵🇱 Poland, 🇵🇹 Portugal, 🇷🇴 Romania, 🇸🇪 Sweden, 🇸🇮 Slovenia, 🇸🇰 Slovakia, and 🇺🇦 Ukraine</country>
+      <state>Région Flamande</state>
+      <skills>Java, PostgreSQL, and Spring</skills>
+      <category>Back-End Programming</category>
+      <type>Full-Time</type>
+      <description>&lt;img src="https://we-work-remotely.imgix.net/logos/0017/1267/logo.gif?ixlib=rails-4.0.0&amp;w=50&amp;h=50&amp;dpr=2&amp;fit=fill&amp;auto=compress" /&gt;
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Ghent - Belgium
+    &lt;br /&gt;&lt;strong&gt;URL:&lt;/strong&gt; &lt;a href="https://www.twikey.com/jobs"&gt;https://www.twikey.com/jobs&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Are you a driven back-end developer who doesn't wait for instructions, but is already thinking two steps ahead? Who experiments with new technologies and smart solutions alongside the job? Then we want to talk to you.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Straight forward but clear: Twikey isn't looking for someone to just execute. We're looking for someone who thinks, does and keeps going when the going gets tough.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Because fintech is evolving at breakneck speed. That calls for real ownership and for someone who can dive deep on the technical side to keep innovating and improving our platform. You get plenty in return, such as the freedom and responsibility to deliver your own projects. Thanks in part to our organisational structure, you can shape your ideas in the short term and see the results of your hard work quickly.&lt;/p&gt;
+&lt;p&gt;Driven by your passion for building scalable, performant and secure back-end systems, you continuously raise the bar for your own skills and for our product.&lt;/p&gt;
+&lt;p&gt;As a member of our development team you work closely with our CTO, 3 fellow developers and 2 testers on the core of our software application. A small, strong team in which you take on a role with real impact on the future of our product.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You focus on&amp;nbsp;&lt;strong&gt;developing and improving the back-end&lt;/strong&gt;&amp;nbsp;of our platform, optimising the architecture and data processing while keeping the security and stability of our system in mind. This lets you put your technical skills to full use and come up with innovative solutions.&lt;/li&gt;
+&lt;li&gt;With your expertise you'll&amp;nbsp;&lt;strong&gt;make valuable suggestions and streamline processes&lt;/strong&gt;&amp;nbsp;for all our stakeholders, so we can work more efficiently and achieve better results.&lt;/li&gt;
+&lt;li&gt;You provide&amp;nbsp;&lt;strong&gt;technical support on integration projects&lt;/strong&gt;&amp;nbsp;with software houses, banks and large companies, solving complex technical problems. That gives you the chance to work on challenging projects and to get in touch with a wide range of technologies and industries.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Once you know our product inside out, there are plenty of challenging projects for you to help build.&lt;/p&gt;
+&lt;h4 class="sec-title-9"&gt;What are we looking for in you?&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;You are&amp;nbsp;&lt;strong&gt;driven, curious and enterprising.&lt;/strong&gt;&amp;nbsp;Not only in your job, but outside of it too. You have a&amp;nbsp;&lt;strong&gt;pro-active attitude&lt;/strong&gt;&amp;nbsp;and are always a few steps ahead: you spot opportunities, grab them and get to work.&lt;/li&gt;
+&lt;li&gt;Technical challenges? You take them on, not because you have to, but because you want to&amp;nbsp;&lt;strong&gt;learn&lt;/strong&gt;. You're a&amp;nbsp;&lt;strong&gt;self-starter&lt;/strong&gt;&amp;nbsp;and quickly get to grips with new technologies, languages or frameworks.&lt;/li&gt;
+&lt;li&gt;You understand that a good product is never "finished". You draw energy from that&amp;nbsp;&lt;strong&gt;mix of creating and fine-tuning&lt;/strong&gt;. You think along, question things and keep building new solutions.&lt;/li&gt;
+&lt;li&gt;You have experience using AI tools to build integrations. You're&amp;nbsp;&lt;strong&gt;actively exploring how AI can contribute&lt;/strong&gt;&amp;nbsp;to smarter user experiences and more efficient software development. Experience with data analytics is an asset.&lt;/li&gt;
+&lt;li&gt;You therefore attach&amp;nbsp;&lt;strong&gt;a lot of importance to the security, stability and reliability&lt;/strong&gt;&amp;nbsp;of a system and know what it takes to get there. You work in a structured, meticulous way and write code that is clean, reusable and easy to test.&lt;/li&gt;
+&lt;li&gt;You have demonstrable experience with&amp;nbsp;&lt;strong&gt;Java, Go and the Spring framework&lt;/strong&gt;. Experience with API integrations, web services, Linux or other relevant areas is a plus.&lt;/li&gt;
+&lt;li&gt;You have&amp;nbsp;&lt;strong&gt;a deep understanding of databases.&lt;/strong&gt;&amp;nbsp;You don't just know how to use them, you know how they work. You have an opinion on structured, high-quality code, architecture and back-end technologies.&lt;/li&gt;
+&lt;li&gt;You have a very good command of&amp;nbsp;&lt;strong&gt;English&lt;/strong&gt;, for smooth collaboration with all colleagues and stakeholders. Dutch is an asset.&lt;/li&gt;
+&lt;li&gt;You are based in a time zone within&amp;nbsp;&lt;strong&gt;one hour of CET&lt;/strong&gt;, so your working day overlaps with the team's for the daily stand-ups and close day-to-day collaboration.&lt;/li&gt;
+&lt;li&gt;You can work independently and enjoy a small team where switching gears quickly, collaboration and knowledge sharing are central.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 class="sec-title-9"&gt;Twikey offers you:&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;An environment where challenge, innovation and autonomy come first.&lt;/li&gt;
+&lt;li&gt;The room to&amp;nbsp;&lt;strong&gt;experiment, to challenge and to improve.&lt;/strong&gt;&amp;nbsp;And we expect you to really take that room.&lt;/li&gt;
+&lt;li&gt;An ideal setting if you want to grow fast and healthily, both technically and personally. Training, ownership, taking on new or additional roles based on your talents and interests, ... a lot is possible here, and you're at the wheel!&lt;/li&gt;
+&lt;li&gt;A&amp;nbsp;&lt;strong&gt;complementary team of more than 35 colleagues&lt;/strong&gt;&amp;nbsp;who move forward together in a respectful and open atmosphere.&lt;/li&gt;
+&lt;li&gt;A motivating workplace with&amp;nbsp;&lt;strong&gt;plenty of knowledge and expertise&lt;/strong&gt;, shared both formally during the daily stand-ups and the weekly Friday call, and informally at the coffee machine.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Appreciation, openness and critical dialogue.&lt;/strong&gt;&amp;nbsp;Our Friction Hunter Trophy is an example: every month we celebrate the colleague who made the biggest difference for customers, teammates or internally. Your impact gets noticed!&lt;/li&gt;
+&lt;li&gt;A modern workplace with different zones (conference, connect, co-work, concentrate) in a recently built, industrial-style office building. Easy to reach by car, by bike and by public transport on the edge of Ghent, right next to the KBC tower.&lt;/li&gt;
+&lt;li&gt;A&amp;nbsp;&lt;strong&gt;salary package tailored&lt;/strong&gt;&amp;nbsp;to your experience and skills, with plenty of extra-legal benefits, a collective bonus system and a cafeteria plan to convert your 13th month as you choose.&lt;/li&gt;
+&lt;li&gt;The chance to work in an&amp;nbsp;&lt;strong&gt;innovative Belgian fintech scale-up&lt;/strong&gt;&amp;nbsp;that is active in several countries, in a sector that is growing fast!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A job ad doesn't tell you everything. Our colleagues tell you&amp;nbsp;&lt;a class="link" href="https://www.twikey.com/jobs/testimonials.html"&gt;here&lt;/a&gt; what it's really like to work at Twikey.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/twikey-senior-java-developer"&gt;https://weworkremotely.com/remote-jobs/twikey-senior-java-developer&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Thu, 17 Sep 2026 10:51:23 +0000</pubDate>
+      <expires_at>Mon, 16 Nov 2026 10:51:23 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/twikey-senior-java-developer</guid>
+      <link>https://weworkremotely.com/remote-jobs/twikey-senior-java-developer</link>
+    </item>
+    <item>
+      <title>Proxify AB: Senior Backend Developer (Python)</title>
+      <region>Anywhere in the World</region>
+      <country></country>
+      <state>Stockholm</state>
+      <skills>Django and Python</skills>
+      <category>Back-End Programming</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; Sweden
+    &lt;br /&gt;&lt;strong&gt;URL:&lt;/strong&gt; &lt;a href="http://career.proxify.io"&gt;http://career.proxify.io&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;h3&gt;&lt;strong&gt;The Role:&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;We are looking for a Senior Python Developer for one of our clients. You are a perfect candidate if you are growth-oriented, you love what you do, and you enjoy working on new ideas to develop exciting products.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;What we are looking for:&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;5+ years of experience building products with Python and Django.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;High proficiency in SQL with experience using databases like PostgreSQL.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Experience scaling cloud infrastructures with Docker or Kubernetes is a plus.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Experience managing cloud infrastructures, specifically AWS or GCP.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You follow the best practices and conventions.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Relevant experience in CI/CD and related tools.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ability to work with minimal supervision.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Intermediate-advanced English level.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You can communicate well with both technical and non-technical clients.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Time zone: CET (+/- 3 hours). We are unable to consider applications from candidates in other time zones.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;Responsibilities:&lt;/strong&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Ability to build libraries and frameworks of reusable efficient code.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Competence in designing and implementing low-latency, stable and performing applications.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Capacity to effectively collaborate with other team members and stakeholders remotely.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ability to implement data protection systems.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Competence in data storage solutions.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div&gt;&amp;nbsp;&lt;/div&gt;
+&lt;div&gt;&amp;nbsp;&lt;/div&gt;
+&lt;h4&gt;&lt;strong&gt;What we offer:&lt;br&gt;&lt;/strong&gt;&lt;/h4&gt;
+&lt;div&gt;&amp;nbsp;&lt;/div&gt;
+&lt;div&gt;&lt;strong&gt;Get paid, not played&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;No more unreliable clients. Enjoy on-time monthly payments with flexible withdrawal options.&lt;br&gt;&lt;br&gt;&lt;/div&gt;
+&lt;div&gt;&lt;strong&gt;&lt;br&gt;Predictable project hours&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;Enjoy a harmonious work-life balance with consistent 8-hour working days with clients.&lt;br&gt;&lt;br&gt;&lt;/div&gt;
+&lt;div&gt;&lt;br&gt;&lt;strong&gt;Flex days, so you can recharge&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;Enjoy up to 24 flex days off per year without losing pay, for full-time positions found through Proxify.&lt;br&gt;&lt;br&gt;&lt;/div&gt;
+&lt;div&gt;&lt;br&gt;&lt;strong&gt;Career-accelerating positions at cutting-edge companies&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;Discover exclusive long-term remote positions at the world's most exciting companies.&lt;br&gt;&lt;br&gt;&lt;/div&gt;
+&lt;div&gt;&lt;br&gt;&lt;strong&gt;Hand-picked opportunities just for you&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;Skip the typical recruitment roadblocks and biases with personally matched positions.&lt;br&gt;&lt;br&gt;&lt;/div&gt;
+&lt;div&gt;&lt;br&gt;&lt;strong&gt;One seamless process, multiple opportunities&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;A one-time contracting process for endless opportunities, with no extra assessments.&lt;br&gt;&lt;br&gt;&lt;/div&gt;
+&lt;div&gt;&lt;br&gt;&lt;strong&gt;Compensation&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;Enjoy the same pay, every month with positions landed through Proxify.&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/proxify-ab-senior-backend-developer-python-11"&gt;https://weworkremotely.com/remote-jobs/proxify-ab-senior-backend-developer-python-11&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Mon, 19 Oct 2026 09:21:57 +0000</pubDate>
+      <expires_at>Wed, 18 Nov 2026 09:21:57 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/proxify-ab-senior-backend-developer-python-11</guid>
+      <link>https://weworkremotely.com/remote-jobs/proxify-ab-senior-backend-developer-python-11</link>
+    </item>
+    <item>
+      <title>Squarespace: Staff Software Engineer, Revenue Systems</title>
+      <region>Anywhere in the World</region>
+      <country></country>
+      <state></state>
+      <skills></skills>
+      <category>Back-End Programming</category>
+      <type>Full-Time</type>
+      <description>
+
+&lt;p&gt;
+  &lt;strong&gt;Headquarters:&lt;/strong&gt; New York City; Remote
+&lt;/p&gt;
+
+&lt;p&gt;Squarespace is seeking a talented Staff Software Engineer to support and evolve the systems at the core core of our monetization platform: billing, payments and orders. In this role, you will provide technical oversight over the critical monetization machinery that accepts orders, processes payments and bills subscriptions. You will regularly collaborate with engineering leadership and key product, strategy and finance stakeholders to align technical strategy with Squarespace’s business objectives. This is an opportunity to take on IC technical leadership responsibilities and own system architecture for high-visibility initiatives tied directly to Squarespace's core businesses.&lt;/p&gt;
+&lt;p&gt;This role is open to remote or hybrid working from our NYC office 3 days per week. You will report to the Director of Revenue Systems.&lt;/p&gt;
+&lt;h2&gt;&lt;strong&gt;You'll Get To...&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Own system architectural vision and design for critical areas of our business.&lt;/li&gt;
+&lt;li&gt;Transform high-level system vision into estimated project plans for initiatives central to Squarespace’s strategy.&lt;/li&gt;
+&lt;li&gt;Serve as technical lead and cross-functional liaison on business-critical projects, making and defending engineering decisions key to the success of the business.&lt;/li&gt;
+&lt;li&gt;Mentor engineers on the team to deliver ever greater quality with ever growing autonomy.&lt;/li&gt;
+&lt;li&gt;Drive best practices for engineering excellence and technical leadership, influence design reviews, question assumptions, point out pitfalls and foster shared understanding&lt;/li&gt;
+&lt;li&gt;Set the engineering quality bar for the team through regular, high-quality code contributions across billing, orders and payments.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;&lt;strong&gt;Who We're Looking For&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;10 or more years experience specifying, delivering and maintaining complex distributed backend services.&lt;/li&gt;
+&lt;li&gt;Significant experience with multiple programming languages (especially Java) and a broad range of tools like Springboot, hibernate, databases, etc.&lt;/li&gt;
+&lt;li&gt;Demonstrated experience leading system architecture decisions across multiple teams or initiatives&lt;/li&gt;
+&lt;li&gt;Proven ability to serve as a technical lead on cross-functional projects, aligning engineering and business goals without sacrificing engineering quality&lt;/li&gt;
+&lt;li&gt;Experience working with billing, orders or payment systems at scale&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;&lt;strong&gt;Benefits &amp;amp; Perks&lt;/strong&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A choice between medical plans with an option for 100% covered premiums including medical, dental, and vision&lt;/li&gt;
+&lt;li&gt;Supplemental Life and Disability Insurance plans&lt;/li&gt;
+&lt;li&gt;Fertility and adoption benefits&lt;/li&gt;
+&lt;li&gt;Headspace mindfulness app subscription&lt;/li&gt;
+&lt;li&gt;Global Employee Assistance Program&lt;/li&gt;
+&lt;li&gt;Retirement benefits with employer match&lt;/li&gt;
+&lt;li&gt;Flexible paid time off&lt;/li&gt;
+&lt;li&gt;12 weeks paid parental leave and family care leave&lt;/li&gt;
+&lt;li&gt;Pretax commuter benefit&lt;/li&gt;
+&lt;li&gt;Education reimbursement&lt;/li&gt;
+&lt;li&gt;Employee donation match to community organizations&lt;/li&gt;
+&lt;li&gt;7 Global Employee Resource Groups (ERGs)&lt;/li&gt;
+&lt;li&gt;Dog-friendly workplace&lt;/li&gt;
+&lt;li&gt;Free lunch and snacks&lt;/li&gt;
+&lt;li&gt;Private rooftop&lt;/li&gt;
+&lt;li&gt;Hack week twice per year&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Cash Compensation Range: $170,000 - $299,000 USD&lt;/h3&gt;
+&lt;p&gt;The base salary for this position will vary based on job-related criteria including relevant skills, experience, and location, among other factors.&lt;/p&gt;
+&lt;p&gt;In addition to the cash compensation above (which includes base salary and, where applicable for eligible roles, may include overtime pay), Squarespace employees are eligible to be granted an option to purchase our common stock. Sales positions generally offer a competitive On Target Earnings (OTE) incentive structure in addition to base salary.&lt;/p&gt;
+&lt;h2&gt;&lt;strong&gt;About Squarespace&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Squarespace is a design-driven platform helping entrepreneurs build brands and businesses online. We empower millions of customers in more than 200 countries and territories with all the tools they need to create an online presence, build an audience, monetize, and scale their business. Our suite of products range from websites, domains, ecommerce, and marketing tools, as well as tools for scheduling with Acuity and creating and managing social media presence with Bio Sites and Unfold. Our team of more than 1,700 is headquartered in New York City, with offices in Dublin, Ireland, and Aveiro, Portugal. For more information about our company, visit &lt;a href="https://www.squarespace.com/about/careers"&gt;https://www.squarespace.com/about/careers&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;&lt;strong&gt;Our Commitment&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Today, more than a million people around the globe use Squarespace to share different perspectives and experiences with the world. Not only do we embrace and celebrate the diversity of our customers, but we also work toward the same in our employees. At Squarespace, we are committed to equal employment opportunity regardless of race, color, ethnicity, ancestry, religion, national origin, gender, sex, gender identity or expression, sexual orientation, age, citizenship, marital or parental status, disability, veteran status, or other class protected by applicable law. We are proud to be an equal opportunity workplace.&lt;/p&gt;
+&lt;p&gt;#LI-Hybrid&lt;/p&gt;
+&lt;p&gt;#LI-Remote&lt;/p&gt;&lt;div class="content-conclusion"&gt;&lt;p&gt;&lt;strong&gt;Thank you in advance for providing the following details about your work history from your resume! This helps us ensure that your candidate information is accurate and consistent during the hiring process.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Squarespace will never solicit your personal banking information or ask you to transfer money in connection with a job offer or interview. We also will not reach out to you via phone or SMS without your permission or knowledge.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;If you plan to use AI in any capacity during your candidate journey, please review our &lt;span&gt;&lt;a href="https://sqsp.link/Sxow3s"&gt;Candidate AI Policy&lt;/a&gt;&lt;/span&gt;.&lt;/strong&gt;&lt;/p&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;To apply:&lt;/strong&gt; &lt;a href="https://weworkremotely.com/remote-jobs/squarespace-staff-software-engineer-revenue-systems"&gt;https://weworkremotely.com/remote-jobs/squarespace-staff-software-engineer-revenue-systems&lt;/a&gt;&lt;/p&gt;
+</description>
+      <pubDate>Sun, 18 Oct 2026 07:30:58 +0000</pubDate>
+      <expires_at>Tue, 17 Nov 2026 07:30:58 +0000</expires_at>
+      <guid>https://weworkremotely.com/remote-jobs/squarespace-staff-software-engineer-revenue-systems</guid>
+      <link>https://weworkremotely.com/remote-jobs/squarespace-staff-software-engineer-revenue-systems</link>
+    </item>
+  </channel>
+</rss>

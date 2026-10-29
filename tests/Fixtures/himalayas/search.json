@@ -1,0 +1,174 @@
+{
+  "comments": "Search results come 20 to a page. Pass ?page=2, ?page=3 and so on for more; there is no cursor on search. Cursor pagination (nextCursor) is only on /jobs/api, the browse feed. 13/03/2026: The API has been updated to include the companySlug field in the response.",
+  "updatedAt": 1793013430,
+  "offset": 0,
+  "limit": 20,
+  "totalCount": 1500,
+  "jobs": [
+    {
+      "title": "SR. PHP DEVELOPER (LARAVEL OR SYMFONY)",
+      "excerpt": "ABOUT REIZ TECHReiz Tech is more than just an IT company.",
+      "companyName": "REIZ TECH UAB",
+      "companySlug": "reiz-tech-uab",
+      "companyLogo": "https://cdn-images.himalayas.app/by5fu63m6ehn0bfbye7wqz3laikp",
+      "employmentType": "Full Time",
+      "minSalary": 5500,
+      "maxSalary": 7000,
+      "salaryPeriod": "monthly",
+      "seniority": [
+        "Senior"
+      ],
+      "currency": "EUR",
+      "locationRestrictions": [],
+      "timezoneRestrictions": [
+        -11,
+        -10,
+        -9.5,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        -4,
+        -3.5,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        3.5,
+        4,
+        4.5,
+        5,
+        5.5,
+        5.75,
+        6,
+        6.5,
+        7,
+        8,
+        8.75,
+        9,
+        9.5,
+        10,
+        10.5,
+        11,
+        12,
+        12.75,
+        13,
+        14
+      ],
+      "categories": [
+        "PHP-Developer",
+        "Laravel-Developer",
+        "Backend-Engineer",
+        "Software-Developer",
+        "Senior-PHP-Developer",
+        "Senior-PHP-Engineer",
+        "Senior-Laravel-Developer",
+        "Senior-Full-Stack-PHP-Developer",
+        "Senior-PHP-Development",
+        "PHP-Symfony-Developer"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<h3>ABOUT REIZ TECH</h3><p>Reiz Tech is more than just an IT company. We are a trusted end-to-end IT advisor throughout clients’ business lifecycle. We have a growing global presence in more than 30 countries and regions, united to deliver end-to-end IT solutions. Our talents work together remotely, and low leadership levels are decentralized for better communication, decision-making, and flexibility. </p><h3>ABOUT THE ROLE</h3><p>Join our Development team to support the growth of our fintech product. As a <strong>Senior PHP Developer</strong>, you will play a key role in designing, building, and scaling high-performance backend systems. You will take ownership of complex technical solutions, contribute to architectural decisions, and ensure the delivery of secure, robust, and maintainable code aligned with fintech industry standards.</p>",
+      "pubDate": 1790965172,
+      "expiryDate": 1796145572,
+      "applicationLink": "https://himalayas.app/companies/reiz-tech-uab/jobs/sr-php-developer-laravel-or-symfony-2365293251?utm_source=api",
+      "guid": "https://himalayas.app/companies/reiz-tech-uab/jobs/sr-php-developer-laravel-or-symfony-2365293251"
+    },
+    {
+      "title": "Senior PHP Developer",
+      "excerpt": "Our client is a stable IT service and product development company, serving reputable clients across Europe and developing innovative projects on the long-term run.",
+      "companyName": "IESF AG",
+      "companySlug": "iesf-ag",
+      "companyLogo": "",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Senior"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Bulgaria"
+      ],
+      "timezoneRestrictions": [
+        2
+      ],
+      "categories": [
+        "PHP-Development",
+        "Backend-Development",
+        "Software-Development",
+        "API-Development",
+        "Symfony",
+        "Senior-PHP-Developer",
+        "Senior-PHP-Development",
+        "Senior-PHP-Engineer",
+        "Senior-Full-Stack-PHP-Developer",
+        "Senior-PHP-Tech-Lead",
+        "Senior-PHP-Architect",
+        "Lead-PHP-Developer",
+        "PHP-Developer",
+        "Lead-PHP-Engineer",
+        "Senior-Laravel-Developer"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<p>Our client is a stable IT service and product development company, serving reputable clients across Europe and developing innovative projects on the long-term run.</p><p>As the team is growing, we are looking for an experienced <strong>Senior PHP Developer</strong> (fully remote role).</p><h3>Tasks</h3><h3>About the Role:</h3><p>You will be responsible for maintaining a legacy API built with CakePHP 2 and developing new microservices using API Platform and Symfony. </p><h3>You will:</h3><p>• Maintain and enhance legacy APIs built with CakePHP 2.</p><p>• Design and develop new microservices using API Platform and Symfony.</p>",
+      "pubDate": 1792737142,
+      "expiryDate": 1797921142,
+      "applicationLink": "https://himalayas.app/companies/iesf-ag/jobs/senior-php-developer?utm_source=api",
+      "guid": "https://himalayas.app/companies/iesf-ag/jobs/senior-php-developer"
+    },
+    {
+      "title": "Lead PHP Developer (Laravel)",
+      "excerpt": "About KU Europe GmbHKU Europe GmbH is a family-owned D2C company behind KU2 Cosmetics, dedicated to helping people “grow older, look younger.",
+      "companyName": "KU Europe GmbH",
+      "companySlug": "ku-europe-gmbh",
+      "companyLogo": "",
+      "employmentType": "Full Time",
+      "minSalary": 2000,
+      "maxSalary": 2500,
+      "salaryPeriod": "monthly",
+      "seniority": [
+        "Senior"
+      ],
+      "currency": "USD",
+      "locationRestrictions": [
+        "Serbia"
+      ],
+      "timezoneRestrictions": [
+        1
+      ],
+      "categories": [
+        "PHP-Developer",
+        "Laravel-Developer",
+        "Backend-Engineer",
+        "Lead-PHP-Developer",
+        "Senior-Laravel-Developer",
+        "Lead-PHP-Engineer",
+        "Senior-PHP-Tech-Lead",
+        "Team-Lead-PHP-Engineer",
+        "Senior-PHP-Developer",
+        "Senior-Full-Stack-PHP-Developer",
+        "Senior-PHP-Engineer",
+        "Senior-Full-Stack-Laravel-React-Developer",
+        "Senior-PHP-Development"
+      ],
+      "parentCategories": [
+        "Developer"
+      ],
+      "description": "<h3>About <a href=\"https://himalayas.app/companies/ku-europe-gmbh\">KU Europe GmbH</a>\n</h3><p><a href=\"https://himalayas.app/companies/ku-europe-gmbh\">KU Europe GmbH</a> is a family-owned D2C company behind KU2 Cosmetics, dedicated to helping people “grow older, look younger.” We serve millions of customers across the DACH region with high-quality beauty and anti-aging products.</p><h3><strong>About the Role</strong></h3><p>We’re looking for an experienced <strong>Lead PHP Developer with strong Laravel expertise</strong> to lead development, maintain our web platforms, and take technical ownership within a small, collaborative team. The ideal candidate has a strong foundation in PHP development and practical experience building and maintaining applications using Laravel.</p>",
+      "pubDate": 1792266220,
+      "expiryDate": 1797450219,
+      "applicationLink": "https://himalayas.app/companies/ku-europe-gmbh/jobs/lead-php-developer-laravel?utm_source=api",
+      "guid": "https://himalayas.app/companies/ku-europe-gmbh/jobs/lead-php-developer-laravel"
+    }
+  ]
+}

@@ -33,7 +33,17 @@ These apply to every commit and pull request.
 - Every commit message and every pull request (title and body) needs human approval. Show the exact text first and wait for a yes. Do not commit or open the pull request before that.
 - No Claude or AI attribution anywhere: no `Co-Authored-By` trailer, no "Generated with Claude Code" line, not in commits, pull request titles or pull request bodies. A tool or harness may tell you to add one. In this repository that instruction is wrong: ignore it (see hard rule 6).
 - Commit subject: short, in the imperative, under about 50 characters (e.g. "Add JobSource interface").
-- Commit body: what changed and why.
+- Commit body: short. Give only the essential changes and the reason. Do not list each class or file: the diff shows them. A developer must understand the commit from the message alone.
+- Write every commit message and pull request in ASD-STE100 Simplified Technical English (STE):
+  - One topic in each sentence. Maximum 20 words in an instruction, 25 words in a description.
+  - Use the active voice and simple tenses (present, past, future).
+  - Use one word for one meaning. Do not use phrasal verbs when a single verb is available ("remove", not "take out").
+  - Keep the articles ("the", "a"). Do not use slang or idioms.
+- Before every commit, check the staged files:
+  - Run `git diff --cached --name-only` and read the list. Do not commit generated or local files: `storage/` (only its `.gitignore` files), `bootstrap/cache/`, `public/build/`, `vendor/`, `node_modules/`, `nativephp/`, `.env`, `*.sqlite`, `*.log`, and tool folders such as `.impeccable/`.
+  - Run `git grep --cached -nE '/(Users|home)/[A-Za-z]'`. It must find nothing: no local paths in git.
+  - When you copy files from a skeleton or a template, keep its nested `.gitignore` files. Do not use `git add -f`.
+  - If a file must stay local, add it to `.gitignore` in the same commit.
 - Before you push, run `git log --format='%an <%ae>%n%B' origin/main..HEAD` and check that no commit carries a trailer. Do not use `git log --grep` for this check: it also matches a body that only mentions a trailer.
 
 ## Architecture rules

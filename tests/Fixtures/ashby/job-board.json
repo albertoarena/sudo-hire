@@ -1,0 +1,511 @@
+{
+  "jobs": [
+    {
+      "id": "3b9b0141-86e7-46b2-b6b4-ed039b84cdc4",
+      "title": "Senior Software Engineer, Product Engineering - EU",
+      "department": "Engineering",
+      "team": "EMEA Engineering",
+      "employmentType": "FullTime",
+      "location": "Remote - European Union",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [
+        {
+          "location": "Spain",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "Spain",
+              "addressCountry": "Spain",
+              "addressLocality": "Spain"
+            }
+          }
+        },
+        {
+          "location": "Italy",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Italy",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Switzerland",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Switzerland",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Croatia",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Croatia",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Ireland",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Ireland",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Stockholm",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "Stockholm",
+              "addressCountry": "Sweden",
+              "addressLocality": "Stockholm"
+            }
+          }
+        },
+        {
+          "location": "Romania",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Romania",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Barcelona",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "Catalonia",
+              "addressCountry": "Spain",
+              "addressLocality": "Barcelona"
+            }
+          }
+        },
+        {
+          "location": "Portugal",
+          "address": {
+            "postalAddress": {
+              "addressCountry": "Portugal"
+            }
+          }
+        },
+        {
+          "location": "Berlin",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Germany",
+              "addressLocality": "Berlin"
+            }
+          }
+        },
+        {
+          "location": "Sweden",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Sweden",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Estonia",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Estonia",
+              "addressLocality": ""
+            }
+          }
+        }
+      ],
+      "publishedAt": "2026-04-30T19:45:44.774+00:00",
+      "isListed": true,
+      "isRemote": true,
+      "workplaceType": "Remote",
+      "address": {
+        "postalAddress": {
+          "postalCode": "",
+          "addressRegion": "",
+          "addressCountry": "European Union",
+          "addressLocality": ""
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/ashby/3b9b0141-86e7-46b2-b6b4-ed039b84cdc4",
+      "applyUrl": "https://jobs.ashbyhq.com/ashby/3b9b0141-86e7-46b2-b6b4-ed039b84cdc4/application",
+      "descriptionHtml": "<p style=\"min-height:1.5em\">Hi 👋🏾 I’m <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://www.linkedin.com/in/example\"><u>Hiring Manager Name</u></a>, Ashby's Co-Founder and VP of Engineering. We’re looking for a versatile, persistent product engineer who’s not afraid to set up reusable building blocks across the stack and advocate for the time and space to do so. At Ashby, all our engineers ship features end-to-end at a high pace. Example is the best leadership. We’ll give you the room to do your best work, and you'll be our guide! If that speaks to you, read on.</p><p style=\"min-height:1.5em\">What Ashby gives you in return is the best of both early and growth-stage environments. The agency and no-nonsense of a seed startup: you write product specs, make product and design decisions, and build in an almost-no-meeting culture. While also the product-market fit and scale of a growth-stage startup: 100,000+ weekly active users who depend on your software and eagerly await your next feature.</p>",
+      "descriptionPlain": "Hi 👋🏾 I’m Hiring Manager Name https://www.linkedin.com/in/example, Ashby's Co-Founder and VP of Engineering. We’re looking for a versatile, persistent product engineer who’s not afraid to set up reusable building blocks across the stack and advocate for the time and space to do so. At Ashby, all our engineers ship features end-to-end at a high pace. Example is the best leadership. We’ll give you the room to do your best work, and you'll be our guide! If that speaks to you, read on.\n\nWhat Ashby gives you in return is the best of both early and growth-stage environments. The agency and no-nonsense of a",
+      "compensation": {
+        "compensationTierSummary": "€108K – €145K • Offers Equity • Multiple Ranges",
+        "scrapeableCompensationSalarySummary": "€108K - €145K",
+        "compensationTiers": [
+          {
+            "id": "7e0f05b8-3132-4ec6-91af-27fa7f2796d5",
+            "tierSummary": "€119K – €145K • Offers Equity",
+            "title": "EU Tier 1",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "677542be-10dd-4f4d-a17d-a6b167b53828",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              },
+              {
+                "id": "13bac280-8ab3-4ea4-8dec-ca59eb384b48",
+                "summary": "€119K – €145K",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "EUR",
+                "minValue": 119000,
+                "maxValue": 145000
+              }
+            ]
+          },
+          {
+            "id": "508ff7da-5c32-4453-9086-da65cf1910fc",
+            "tierSummary": "€108K – €133K • Offers Equity",
+            "title": "EU Tier 2",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "600b99fb-7874-4778-aa03-4edb3dad746e",
+                "summary": "€108K – €133K",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "EUR",
+                "minValue": 108000,
+                "maxValue": 133000
+              },
+              {
+                "id": "5bd15c11-aa48-4e2a-b6e4-15558526881f",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              }
+            ]
+          }
+        ],
+        "summaryComponents": [
+          {
+            "compensationType": "EquityPercentage",
+            "minValue": null,
+            "maxValue": null,
+            "interval": "1 YEAR"
+          },
+          {
+            "minValue": 108000,
+            "maxValue": 145000,
+            "currencyCode": "EUR",
+            "interval": "1 YEAR",
+            "compensationType": "Salary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "55078a90-f1f0-4190-9d2a-c14d1cbc5486",
+      "title": "Product Support Specialist - Australia",
+      "department": "Customer Success",
+      "team": "Technical Support",
+      "employmentType": "FullTime",
+      "location": "Australia",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [],
+      "publishedAt": "2026-02-20T17:26:27.704+00:00",
+      "isListed": true,
+      "isRemote": true,
+      "workplaceType": "Remote",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "",
+          "addressCountry": "Australia",
+          "addressLocality": ""
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/ashby/55078a90-f1f0-4190-9d2a-c14d1cbc5486",
+      "applyUrl": "https://jobs.ashbyhq.com/ashby/55078a90-f1f0-4190-9d2a-c14d1cbc5486/application",
+      "descriptionHtml": "<p style=\"min-height:1.5em\">We're excited to share that we're hiring a Product Support Specialist in the APAC region, specifically in Australia 🎉.</p><p style=\"min-height:1.5em\">Over the past few years, we’ve built a team of Ashby experts who delight customers through keen attention to detail, deep product knowledge, and fast, thoughtful support. By joining the team, you’ll contribute to delivering that same world-class experience.</p><p style=\"min-height:1.5em\">In this role, you’ll work closely with customers every day. Ashby is a broad and complex product, so you can expect to handle everything from troubleshooting sophisticated integrations to guiding customers through detailed workflows and best practices.</p>",
+      "descriptionPlain": "We're excited to share that we're hiring a Product Support Specialist in the APAC region, specifically in Australia 🎉.\n\nOver the past few years, we’ve built a team of Ashby experts who delight customers through keen attention to detail, deep product knowledge, and fast, thoughtful support. By joining the team, you’ll contribute to delivering that same world-class experience.\n\nIn this role, you’ll work closely with customers every day. Ashby is a broad and complex product, so you can expect to handle everything from troubleshooting sophisticated integrations to guiding customers through",
+      "compensation": {
+        "compensationTierSummary": "A$89K – A$105K • Offers Equity",
+        "scrapeableCompensationSalarySummary": "A$89K - A$105K",
+        "compensationTiers": [
+          {
+            "id": "5567d29c-ce3f-455f-88eb-026ea83844fc",
+            "tierSummary": "A$89K – A$105K • Offers Equity",
+            "title": "Australia",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "7351f86b-911e-4c1b-b66f-3cd1d9a3169e",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              },
+              {
+                "id": "344f5a67-1acf-4e5d-b243-47a7502d51a8",
+                "summary": "A$89K – A$105K",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "AUD",
+                "minValue": 89000,
+                "maxValue": 105000
+              }
+            ]
+          }
+        ],
+        "summaryComponents": [
+          {
+            "compensationType": "EquityPercentage",
+            "interval": "NONE",
+            "currencyCode": null,
+            "minValue": null,
+            "maxValue": null
+          },
+          {
+            "compensationType": "Salary",
+            "interval": "1 YEAR",
+            "currencyCode": "AUD",
+            "minValue": 89000,
+            "maxValue": 105000
+          }
+        ]
+      }
+    },
+    {
+      "id": "cf34cf62-5348-4bd5-bd8c-22a77467162d",
+      "title": "Product Support Engineer - APAC",
+      "department": "Customer Success",
+      "team": "Support Engineering",
+      "employmentType": "FullTime",
+      "location": "Australia",
+      "shouldDisplayCompensationOnJobPostings": true,
+      "secondaryLocations": [
+        {
+          "location": "New Zealand",
+          "address": {
+            "postalAddress": {
+              "addressCountry": "New Zealand"
+            }
+          }
+        },
+        {
+          "location": "Singapore",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Singapore",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "South Korea",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "South Korea",
+              "addressLocality": ""
+            }
+          }
+        },
+        {
+          "location": "Japan",
+          "address": {
+            "postalAddress": {
+              "addressRegion": "",
+              "addressCountry": "Japan",
+              "addressLocality": ""
+            }
+          }
+        }
+      ],
+      "publishedAt": "2026-06-03T20:06:54.537+00:00",
+      "isListed": true,
+      "isRemote": true,
+      "workplaceType": "Remote",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "",
+          "addressCountry": "Australia",
+          "addressLocality": ""
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/ashby/cf34cf62-5348-4bd5-bd8c-22a77467162d",
+      "applyUrl": "https://jobs.ashbyhq.com/ashby/cf34cf62-5348-4bd5-bd8c-22a77467162d/application",
+      "descriptionHtml": "<h3><strong>Hello!</strong></h3><p style=\"min-height:1.5em\">I’m Hiring Manager Name, Head of Support at Ashby. I’m excited to share that we’re hiring a Support Engineer in APAC 🎉</p><p style=\"min-height:1.5em\">We’re expanding our global Support team to provide 24/7 coverage across time zones. You’ll join a global team while establishing the technical Support Engineering presence in APAC, with the ownership and visibility that come from being one of the first Support Engineers in the region. We staff across regions rather than relying on on-call rotations; we’ll discuss the specific schedule for this opening during the process.</p>",
+      "descriptionPlain": "HELLO!\n\nI’m Hiring Manager Name, Head of Support at Ashby. I’m excited to share that we’re hiring a Support Engineer in APAC 🎉\n\nWe’re expanding our global Support team to provide 24/7 coverage across time zones. You’ll join a global team while establishing the technical Support Engineering presence in APAC, with the ownership and visibility that come from being one of the first Support Engineers in the region. We staff across regions rather than relying on on-call rotations; we’ll discuss the specific schedule for this opening during the process.\n\n\n\n\nNOT SURE WHICH SUPPORT ROLE IS RIGHT FOR YOU?\n\nWe’re",
+      "compensation": {
+        "compensationTierSummary": "¥11,950,000 – ¥13,750,000 • Offers Equity • Multiple Ranges",
+        "scrapeableCompensationSalarySummary": "¥11,950,000 - ¥13,750,000",
+        "compensationTiers": [
+          {
+            "id": "c8dfe591-ccb7-4638-beae-70369ce3170b",
+            "tierSummary": "Japan ¥11,950,000 – ¥13,750,000 • Offers Equity",
+            "title": "Japan",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "c3ca3d18-dea7-40e8-ba00-b27778111aef",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              },
+              {
+                "id": "c90a05ad-944b-4a1e-9ee9-ffb336a919c5",
+                "summary": "Japan ¥11,950,000 – ¥13,750,000",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "JPY",
+                "minValue": 11950000,
+                "maxValue": 13750000
+              }
+            ]
+          },
+          {
+            "id": "e9287b7a-459c-45ab-b655-5c07f7914507",
+            "tierSummary": "South Korea ₩99,500,000 – ₩119,000,000 • Offers Equity",
+            "title": "South Korea",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "12dc5317-facb-4785-8bdf-021be3b43afe",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              },
+              {
+                "id": "f1fa453f-9913-4c8f-b0eb-60152638fcce",
+                "summary": "South Korea ₩99,500,000 – ₩119,000,000",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "KRW",
+                "minValue": 99500000,
+                "maxValue": 119000000
+              }
+            ]
+          },
+          {
+            "id": "105aeb79-fb03-4c04-a274-0cf637ca0aa0",
+            "tierSummary": "New Zealand NZ$138,000 – NZ$164,000 • Offers Equity",
+            "title": "New Zealand",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "3d9583a0-659b-4022-858e-f2ed60f86884",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              },
+              {
+                "id": "2e721dce-3543-4620-81c9-479acf30fc8a",
+                "summary": "New Zealand NZ$138,000 – NZ$164,000",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "NZD",
+                "minValue": 138000,
+                "maxValue": 164000
+              }
+            ]
+          },
+          {
+            "id": "850ee1ec-7be2-4beb-b846-8870367cc419",
+            "tierSummary": "Singapore SGD 127,000 – SGD 156,000 • Offers Equity",
+            "title": "Singapore",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "8aae3c3e-aefc-4866-b644-7abd16a09edd",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              },
+              {
+                "id": "05fc82f8-14d8-4068-88aa-e000cae40e67",
+                "summary": "Singapore SGD 127,000 – SGD 156,000",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "SGD",
+                "minValue": 127000,
+                "maxValue": 156000
+              }
+            ]
+          },
+          {
+            "id": "179ba1fc-ac19-4272-bfc6-2e5209e5869c",
+            "tierSummary": "Australia A$136,000 – A$165,000 • Offers Equity",
+            "title": "Australia",
+            "additionalInformation": null,
+            "components": [
+              {
+                "id": "06fd9060-1a7c-447b-9d78-9704def4272c",
+                "summary": "Australia A$136,000 – A$165,000",
+                "compensationType": "Salary",
+                "interval": "1 YEAR",
+                "currencyCode": "AUD",
+                "minValue": 136000,
+                "maxValue": 165000
+              },
+              {
+                "id": "6b1c5104-3fed-4805-8c5d-62f2a57ef249",
+                "summary": "Offers Equity",
+                "compensationType": "EquityPercentage",
+                "interval": "NONE",
+                "currencyCode": null,
+                "minValue": null,
+                "maxValue": null
+              }
+            ]
+          }
+        ],
+        "summaryComponents": [
+          {
+            "compensationType": "EquityPercentage",
+            "minValue": null,
+            "maxValue": null,
+            "interval": "1 YEAR"
+          },
+          {
+            "compensationType": "Salary",
+            "interval": "1 YEAR",
+            "currencyCode": "JPY",
+            "minValue": 11950000,
+            "maxValue": 13750000
+          }
+        ]
+      }
+    }
+  ],
+  "apiVersion": "1"
+}

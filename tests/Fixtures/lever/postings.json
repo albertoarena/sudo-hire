@@ -1,0 +1,123 @@
+[
+  {
+    "additionalPlain": "The United States base range for this position is $164,448–$234,926 USD, plus equity. The benefits available for this position include health insurance, six-month paid parental leave, 401(k) retirement plan, monthly meal allowance, 23 paid days off, paid flexible holidays, and paid sick leave. These ranges may be modified in the future.\n\n\nSpotify is an equal opportunity employer. You are welcome at Spotify for who you are, no matter where you come from, what you look like, or what’s playing in your headphones. Our platform is for everyone, and so is our workplace. The more voices we have",
+    "additional": "<div>The United States base range for this position is $164,448–$234,926 USD, plus equity. The benefits available for this position include health insurance, six-month paid parental leave, 401(k) retirement plan, monthly meal allowance, 23 paid days off, paid flexible holidays, and paid sick leave. These ranges may be modified in the future.</div><div><br></div><div><span style=\"font-size: 11pt;\">Spotify is an equal opportunity employer. You are welcome at Spotify for who you are, no matter where you come from, what you look like, or what’s playing in your headphones. Our platform is for everyone, and so is our workplace. The more voices we have represented and amplified in our business, the more we will all thrive, contribute, and be forward-thinking! So bring us your personal experience, your perspectives, and your background. It’s in our differences that we will find the power to keep revolutionizing the way the world listens.</span></div>",
+    "categories": {
+      "commitment": "Permanent",
+      "department": "Engineering",
+      "location": "New York, NY",
+      "team": "Platform",
+      "allLocations": [
+        "New York, NY"
+      ]
+    },
+    "createdAt": 1786644763502,
+    "descriptionPlain": "The Platform team creates the technology that enables Spotify to learn quickly and scale easily, enabling rapid growth in our users and our business around the globe. Spanning many disciplines, we work to make the business work; creating the infrastructure, tooling, frameworks, and capabilities needed to welcome a billion customers.\nEnterprise AI builds and operates the internal AI platform layer that supports Spotifiers across the company. We’re helping evolve AI tooling into reliable infrastructure that teams can use in their day-to-day work. Our team builds the connective tissue between AI",
+    "description": "<p>The Platform team creates the technology that enables Spotify to learn quickly and scale easily, enabling rapid growth in our users and our business around the globe. Spanning many disciplines, we work to make the business work; creating the infrastructure, tooling, frameworks, and capabilities needed to welcome a billion customers.</p>\n<p>Enterprise AI builds and operates the internal AI platform layer that supports Spotifiers across the company. We’re helping evolve AI tooling into reliable infrastructure that teams can use in their day-to-day work. Our team builds the connective tissue between AI models and Spotify’s internal systems, with a focus on secure access, governance, identity, integrations, and dependable AI infrastructure.</p>",
+    "id": "c73be71c-1a63-4906-9925-95f2115d1f1d",
+    "lists": [
+      {
+        "text": "What You'll Do",
+        "content": "<div>\n\n<li>Design, build, and operate secure enterprise AI platform capabilities that connect AI models, agents, tools, and Spotify’s internal systems.</li>\n<li>Own major workstreams across our enterprise AI infrastructure, including our Model Context Protocol (MCP) gateway and enterprise context capabilities, from technical design through launch and operation.</li>\n<li>Build reliable backend services, APIs, and integrations that enable AI-powered experiences across Spotify’s digital workplace.</li>\n<li>Help develop scalable approaches to AI governance, including identity-aware access, permissions, auditing, policy enforcement, and managing risks associated with third-party AI-enabled tools.</li></div>"
+      },
+      {
+        "text": "Who You Are",
+        "content": "<div>\n\n<li>You have strong software engineering fundamentals and experience building, testing, debugging, and operating reliable backend systems.</li>\n<li>You are experienced with backend languages such as Python, Go, or similar and are comfortable designing APIs and integrations across complex systems.</li>\n<li>You understand software architecture and how services, APIs, enterprise tools, and user-facing experiences fit together.</li>\n<li>You have experience with identity and authentication concepts and technologies such as OAuth, SAML, or SCIM.</li>\n<li>You have experience working with cloud infrastructure; familiarity with Google Cloud Platform is valuable.</li></div>"
+      },
+      {
+        "text": "Where You'll Be",
+        "content": "<div>\n\n<li>This role is based in New York.</li>\n<li>We offer you the flexibility to work where you work best! There will be some in person meetings, but still allows for flexibility to work from home.</li>\n\n</div>"
+      }
+    ],
+    "text": "Senior Software Engineer - Enterprise AI",
+    "country": "US",
+    "workplaceType": "remote",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<p>The Platform team creates the technology that enables Spotify to learn quickly and scale easily, enabling rapid growth in our users and our business around the globe. Spanning many disciplines, we work to make the business work; creating the infrastructure, tooling, frameworks, and capabilities needed to welcome a billion customers.</p>\n<p>Enterprise AI builds and operates the internal AI platform layer that supports Spotifiers across the company. We&rsquo;re helping evolve AI tooling into reliable infrastructure that teams can use in their day-to-day work. Our team builds the connective tissue between AI models and Spotify&rsquo;s internal systems, with a focus on secure access, governance, identity, integrations, and dependable AI infrastructure.</p>",
+    "descriptionBodyPlain": "The Platform team creates the technology that enables Spotify to learn quickly and scale easily, enabling rapid growth in our users and our business around the globe. Spanning many disciplines, we work to make the business work; creating the infrastructure, tooling, frameworks, and capabilities needed to welcome a billion customers.\nEnterprise AI builds and operates the internal AI platform layer that supports Spotifiers across the company. We’re helping evolve AI tooling into reliable infrastructure that teams can use in their day-to-day work. Our team builds the connective tissue between AI",
+    "hostedUrl": "https://jobs.lever.co/spotify/c73be71c-1a63-4906-9925-95f2115d1f1d",
+    "applyUrl": "https://jobs.lever.co/spotify/c73be71c-1a63-4906-9925-95f2115d1f1d/apply"
+  },
+  {
+    "additional": "",
+    "additionalPlain": "",
+    "categories": {
+      "commitment": "Permanent",
+      "department": "Engineering",
+      "location": "London",
+      "team": "Experience",
+      "allLocations": [
+        "London",
+        "Stockholm"
+      ]
+    },
+    "createdAt": 1792601057090,
+    "descriptionPlain": "",
+    "description": "<div>\n<p>We design Spotify’s consumer experience—end to end, moment to moment, across every screen, platform, and partner integration. Our mission is to make listening feel effortless, personal, and joyful for billions of users around the world. That means turning complexity into clarity across hundreds of touchpoints—from our mobile and desktop apps to the smart speakers, TVs, cars, and integrations where Spotify shows up every day. If it touches a consumer, we shape it. We bring deep insight into human behavior, design, and technology to craft experiences that feel intuitive, expressive, and unmistakably Spotify.</p></div>",
+    "id": "9f66e598-8587-4a57-8552-2cdb8672014a",
+    "lists": [
+      {
+        "text": "What You'll Do",
+        "content": "<div>\n\n<li>Build and run the backend services and data pipelines that ingest, validate and process music deliveries from partners, covering audio, metadata, lyrics and new content types</li>\n<li>Own large parts of the ingestion pipeline and lead technical work as we add video, richer partner data and other new content</li>\n<li>Make ingestion more reliable, catch data quality problems at the point of entry, and improve the operational tooling around the pipeline</li>\n<li>Design and evolve APIs and schemas that other teams depend on, keeping contracts stable and backward compatible</li>\n<li>Help move validation towards real time and make Silk Road a well-documented, self-serve platform</li></div>"
+      },
+      {
+        "text": "Who You Are",
+        "content": "<div>\n\n<li>You have strong experience building and operating backend services and data pipelines in production at scale, ideally in Java, Scala or Go</li>\n<li>You have designed APIs and handled schema evolution and backward compatibility in systems where other teams rely on stable contracts</li>\n<li>You’re comfortable modelling data for auditability, versioning and efficient querying and&nbsp; understand the tradeoffs between real-time and batch processing</li>\n<li>You lead projects from discovery to handover, make sound technical decisions, and mentor others</li>\n<li>You may have worked with content ingestion, metadata standards such as DDEX, B2B partner integrations, rights or compliance-sensitive data, lyrics or time-synced data, or GCP.</li></div>"
+      },
+      {
+        "text": "Where You'll Be",
+        "content": "\n<li>This role is based in London or Stockholm.</li>\n<li>We offer you the flexibility to work where you work best! There will be some in person meetings, but still allows for flexibility to work from home.</li>\n"
+      }
+    ],
+    "text": "Senior Backend Engineer - Content Platform",
+    "country": "GB",
+    "workplaceType": "hybrid",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div>\n<p>We design Spotify&rsquo;s consumer experience&mdash;end to end, moment to moment, across every screen, platform, and partner integration. Our mission is to make listening feel effortless, personal, and joyful for billions of users around the world. That means turning complexity into clarity across hundreds of touchpoints&mdash;from our mobile and desktop apps to the smart speakers, TVs, cars, and integrations where Spotify shows up every day. If it touches a consumer, we shape it. We bring deep insight into human behavior, design, and technology to craft experiences that feel intuitive, expressive, and unmistakably Spotify.</p></div>",
+    "descriptionBodyPlain": "",
+    "hostedUrl": "https://jobs.lever.co/spotify/9f66e598-8587-4a57-8552-2cdb8672014a",
+    "applyUrl": "https://jobs.lever.co/spotify/9f66e598-8587-4a57-8552-2cdb8672014a/apply"
+  },
+  {
+    "additionalPlain": "Spotify is an equal opportunity employer. You are welcome at Spotify for who you are, no matter where you come from, what you look like, or what’s playing in your headphones. Our platform is for everyone, and so is our workplace. The more voices we have represented and amplified in our business, the more we will all thrive, contribute, and be forward-thinking! So bring us your personal experience, your perspectives, and your background. It’s in our differences that we will find the power to keep revolutionizing the way the world listens.\n \nAt Spotify, we are passionate about inclusivity and",
+    "additional": "<div><span style=\"font-size: 11pt;\">Spotify is an equal opportunity employer. You are welcome at Spotify for who you are, no matter where you come from, what you look like, or what’s playing in your headphones. Our platform is for everyone, and so is our workplace. The more voices we have represented and amplified in our business, the more we will all thrive, contribute, and be forward-thinking! So bring us your personal experience, your perspectives, and your background. It’s in our differences that we will find the power to keep revolutionizing the way the world listens.</span></div>\n<div>&nbsp;</div>",
+    "categories": {
+      "commitment": "Permanent",
+      "department": "Engineering",
+      "location": "Stockholm",
+      "team": "IT and Network Engineering",
+      "allLocations": [
+        "Stockholm"
+      ]
+    },
+    "createdAt": 1791537508142,
+    "descriptionPlain": "",
+    "description": "<div>\n<p>The Platform team creates the technology that enables Spotify to learn quickly and scale easily, enabling rapid growth in our users and our business around the globe. Spanning many disciplines, we work to make the business work; creating the infrastructure, tooling, frameworks, and capabilities needed to welcome a billion customers.</p>\n<p>The IT Studio exists to remove the friction of work, unblocking Spotifiers anywhere, anytime, with simplicity and safety. We’re behind the technology that thousands of Spotifiers rely on every day, spanning devices, identity and access, networking, IT support, audio visual and meeting room technology, productivity platforms, work management tooling, and AI tooling.</p></div>",
+    "id": "785989a6-b219-43b1-92d9-750a67054f24",
+    "lists": [
+      {
+        "text": "What You’ll Do",
+        "content": "<div>\n\n<li>Own the AV experience across EMEA, including meeting rooms, boardrooms, common areas, labs, lounges, and digital signage.</li>\n<li>Provide thoughtful, high-quality AV support for executive and VIP meetings, helping ensure technology works reliably when it matters most.</li>\n<li>Design, document, deliver, and maintain AV solutions and technical standards in partnership with the global AV team. Review technical designs and documentation from external integrators to ensure solutions meet requirements.</li>\n<li>Lead AV initiatives and projects with internal partners and external vendors, from defining scope through delivery, commissioning, and handover.</li></div>"
+      },
+      {
+        "text": "Who You Are",
+        "content": "<div>\n\n<li>You have 3+ years of AV experience and have delivered AV projects through design, integration, commissioning, and ongoing support.</li>\n<li>You understand the hardware behind sophisticated AV systems, including DSP, control processors, amplifiers, and related technologies, with experience using platforms such as Crestron, Q-SYS, and Dante. Experience configuring Q-SYS designs is a plus, as are certifications such as AVIXA CTS, Q-SYS Level 2, or Dante Level 3.</li>\n<li>You have hands-on experience deploying, managing, and monitoring video conferencing systems such as Google Meet hardware and Zoom Rooms. You're familiar with fleet management and monitoring tools and can troubleshoot issues across connected AV systems.</li></div>"
+      },
+      {
+        "text": "Where You'll Be",
+        "content": "<div>\n\n<li>This role is based in Stockholm.</li>\n<li>We offer you the flexibility to work where you work best! There will be some in person&nbsp;meetings, but still allows for flexibility to work from home.</li>\n<li>We ask that you come in 4-5 times per week.</li>\n\n</div>"
+      }
+    ],
+    "text": "AV Engineer - Platform",
+    "country": "SE",
+    "workplaceType": "onsite",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<div>\n<p>The Platform team creates the technology that enables Spotify to learn quickly and scale easily, enabling rapid growth in our users and our business around the globe. Spanning many disciplines, we work to make the business work; creating the infrastructure, tooling, frameworks, and capabilities needed to welcome a billion customers.</p>\n<p>The IT Studio exists to remove the friction of work, unblocking Spotifiers anywhere, anytime, with simplicity and safety. We&rsquo;re behind the technology that thousands of Spotifiers rely on every day, spanning devices, identity and access, networking, IT support, audio visual and meeting room technology, productivity platforms, work management tooling, and AI tooling.</p></div>",
+    "descriptionBodyPlain": "",
+    "hostedUrl": "https://jobs.lever.co/spotify/785989a6-b219-43b1-92d9-750a67054f24",
+    "applyUrl": "https://jobs.lever.co/spotify/785989a6-b219-43b1-92d9-750a67054f24/apply"
+  }
+]

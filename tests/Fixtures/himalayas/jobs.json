@@ -1,0 +1,138 @@
+{
+  "comments": "21/08/2026: Cursor pagination is now available and is the preferred way to page through the feed. Pass the nextCursor value from each response back as ?cursor=. It is faster than offset and will never return the same job twice. The offset parameter is deprecated and will be removed in a future release. 13/03/2026: The API has been updated to include the companySlug field in the response.",
+  "updatedAt": 1793191384,
+  "offset": 0,
+  "limit": 5,
+  "totalCount": 131852,
+  "nextCursor": "MjAyNi0xMC0yOFQxMjozNjoyNi4yOTI5OTBafDI0NzE2NjE",
+  "jobs": [
+    {
+      "title": "Senior Research Scientist - AI Security",
+      "excerpt": "Ready to expand the limits of AI security research?",
+      "companyName": "NVIDIA",
+      "companySlug": "nvidia",
+      "companyLogo": "https://cdn-images.himalayas.app/9jkqq85jdsq9vtt2fuhb5vq8y2zy",
+      "employmentType": "Full Time",
+      "minSalary": 168000,
+      "maxSalary": 304750,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Senior"
+      ],
+      "currency": "USD",
+      "locationRestrictions": [
+        "United States"
+      ],
+      "timezoneRestrictions": [
+        -10,
+        -9,
+        -8,
+        -7,
+        -6,
+        -5,
+        14
+      ],
+      "categories": [
+        "Senior-Research-Scientist",
+        "AI-Security-Researcher",
+        "Cybersecurity-Researcher",
+        "Machine-Learning-Researcher",
+        "Security-Researcher",
+        "Senior-AI-Scientist",
+        "Senior-Security-Researcher",
+        "AI-Research-Scientist",
+        "Senior-AI-ML-Scientist",
+        "Research-Scientist"
+      ],
+      "parentCategories": [
+        "Data Science"
+      ],
+      "description": "<p>Ready to expand the limits of AI security research? <a href=\"https://himalayas.app/companies/nvidia\">NVIDIA</a>’s Agentic Cybersecurity Research team is searching for a motivated AI Security Researcher to innovate and improve the protection of AI models, systems, and infrastructure. Come work with us, where your knowledge will contribute to developing advanced technology that secures AI and systems through AI.</p><br><p>Our work in Security and AI is globally visible and helps drive the frontier of the whole industry. We are looking for a researcher with hands-on safety and security experience in agents to help us innovate and improve protection of AI models, systems and infrastructure. In this role you will research and develop technology that secures AI and systems using AI.</p>",
+      "pubDate": 1793191105,
+      "expiryDate": 1798375104,
+      "applicationLink": "https://himalayas.app/companies/nvidia/jobs/senior-research-scientist-ai-security-7467429180?utm_source=api",
+      "guid": "https://himalayas.app/companies/nvidia/jobs/senior-research-scientist-ai-security-7467429180"
+    },
+    {
+      "title": "Senior AI/ML Engineer",
+      "excerpt": "Companyteam. blueis an ecosystem of 60+ successful brands working together across 22 European countries to provide its 3.",
+      "companyName": "team.blue",
+      "companySlug": "team-blue",
+      "companyLogo": "https://cdn-images.himalayas.app/z9r9oda5bmdhbni7fjvic0l2yqx8",
+      "employmentType": "Full Time",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Senior"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "Germany",
+        "Italy"
+      ],
+      "timezoneRestrictions": [
+        1
+      ],
+      "categories": [
+        "Senior-AI-ML-Engineer",
+        "Principal-AI-Engineer",
+        "AI-Solutions-Engineer",
+        "Machine-Learning-Engineer",
+        "Applied-AI-Engineer",
+        "Senior-ML-Engineer",
+        "Senior-AI-ML-Data-Engineer",
+        "Senior-ML-Engineering",
+        "Senior-AI-Engineer",
+        "Senior-AI-ML-Developer",
+        "Senior-Applied-ML-Engineer",
+        "Senior-AI-ML-Operations-Engineer"
+      ],
+      "parentCategories": [
+        "Data Science"
+      ],
+      "description": "<h6>Company</h6><p><a href=\"https://himalayas.app/companies/team-blue\">team.blue</a>is an ecosystem of 60+ successful brands working together across 22 European countries to provide its 3.3 million SMB customers with everything they need to succeed online by offering best-in-class expertise and services.</p><p><a href=\"https://himalayas.app/companies/team-blue\">team.blue</a>'s brands are a mix of traditional hosting businesses that offer services from domain names, email, shared hosting, e-commerce, and server hosting solutions and, as specialist SaaS providers, adjacent products such as compliance, marketing tools, and team collaboration products. This broad product offering makes it a one-stop partner for online businesses and entrepreneurs across Europe.</p>",
+      "pubDate": 1793191058,
+      "expiryDate": 1798375056,
+      "applicationLink": "https://himalayas.app/companies/team-blue/jobs/senior-ai-ml-engineer?utm_source=api",
+      "guid": "https://himalayas.app/companies/team-blue/jobs/senior-ai-ml-engineer"
+    },
+    {
+      "title": "Product Analyst - Pendo (Europe, Remote)",
+      "excerpt": "Company Overview:Intel 471 empowers enterprises, government agencies, and other organizations to win the cybersecurity war using the real-time insights about adversaries, their relationships, threat patterns, and imminent attacks relevant to their businesses.",
+      "companyName": "Intel 471",
+      "companySlug": "intel-471",
+      "companyLogo": "https://cdn-images.himalayas.app/xh91xtxwidh9uvyxtr0ygg8s1xba",
+      "employmentType": "Contractor",
+      "minSalary": null,
+      "maxSalary": null,
+      "salaryPeriod": "annual",
+      "seniority": [
+        "Mid-level"
+      ],
+      "currency": null,
+      "locationRestrictions": [
+        "United Kingdom"
+      ],
+      "timezoneRestrictions": [
+        0
+      ],
+      "categories": [
+        "Product-Analyst",
+        "Product-Analytics-Specialist",
+        "Product-Operations-Analyst",
+        "Product-Data-Analyst",
+        "Product-Business-Analyst",
+        "Product"
+      ],
+      "parentCategories": [
+        "Product"
+      ],
+      "description": "<h3>Company Overview:</h3><p><a href=\"https://himalayas.app/companies/intel-471\">Intel 471</a> empowers enterprises, government agencies, and other organizations to win the cybersecurity war using the real-time insights about adversaries, their relationships, threat patterns, and imminent attacks relevant to their businesses. The company’s platform collects, interprets, structures, and validates human-led, automation-enhanced intelligence, which fuels our external attack surface and advanced behavioral threat hunting solutions. Customers utilize this operationalized intelligence to drive a proactive response to neutralize threats and mitigate risk. Organizations across the globe leverage </p>",
+      "pubDate": 1793191384,
+      "expiryDate": 1798375382,
+      "applicationLink": "https://himalayas.app/companies/intel-471/jobs/product-analyst-pendo-europe-remote?utm_source=api",
+      "guid": "https://himalayas.app/companies/intel-471/jobs/product-analyst-pendo-europe-remote"
+    }
+  ]
+}
