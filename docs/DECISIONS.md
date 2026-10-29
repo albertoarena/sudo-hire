@@ -501,3 +501,36 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: REQUIREMENTS section 4 asks each source milestone to check the endpoint and the terms. The feed has `<ttl>60</ttl>`, so a 2 hour interval is within its own refresh time.
 - Source terms: the terms and conditions (updated 2026-10-23) have no rule about the RSS feed, automated access or reuse of listings. They give a limited, revocable right to access and use the material. The app reads the public feed every 2 hours, keeps the We Work Remotely links and shows "via We Work Remotely".
 - Checked on: 2026-10-29
+
+## 2026-10-29: Country and region tables
+
+- Milestone: M4
+- Decision: `App\Parsers\Location\Countries` maps names and common spellings to all 249 ISO 3166-1 alpha-2 codes. It is a plain PHP array. It does not use the intl extension, because the PHP that NativePHP bundles may not have it. Lookup ignores case, flag emoji, dots, extra spaces and a leading "the". "&" reads as "and".
+- Decision: short codes are not read as countries, except the aliases "US", "USA", "UK" and "UAE". "CA" can mean California, so it gives nothing.
+- Decision: `App\Parsers\Location\Regions` has these region keys: `africa`, `americas`, `apac`, `asia`, `emea`, `eu`, `europe`, `latam`, `middle_east`, `north_america`, `oceania`.
+- Decision: each country gets its regions from its UN M49 sub-region. Africa gives `africa` and `emea`. Europe gives `europe` and `emea`. Northern America (US, CA, BM, GL, PM) gives `north_america` and `americas`. The Caribbean, Central and South America give `latam` and `americas`. Eastern, South-eastern and Southern Asia give `asia` and `apac`. Western Asia gives `asia` and `emea`. Central Asia gives `asia` only. Oceania gives `oceania` and `apac`. Antarctica gives no region.
+- Decision: the 27 EU member states (europa.eu) also get `eu` and `europe`. The Middle East as job posts use it (AE, BH, EG, IL, IQ, IR, JO, KW, LB, OM, PS, QA, SA, SY, TR, YE) gets `middle_east` and `emea`, and never `apac`. Mexico is in `latam`, not in `north_america`, as in M49.
+- Reason: REQUIREMENTS section 6 needs a table from each country to its regions. M49 and the EU list are public standards, so the table does not depend on one job board.
+- Replaces: none
+
+## 2026-10-29: Location parser rules
+
+- Milestone: M4
+- Decision: `LocationParser::parse()` reads one location text into eligibility, work mode, timezone min and max, and office location. Greenhouse parts split by ";" are read one by one, then merged.
+- Decision: work mode words: "remote", "distributed", "work from home" give `remote`. "hybrid" gives `hybrid`. "on-site", "in-office", "office-based" give `onsite`. "anywhere" and "worldwide" also give `remote`. When parts disagree, the most remote mode wins, and only the parts with that mode give the eligibility.
+- Decision: hybrid and on-site jobs give `unknown` eligibility and keep the rest of the text as the office location. This is the same rule as for Lever in "Source fields that wait for a parser".
+- Decision: a place name gives `restricted`. Places win over worldwide words: "Anywhere in Europe" gives region `europe`. Words like "only", "based in" and "residents" around a place are ignored. A part that is not a place next to a country, e.g. the city in "Bangalore, India", is ignored. Text with no place, e.g. "New York, NY" or "Remote", gives `unknown`.
+- Decision: text that excludes places ("except", "excluding", "not", "outside", "no") gives `unknown`. The parser does not read exclusions.
+- Decision: "Georgia" in free text gives nothing, because it is also a US state ("Atlanta, Georgia"). A country list (Himalayas, We Work Remotely) still reads it as `GE`.
+- Decision: timezone text fills the timezone fields and is removed before places are read, so it never gives a region. It reads "UTC+1", "GMT-3:30", "±2" spreads, zone ids such as "Europe/Berlin", abbreviations such as "CET" or "EST", names such as "Eastern Time", and "<country> timezones". An abbreviation or a zone gives the offsets of the whole year 2026, with summer time: "CET" gives 1 to 2. Other "<word> time zones" text, e.g. "European time zones", is removed with no offsets. Offsets stay inside -12 to 14.
+- Decision: `countryList()` and `countryText()` read a list of country or region names (Himalayas `locationRestrictions`, We Work Remotely `country`). One name that is not in the tables gives `unknown`. An empty list gives `unknown`, so the source applies its own rule (both sources say empty is `worldwide`).
+- Decision: `UnknownEligibilityShare::of()` gives the number, the total and the share of jobs with `unknown` eligibility. M6 stores it in `source_runs`.
+- Reason: REQUIREMENTS section 6 says text the rules cannot read gives `unknown`, never a guess. `unknown` goes to the "Location not stated" group, so the user still sees the job.
+- Replaces: none
+
+## 2026-10-29: Timezone-only text is tested without a fixture
+
+- Milestone: M4
+- Decision: the parser tests for timezone-only text ("CET", "UTC+1 ±2", "USA timezones") are plain unit tests, marked "not from a fixture". All other rows of the fixture table come from a file in `tests/Fixtures/`, and a test checks that the string is in that file.
+- Reason: no source gives timezone-only text in a location field. The project owner checked 9 sources live on 2026-10-29. The cloud session cannot reach the job boards to save a new response.
+- Replaces: none
