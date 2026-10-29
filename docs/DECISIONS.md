@@ -368,3 +368,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: a cloud session commits freely on its branch. Before the first push, it shows all commit messages and the pull request text for one approval. Each later push needs a yes for its new messages. Local sessions keep the approval for each commit.
 - Reason: with five cloud sessions in parallel, an approval for each commit stops the work most of the time. The human still approves all text before it leaves the session.
 - Replaces: none
+
+## 2026-10-29: Cloud setup script does not depend on the repository
+
+- Milestone: prep for M2 to M5
+- Decision: `scripts/cloud-setup.sh` turns off AI attribution in `~/.claude/settings.json` and commit signing, and sets the git identity from the `GIT_*` variables. It does not install packages. The environment holds the variables, `COMPOSER_ALLOW_SUPERUSER=1` and a GitHub network secret.
+- Reason: the setup script runs before the repository is cloned. The M1 script exited at once outside the repository, so it did nothing in a real cloud session. Without a GitHub secret, Composer could not download PHPStan.
+- Replaces: the M1 version of `scripts/cloud-setup.sh`
+
