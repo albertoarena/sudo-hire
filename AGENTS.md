@@ -84,7 +84,7 @@ Cannot: menu bar, windows, macOS notifications, permission prompts, `osascript`,
 - Run Composer with `COMPOSER_ALLOW_SUPERUSER=1` (the container runs as root).
 - The container may have PHP 8.3. Do not try to install PHP 8.4: the PPA, php.net, Docker and static builds are blocked. The lock file installs and runs on PHP 8.3, so tests run here. CI runs PHP 8.3 and 8.4.
 - Never add a package that needs PHP 8.4. `composer.json` pins the platform to PHP 8.3, so Composer refuses it.
-- PHPStan has no git source. If it does not install, build the zip from its tag and place it in Composer's cache. Do not skip PHPStan silently: report it.
+- PHPStan has no git source, and GitHub refuses its zip in a cloud session. If `composer install` fails on `phpstan/phpstan`, run `scripts/phpstan-cache.sh`, then `composer install --prefer-source` again. Do not skip PHPStan silently: report it.
 - Run PHPStan with `--memory-limit=2G`.
 - Run `npm run build` before Pest. Without a Vite manifest, page tests return 500.
 - Documentation sites are blocked. Read the installed source in `vendor/` instead.

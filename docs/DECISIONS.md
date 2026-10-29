@@ -451,3 +451,10 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: the platform adds the footer to pull requests from cloud sessions, also when the session sends a body without it. Attribution settings in the container do not stop it. Hard rule 6 forbids the footer.
 - Replaces: none
 
+## 2026-10-29: A script puts PHPStan into the Composer cache
+
+- Milestone: after M2
+- Decision: `scripts/phpstan-cache.sh` clones the locked PHPStan tag (one commit) and zips it under the name Composer looks for in its cache. Cloud sessions run it when `composer install` fails on `phpstan/phpstan`. Tests run it against a local git repository, without network.
+- Reason: cloud sessions spent about 10 minutes to rebuild this zip by hand. A `vcs` repository for PHPStan is no option: Composer mirrors its full history, which holds every released phar (more than 5 GB).
+- Replaces: none
+
