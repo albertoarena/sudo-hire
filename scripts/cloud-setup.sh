@@ -9,8 +9,13 @@
 #   - a GitHub network secret, so Composer can download packages
 #
 # CLOUD_SETUP_HOMES overrides the home folders (used by the tests).
+# The session may run as root, as claude or as another user, so the
+# default list also has the current user's home folder.
 
-for d in ${CLOUD_SETUP_HOMES:-/root /home/claude}; do
+seen=" "
+for d in ${CLOUD_SETUP_HOMES:-/root /home/claude ${HOME:-}}; do
+  case "$seen" in *" $d "*) continue ;; esac
+  seen="$seen$d "
   [ -d "$d" ] || continue
   mkdir -p "$d/.claude"
   f="$d/.claude/settings.json"

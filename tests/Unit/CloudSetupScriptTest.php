@@ -91,3 +91,20 @@ it('skips a home folder that does not exist', function () {
     expect($result['exit'])->toBe(0)
         ->and(file_exists($missing))->toBeFalse();
 });
+
+it('also sets up the home folder of the current user', function () {
+    $home = tempHome();
+
+    $script = dirname(__DIR__, 2).'/scripts/cloud-setup.sh';
+    $process = proc_open(['bash', $script], [1 => ['pipe', 'w'], 2 => ['redirect', 1]], $pipes, null, [
+        'PATH' => (string) getenv('PATH'),
+        'HOME' => $home,
+        'GIT_AUTHOR_EMAIL' => 'ada@example.com',
+    ]);
+    stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+
+    expect(proc_close($process))->toBe(0)
+        ->and(file_exists("{$home}/.claude/settings.json"))->toBeTrue()
+        ->and(gitConfig($home, 'user.email'))->toBe('ada@example.com');
+});
