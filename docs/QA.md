@@ -56,4 +56,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `ls vendor node_modules | head -2`.
   3. Run `grep -c COMPOSER_ALLOW_SUPERUSER ~/.bashrc`.
 - Expected: `false`, `1`, both folders exist, and the count is `1` (the line is not added twice).
-- Result: not run
+- Result: failed 2026-10-29 (script exits before the clone; replaced by an environment setup script)
