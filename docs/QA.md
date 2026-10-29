@@ -71,3 +71,43 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Expected: the email from `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
 - Result: not run
 
+## M2: Source terms and endpoints
+
+- Added: 2026-10-29, branch m2/ats-larajobs-jobicy
+- Why manual: the cloud session proxy blocks all six sources and their terms pages (403).
+- Setup: a browser on a Mac with normal internet access.
+- Steps:
+  1. Read the terms of use or API terms of Greenhouse (job board API), Lever (postings API), Ashby (posting API), Personio (XML feed), LaraJobs and Jobicy.
+  2. For each source, note the attribution, the rate limit and any restriction.
+  3. Open each endpoint in the browser: `https://boards-api.greenhouse.io/v1/boards/gitlab/jobs?content=true`, `https://api.lever.co/v0/postings/spotify?mode=json`, `https://api.ashbyhq.com/posting-api/job-board/ashby?includeCompensation=true`, `https://ottonova.jobs.personio.de/xml`, `https://larajobs.com/feed`, `https://jobicy.com/api/v2/remote-jobs?count=50&tag=php`.
+  4. Update the "Source terms" and "Checked on" lines of the three M2 source terms entries in `docs/DECISIONS.md`.
+- Expected: each endpoint returns jobs in the format of its fixture. No terms page forbids the use in the app, or the decision entry says what must change.
+- Result: not run
+
+## M2: ATS reader and job boards with live data
+
+- Added: 2026-10-29, branch m2/ats-larajobs-jobicy
+- Why manual: tests use fixtures only. The cloud session cannot reach the sources.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`, `php artisan migrate`.
+- Steps:
+  1. Run `php artisan ats:add greenhouse:gitlab --name=GitLab`, `php artisan ats:add lever:spotify`, `php artisan ats:add ashby:ashby` and `php artisan ats:add personio:ottonova`.
+  2. Run `php artisan ats:add personio:no-such-company-sudo-hire`.
+  3. Run `php artisan tinker --execute='$b = (new App\Sources\NormaliseItems)(app(App\Sources\Ats\AtsSource::class)); dump(count($b->jobs), $b->skipped, $b->skipReasons);'`
+  4. Run `php artisan ats:list`.
+  5. Run step 3 again, then `php artisan ats:list` again.
+  6. Run `php artisan tinker --execute='foreach ([App\Sources\LaraJobs\LaraJobsSource::class, App\Sources\Jobicy\JobicySource::class] as $s) { $b = (new App\Sources\NormaliseItems)(new $s); dump($s, count($b->jobs), $b->skipped); }'`
+  7. Open the `apply_url` of one job from each source in a browser. To see one, add `dump($b->jobs[0]->applyUrl);` to the commands of step 3 and step 6.
+- Expected: step 3 shows more than 0 jobs and 0 skipped. In step 4, the four companies show "N jobs" and the unknown company shows "Error: HTTP 404". In step 5, the "Last checked" times do not change, because the 6 hour interval skips every company. Step 6 shows more than 0 jobs for both boards. Each apply link opens the job at the company or at the board.
+- Result: not run
+
+## M2: Lever salary range with a real posting
+
+- Added: 2026-10-29, branch m2/ats-larajobs-jobicy
+- Why manual: no Lever fixture has a `salaryRange`. The interval values come from the Lever API documentation, not from a real response.
+- Setup: a browser on a Mac.
+- Steps:
+  1. Open `https://api.lever.co/v0/postings/<slug>?mode=json` for some Lever companies that post salaries (for example US companies).
+  2. Find a posting with a `salaryRange` field.
+  3. Save the response, trimmed to that posting, as `tests/Fixtures/lever/postings-salary.json`.
+- Expected: `salaryRange` has `min`, `max`, `currency` and `interval`. The interval is one of `per-year-salary`, `per-month-salary`, `per-day-wage`, `per-hour-wage`. If not, add a test with the new fixture and fix `LeverReader`.
+- Result: not run
