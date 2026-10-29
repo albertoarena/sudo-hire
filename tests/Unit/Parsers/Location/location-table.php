@@ -19,6 +19,7 @@ return [
     'remote dash country' => ['greenhouse/twilio-levels.json', 'Remote - Estonia', 'remote', 'restricted', [], ['EE'], null, null, null],
     'distributed and hybrid' => ['greenhouse/cloudflare-levels.json', 'Distributed; Hybrid', 'remote', 'unknown', [], [], null, null, null],
     'hybrid only' => ['greenhouse/cloudflare-levels.json', 'Hybrid', 'hybrid', 'unknown', [], [], null, null, null],
+    'remote only' => ['greenhouse/gitlab-remote.json', 'Remote', 'remote', 'unknown', [], [], null, null, null],
     'in office only' => ['greenhouse/cloudflare-levels.json', 'In-Office', 'onsite', 'unknown', [], [], null, null, null],
 
     'lever city and state' => ['lever/postings.json', 'New York, NY', 'unknown', 'unknown', [], [], null, null, null],
