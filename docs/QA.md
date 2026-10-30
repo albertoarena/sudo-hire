@@ -66,9 +66,9 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Steps:
   1. Start a new cloud session on this repository, with this environment.
   2. Check that the start panel shows "Ran setup script" in green.
-  3. In the cloud session, run `git config user.email`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
+  3. In the cloud session, run `git var GIT_AUTHOR_IDENT`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
   4. In the cloud session, run `composer install --no-interaction --ignore-platform-req=php`.
-- Expected: the email from `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
+- Expected: the name and email from `GIT_AUTHOR_NAME` and `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
 - Result: partly passed 2026-10-29, in the M3 cloud session (branch m3/remotive-himalayas-wwr). Step 2 was not visible from inside the session.
   - `git config user.email` gave `noreply@anthropic.com`: `~/.gitconfig` has the Claude name and email. `git var GIT_AUTHOR_IDENT` and `git var GIT_COMMITTER_IDENT` gave the owner's name and email, because the `GIT_*` variables win over the file. Commits get the correct identity.
   - `git config commit.gpgsign` gave `false`. `echo $COMPOSER_ALLOW_SUPERUSER` gave `1`. `~/.claude/settings.json` had the `attribution` block.
