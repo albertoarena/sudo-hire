@@ -111,6 +111,9 @@ it('reads a dollar amount next to the PHP language (not from a fixture)', functi
 dataset('syntheticSalaries', [
     'Swiss apostrophes as thousands separators' => ["CHF 120\u{2019}000 - 140'000", 120000.0, 140000.0, 'CHF', 'unknown'],
     'up to gives a max and no min' => ['up to $120k', null, 120000.0, 'USD', 'unknown'],
+    'salary plus sign benefits' => ['$120k + benefits', 120000.0, null, 'USD', 'unknown'],
+    'salary plus benefits' => ['$120k plus benefits', 120000.0, null, 'USD', 'unknown'],
+    'benefits heading before the salary' => ['Compensation & Benefits $120k', 120000.0, null, 'USD', 'unknown'],
 ]);
 
 it('reads the synthetic salaries', function (string $text, ?float $min, ?float $max, string $currency, string $period) {
@@ -119,6 +122,7 @@ it('reads the synthetic salaries', function (string $text, ?float $min, ?float $
 
 it('does not read an amount next to "allowance" or "benefit" as pay (not from a fixture)', function () {
     expect((new SalaryParser)->parse('A $500 allowance for equipment'))->toBeNull()
+        ->and((new SalaryParser)->parse('A $500 monthly allowance'))->toBeNull()
         ->and((new SalaryParser)->parse('Equipment allowance of $500. Salary $90k per year')?->max)->toBeNull()
         ->and((new SalaryParser)->parse('Equipment allowance of $500. Salary $90k per year')?->min)->toBe(90000.0)
         ->and((new SalaryParser)->parse('$170k - $200k plus great benefits')?->max)->toBe(200000.0);

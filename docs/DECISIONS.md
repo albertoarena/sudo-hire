@@ -564,7 +564,7 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the parser reads the ISO codes of the ECB reference currencies and EUR. A code counts only when it touches an amount: "1000PHP", "PHP 50,000", "50,000 PHP". Otherwise "PHP" is the language. "PHP" before a number below 100 is a version ("PHP 8.3"), not pesos. "₱" gives PHP.
 - Decision: the period comes only from the sentence with the amount: "/hour", "p/d", "per month", "/mo", "annual" and similar words. No period word, or two different ones, gives `unknown`. A "k" amount is not read as a year, because that is a guess.
 - Decision: one amount gives `min` only. "Up to" before one amount gives `max` and no `min`. A range with min above max gives `null`.
-- Decision: an amount next to "allowance" or "benefit" is not pay, e.g. "benefit of 7500PHP per year". The parser skips it and reads the next amount. "Benefits" later in the same sentence does not count.
+- Decision: an amount that belongs to an allowance or a benefit is not pay: "allowance of 1000PHP", "benefit of 7500PHP", "$500 allowance", "$500 monthly allowance". The parser skips it and reads the next amount. The amount stays pay when "+", "plus", "and", "with" or "&" joins it to the word ("$120k plus benefits"), or when the word is a heading before it ("Compensation & Benefits $120k").
 - Decision: "'" and "’" between digit groups are thousands separators, as in Swiss amounts ("CHF 120’000").
 - Reason: REQUIREMENTS section 7 says text the rules cannot read gives no value, never a guess. The fixture table in `tests/Unit/Parsers/Salary/salary-table.php` holds the real strings.
 - Replaces: none
@@ -593,6 +593,6 @@ Not used: `state` (company headquarters), `media:content`.
 
 - Milestone: M5
 - Decision: the salary parser tests have one dataset of invented strings, `syntheticSalaries`. The project owner approved this exception to the real strings rule (REQUIREMENTS section 14), as for `syntheticTitles` in M4b.
-- Decision: the dataset has two rows. "CHF 120’000 - 140'000" tests the Swiss thousands separators. "up to $120k" tests "up to" with a currency. The real Remotive text "earn up to 45K in their first year" has no currency, so it gives `null`. When a real string has one of these forms, the real string replaces the synthetic row.
+- Decision: the dataset has five rows. "CHF 120’000 - 140'000" tests the Swiss thousands separators. "up to $120k" tests "up to" with a currency. "$120k + benefits", "$120k plus benefits" and "Compensation & Benefits $120k" test that a salary next to "benefits" stays a salary. The real Remotive text "earn up to 45K in their first year" has no currency, so it gives `null`. When a real string has one of these forms, the real string replaces the synthetic row.
 - Reason: no fixture has a Swiss amount or an "up to" amount with a currency. The cloud session cannot reach the job boards to save a new response.
 - Replaces: none

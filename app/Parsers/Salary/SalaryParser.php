@@ -127,14 +127,16 @@ final class SalaryParser
     }
 
     /**
-     * An amount next to "allowance" or "benefit" is not pay: "benefit of 7500PHP", "$500 allowance".
+     * An amount that belongs to an allowance or a benefit is not pay: "benefit of 7500PHP",
+     * "$500 allowance", "$500 monthly allowance". A joining word ("+", "plus", "and", "with", "&")
+     * or a heading ("Compensation & Benefits $120k") does not make the amount a benefit.
      */
     private function isBenefit(string $before, string $after): bool
     {
         $word = '(allowances?|benefits?)\b';
 
-        return preg_match('/\b'.$word.'(\s+\S+)?\s*$/iu', $before) === 1
-            || preg_match('/^\s*(\S+\s+)?'.$word.'/iu', $after) === 1;
+        return preg_match('/\b'.$word.'\s+of\s*$/iu', $before) === 1
+            || preg_match('/^\s*((?!(plus|and|with)\b)[a-z]+\s+)?'.$word.'/iu', $after) === 1;
     }
 
     /**
