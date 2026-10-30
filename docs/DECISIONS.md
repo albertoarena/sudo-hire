@@ -605,3 +605,38 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: a release must not ship an old bundle. The release script will check its age.
 - Reason: the M5 live fetch failed on a Mac with cURL error 60. The local PHP used an old CA bundle with no "Sectigo Public Server Authentication Root E46", the root of the ECB certificate. The NativePHP bundle of 2026-10-20 has it. The installed app does not use the local PHP or the macOS keychain.
 - Replaces: none
+
+## 2026-10-30: M6 split into M6a and M6b
+
+- Milestone: prep for M6
+- Decision: M6 becomes M6a (storage, source registry and runner, parser wiring, deduplication, retention, `source_runs` stats) and M6b (filters). The old M6b (`hire:scan`) becomes M6c.
+- Decision: a new local phase, UI design, runs with Impeccable in parallel with M6. It must be merged before the M8 brief. The `.impeccable/` folder stays local.
+- Reason: M6 was the largest milestone. The filters are pure classes and can run in parallel with the storage work, after the shared `Settings` value object is in main.
+- Replaces: the M6 and M6b rows of REQUIREMENTS section 16
+
+## 2026-10-30: Settings value object
+
+- Milestone: prep for M6
+- Decision: `App\Settings\Settings` holds every setting of REQUIREMENTS section 8, plus `timezone`, `displayCurrency`, `monthlyPayments`, `hoursPerDay` and `notificationIntervalHours`. It is pure. M6a stores it with `toArray()` and `fromArray()`. M6b reads it.
+- Decision: `fromArray()` uses the default for each missing key, so stored settings keep working when a setting is added.
+- Decision: `unknown` is not a value for work mode, contract type or seniority settings. The filters decide what to do with unknown values.
+- Decision: the default display currency is EUR. The default timezone comes from the Mac at first run, and is UTC when it is missing.
+- Reason: M6a and M6b both need the same settings shape. A shared class in main stops the two sessions from making two versions.
+- Replaces: none
+
+## 2026-10-30: Salary with no period
+
+- Milestone: prep for M6 (rule for M6b)
+- Decision: for the minimum annual salary filter, a salary with period `unknown` counts as yearly when its top amount (`max`, or `min` if no `max`) is 10,000 or more in the original currency. A smaller amount stays unknown and follows the unknown salary setting.
+- Decision: the parser does not change. It keeps period `unknown` (never guess). Only the filter applies this rule.
+- Reason: most real ranges with no period word are yearly ("$170k - $200k", the Greenhouse pay ranges, the LaraJobs salaries). Small amounts are often hourly or daily rates.
+- Replaces: none
+
+## 2026-10-30: On-target earnings (OTE)
+
+- Milestone: prep for M6 (rule for M6b and M8)
+- Decision: a pure helper reads "OTE" from `Salary::raw`. The salary filter uses an OTE amount like a salary. M8 shows an "OTE" badge.
+- Decision: the job schema does not change. `Salary` has no OTE field.
+- Reason: the schema is frozen since M1 (AGENTS.md rule 10), and only one fixture string has OTE. If a source sends OTE as a structured field, a schema change can follow with a new decision.
+- Replaces: none
+
