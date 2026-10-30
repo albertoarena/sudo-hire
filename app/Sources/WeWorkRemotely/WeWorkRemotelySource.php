@@ -13,11 +13,11 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 use SimpleXMLElement;
 use Throwable;
 
@@ -50,7 +50,7 @@ final class WeWorkRemotelySource implements JobSource
         libxml_use_internal_errors($previous);
 
         if ($xml === false || $xml->getName() !== 'rss') {
-            throw new RuntimeException('The We Work Remotely feed is not RSS.');
+            throw new UnreadableResponse('The We Work Remotely feed is not RSS.');
         }
 
         foreach ($xml->channel->item ?? [] as $item) {

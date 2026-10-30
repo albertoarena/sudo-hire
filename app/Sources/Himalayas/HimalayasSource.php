@@ -15,11 +15,11 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 
 /**
  * Himalayas search API. See the field mapping in docs/DECISIONS.md.
@@ -162,7 +162,7 @@ final class HimalayasSource implements JobSource
         $jobs = Http::timeout(20)->get(self::SEARCH_URL, ['q' => $query, 'page' => $page])->throw()->json('jobs');
 
         if (! is_array($jobs) || ! array_is_list($jobs)) {
-            throw new RuntimeException('The Himalayas response has no job list.');
+            throw new UnreadableResponse('The Himalayas response has no job list.');
         }
 
         return array_values(array_filter($jobs, 'is_array'));

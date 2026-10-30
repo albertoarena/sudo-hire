@@ -13,11 +13,11 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -43,7 +43,7 @@ final class RemotiveSource implements JobSource
         $jobs = Http::timeout(20)->get(self::API_URL, ['search' => 'php'])->throw()->json('jobs');
 
         if (! is_array($jobs) || ! array_is_list($jobs)) {
-            throw new RuntimeException('The Remotive response has no job list.');
+            throw new UnreadableResponse('The Remotive response has no job list.');
         }
 
         yield from array_values(array_filter($jobs, 'is_array'));
