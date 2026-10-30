@@ -1,5 +1,10 @@
 <?php
 
+use App\Schema\ContractType;
+use App\Schema\Eligibility;
+use App\Schema\Seniority;
+use App\Schema\WorkMode;
+use Carbon\CarbonImmutable;
 use Tests\TestCase;
 
 /*
@@ -31,16 +36,16 @@ function jobAttributes(array $overrides = []): array
         'company' => 'Acme',
         'description' => null,
         'tags' => [],
-        'workMode' => App\Schema\WorkMode::Remote,
-        'eligibility' => App\Schema\Eligibility::unknown(),
+        'workMode' => WorkMode::Remote,
+        'eligibility' => Eligibility::unknown(),
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
         'salary' => null,
-        'contractType' => App\Schema\ContractType::FullTime,
-        'seniority' => App\Schema\Seniority::Senior,
-        'postedAt' => Carbon\CarbonImmutable::parse('2026-10-27T09:00:00Z'),
-        'fetchedAt' => Carbon\CarbonImmutable::parse('2026-10-28T09:00:00Z'),
+        'contractType' => ContractType::FullTime,
+        'seniority' => Seniority::Senior,
+        'postedAt' => CarbonImmutable::parse('2026-10-27T09:00:00Z'),
+        'fetchedAt' => CarbonImmutable::parse('2026-10-28T09:00:00Z'),
         'expiresAt' => null,
         'attribution' => 'via Fake',
     ], $overrides);

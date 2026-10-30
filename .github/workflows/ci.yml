@@ -54,6 +54,9 @@ jobs:
       - name: PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
 
+      - name: Pint
+        run: vendor/bin/pint --test
+
   frontend:
     name: Vitest and typecheck
     runs-on: ubuntu-latest

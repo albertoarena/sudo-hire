@@ -271,13 +271,17 @@ Tag, CI builds, signs and notarises a **draft** GitHub release. A human installs
 | M4 | Eligibility parser and country/region table | Cloud |
 | M4b | Title parser: seniority and contract type from the job title | Cloud |
 | M5 | Salary parser, exchange rates, conversion | Cloud |
-| M6 | Filters, deduplication, storage, retention, `source_runs` stats | Cloud |
-| M6b | `php artisan hire:scan`: fetch due sources, filter, print matches, one summary notification through `osascript`. Runs from cron or launchd, no NativePHP needed | Cloud + Mac check |
+| M6a | Storage, source registry and runner, parser wiring, deduplication, retention, `source_runs` stats | Cloud |
+| M6b | Filters (section 8), as pure classes over the job and the settings | Cloud |
+| M6c | `php artisan hire:scan`: fetch due sources, filter, print matches, one summary notification through `osascript`. Runs from cron or launchd, no NativePHP needed | Cloud + Mac check |
 | M7 | NativePHP scheduler wiring and native notifications, reusing M6b | Mac or cloud + Mac check |
+| UI design | Screens, states and design tokens for the menu bar list and settings, with Impeccable. Updates section 11 | Local |
 | M8 | Menu bar UI and settings | Mac or cloud + Mac check |
 | M9 | Signing, notarisation, release flow | Mac |
 
 M4, M4b and M5 can run in parallel with M2 and M3. A local prep pull request comes first.
+
+M6a and M6b run in parallel, after a local prep pull request that adds the shared `Settings` value object. UI design runs locally in parallel with M6 and must be merged before the M8 brief.
 
 ## 17. Open questions
 
