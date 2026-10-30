@@ -2,6 +2,7 @@
 
 namespace App\Settings;
 
+use App\Currency\DisplayCurrency;
 use App\Schema\ContractType;
 use App\Schema\Seniority;
 use App\Schema\WorkMode;
