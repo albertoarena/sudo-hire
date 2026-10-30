@@ -66,9 +66,9 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Steps:
   1. Start a new cloud session on this repository, with this environment.
   2. Check that the start panel shows "Ran setup script" in green.
-  3. In the cloud session, run `git config user.email`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
+  3. In the cloud session, run `git var GIT_AUTHOR_IDENT`, `git config commit.gpgsign`, `echo $COMPOSER_ALLOW_SUPERUSER` and `cat ~/.claude/settings.json`.
   4. In the cloud session, run `composer install --no-interaction --ignore-platform-req=php`.
-- Expected: the email from `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
+- Expected: the name and email from `GIT_AUTHOR_NAME` and `GIT_AUTHOR_EMAIL`, `false`, `1`, a JSON with an `attribution` block, and a Composer install that works. Only PHPStan may need the zip workaround in `AGENTS.md`.
 - Result: partly passed 2026-10-29, in the M3 cloud session (branch m3/remotive-himalayas-wwr). Step 2 was not visible from inside the session.
   - `git config user.email` gave `noreply@anthropic.com`: `~/.gitconfig` has the Claude name and email. `git var GIT_AUTHOR_IDENT` and `git var GIT_COMMITTER_IDENT` gave the owner's name and email, because the `GIT_*` variables win over the file. Commits get the correct identity.
   - `git config commit.gpgsign` gave `false`. `echo $COMPOSER_ALLOW_SUPERUSER` gave `1`. `~/.claude/settings.json` had the `attribution` block.
@@ -150,4 +150,6 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `php artisan tinker --execute='$r = app(App\Currency\ExchangeRates::class); dump($r->refresh(), $r->rateDate()?->toDateString(), $r->converter()->convert(100, "EUR", "USD"));'`
   3. Run the same command again.
 - Expected: the terms allow the use in the app when the ECB is named as the source, or the decision entry "Exchange rates come from the ECB directly" says what must change. Step 2 shows `true`, the date of the last TARGET working day and a value near 100 times the USD rate. Step 3 shows `false` and the same date.
-- Result: not run
+- Result: passed 2026-10-30, on a Mac, on main after the merge of #11.
+  - Terms: the ECB copyright notice allows free reuse when the ECB is cited as the source. Data that the user changes (e.g. calculations) must say so. The rates page says the rates are for information only.
+  - Step 2 first gave `false`, `null`, `null`: cURL error 60 in `storage/logs/laravel.log`. The local PHP CA bundle had no root for the ECB certificate. With `php -d curl.cainfo=<Homebrew cert.pem> -d openssl.cafile=<Homebrew cert.pem>`, step 2 gave `true`, `2026-10-29`, `111.3`. Step 3 gave `false`, `2026-10-29`. See the "Local development" section in `README.md`.

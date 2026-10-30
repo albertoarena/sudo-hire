@@ -574,8 +574,8 @@ Not used: `state` (company headquarters), `media:content`.
 - Milestone: M5
 - Decision: `EcbRatesClient` reads `https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml`, not Frankfurter.
 - Reason: Frankfurter only republishes the ECB rates. The direct file has one less third party, which is better for privacy (REQUIREMENTS section 13), and the project already has a real response in `tests/Fixtures/ecb/`.
-- Source terms: the ECB publishes the euro foreign exchange reference rates for information only, on TARGET working days at about 16:00 CET. Reuse is free if the ECB is named as the source. The ECB discourages the rates for transactions. The app shows them as an estimate ("≈"). Not checked live from the cloud session: see the M5 entry in `docs/QA.md`.
-- Checked on: not yet (QA entry "M5: ECB rates terms and live fetch")
+- Source terms: the ECB publishes the euro foreign exchange reference rates for information only, on TARGET working days at about 16:00 CET. Reuse is free if the ECB is named as the source. The ECB discourages the rates for transactions. The app shows them as an estimate ("≈"). Converted amounts are a change to ECB data, so the app must say that they are converted, and name the ECB as the source of the rates.
+- Checked on: 2026-10-30, on a Mac (QA entry "M5: ECB rates terms and live fetch")
 - Replaces: none
 
 ## 2026-10-29: Exchange rate storage and conversion
@@ -595,4 +595,13 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the salary parser tests have one dataset of invented strings, `syntheticSalaries`. The project owner approved this exception to the real strings rule (REQUIREMENTS section 14), as for `syntheticTitles` in M4b.
 - Decision: the dataset has five rows. "CHF 120’000 - 140'000" tests the Swiss thousands separators. "up to $120k" tests "up to" with a currency. "$120k + benefits", "$120k plus benefits" and "Compensation & Benefits $120k" test that a salary next to "benefits" stays a salary. The real Remotive text "earn up to 45K in their first year" has no currency, so it gives `null`. When a real string has one of these forms, the real string replaces the synthetic row.
 - Reason: no fixture has a Swiss amount or an "up to" amount with a currency. The cloud session cannot reach the job boards to save a new response.
+- Replaces: none
+
+## 2026-10-30: TLS trust comes from the NativePHP CA bundle
+
+- Milestone: M5 (QA follow-up)
+- Decision: the app trusts the Mozilla CA bundle that `nativephp/desktop` ships (`resources/cacert.pem`). NativePHP copies it into the build and starts the bundled PHP with `curl.cainfo` and `openssl.cafile` set to it. The app has no CA bundle of its own.
+- Decision: the app never turns off certificate checks. Never set `verify => false` to fix a certificate error.
+- Decision: a release must not ship an old bundle. The release script will check its age.
+- Reason: the M5 live fetch failed on a Mac with cURL error 60. The local PHP used an old CA bundle with no "Sectigo Public Server Authentication Root E46", the root of the ECB certificate. The NativePHP bundle of 2026-10-20 has it. The installed app does not use the local PHP or the macOS keychain.
 - Replaces: none
