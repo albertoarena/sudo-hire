@@ -95,6 +95,7 @@ Cannot: menu bar, windows, macOS notifications, permission prompts, `osascript`,
 ## Before you push
 
 - Run the full suite with `CI=true`.
+- Run `vendor/bin/pint --test`. CI fails on code style errors.
 - Check that every file a test reads is tracked in git. Untracked files do not exist in CI.
 - Watch filename case. macOS forgives wrong case, Linux CI does not.
 

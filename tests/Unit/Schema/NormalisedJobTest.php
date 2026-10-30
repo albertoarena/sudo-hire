@@ -4,6 +4,7 @@ use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
 use App\Schema\NormalisedJob;
 use App\Schema\Salary;
+use Carbon\CarbonImmutable;
 
 it('keeps apply_url and source_url unchanged', function () {
     $applyUrl = 'https://jobs.lever.co/spotify/0d7d1f6c-2a1e-4b8a-9b1e-6c6c3b1f2a10/apply?lever-source=Sudo%20Hire&x=1#form';
@@ -59,14 +60,14 @@ it('rejects a timezone range where min is above max', function () {
 })->throws(InvalidJob::class);
 
 it('stores an optional expiry date', function () {
-    $expiresAt = Carbon\CarbonImmutable::parse('2026-12-01T00:00:00Z');
+    $expiresAt = CarbonImmutable::parse('2026-12-01T00:00:00Z');
 
     expect((new NormalisedJob(...jobAttributes()))->expiresAt)->toBeNull()
         ->and((new NormalisedJob(...jobAttributes(['expiresAt' => $expiresAt])))->expiresAt)->toBe($expiresAt);
 });
 
 it('rejects an expiry date before the posted date', function () {
-    new NormalisedJob(...jobAttributes(['expiresAt' => Carbon\CarbonImmutable::parse('2026-10-01T00:00:00Z')]));
+    new NormalisedJob(...jobAttributes(['expiresAt' => CarbonImmutable::parse('2026-10-01T00:00:00Z')]));
 })->throws(InvalidJob::class);
 
 it('stores eligibility and salary objects', function () {
