@@ -39,7 +39,8 @@ return [
     'Himalayas monthly gross' => ['himalayas/search-mid.json', 'Salary range: €5000 - €5800 (GROSS) / month.', null, 5000.0, 5800.0, 'EUR', 'month'],
     'We Work Remotely cash range' => ['weworkremotely/back-end.rss', 'Cash Compensation Range: $170,000 - $299,000 USD', null, 170000.0, 299000.0, 'USD', 'unknown'],
     'Remotive budget per month' => ['remotive/remote-jobs.json', 'starting budget is $5k/mo', null, 5000.0, null, 'USD', 'month'],
-    'Jobicy pesos touching the amount, per month' => ['jobicy/remote-jobs-junior.json', 'Work from Home Allowance of 1000PHP per month', null, 1000.0, null, 'PHP', 'month'],
-    'Jobicy pesos touching the amount, per year' => ['jobicy/remote-jobs-junior.json', 'Health and wellness benefit of 7500PHP per year', null, 7500.0, null, 'PHP', 'year'],
+    'Jobicy allowance is not pay' => ['jobicy/remote-jobs-junior.json', 'Work from Home Allowance of 1000PHP per month', null, null],
+    'Jobicy benefit is not pay' => ['jobicy/remote-jobs-junior.json', 'Health and wellness benefit of 7500PHP per year', null, null],
+    'Remotive up to with no currency' => ['remotive/remote-jobs-contract.json', 'earn up to 45K in their first year', null, null],
     'Remotive per hour' => ['remotive/remote-jobs-contract.json', '$50 per hour', null, 50.0, null, 'USD', 'hour'],
 ];

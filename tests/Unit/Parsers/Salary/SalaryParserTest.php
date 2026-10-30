@@ -95,6 +95,7 @@ it('reads PHP as the peso only when it touches an amount (not from a fixture)', 
 })->with([
     'code before, with a space' => ['PHP 50,000', 50000.0, 'PHP'],
     'code after, with a space' => ['50,000 PHP', 50000.0, 'PHP'],
+    'code touching the amount' => ['1000PHP', 1000.0, 'PHP'],
     'peso sign' => ['₱50,000', 50000.0, 'PHP'],
     'other code touching the amount' => ['60000EUR', 60000.0, 'EUR'],
     'the language' => ['Senior PHP developer', null, null],
@@ -103,4 +104,22 @@ it('reads PHP as the peso only when it touches an amount (not from a fixture)', 
 
 it('reads a dollar amount next to the PHP language (not from a fixture)', function () {
     expectSalary((new SalaryParser)->parse('PHP 8 developer, $60k'), 60000.0, null, 'USD', 'unknown', 'PHP 8 developer, $60k');
+});
+
+// Invented strings: no fixture has them. The project owner approved this exception to
+// the real strings rule, see "Synthetic salaries for the salary parser" in docs/DECISIONS.md.
+dataset('syntheticSalaries', [
+    'Swiss apostrophes as thousands separators' => ["CHF 120\u{2019}000 - 140'000", 120000.0, 140000.0, 'CHF', 'unknown'],
+    'up to gives a max and no min' => ['up to $120k', null, 120000.0, 'USD', 'unknown'],
+]);
+
+it('reads the synthetic salaries', function (string $text, ?float $min, ?float $max, string $currency, string $period) {
+    expectSalary((new SalaryParser)->parse($text), $min, $max, $currency, $period, $text);
+})->with('syntheticSalaries');
+
+it('does not read an amount next to "allowance" or "benefit" as pay (not from a fixture)', function () {
+    expect((new SalaryParser)->parse('A $500 allowance for equipment'))->toBeNull()
+        ->and((new SalaryParser)->parse('Equipment allowance of $500. Salary $90k per year')?->max)->toBeNull()
+        ->and((new SalaryParser)->parse('Equipment allowance of $500. Salary $90k per year')?->min)->toBe(90000.0)
+        ->and((new SalaryParser)->parse('$170k - $200k plus great benefits')?->max)->toBe(200000.0);
 });

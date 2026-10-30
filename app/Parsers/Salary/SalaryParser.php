@@ -85,7 +85,7 @@ final class SalaryParser
      * The first amount or range with a currency marker. Null when there is none.
      * The currency is null when the marker cannot be read (e.g. "¥" with no hint).
      *
-     * @return array{0: float, 1: float|null, 2: string|null}|null
+     * @return array{0: float|null, 1: float|null, 2: string|null}|null
      */
     private function firstAmount(string $sentence, ?string $hint): ?array
     {
@@ -100,14 +100,21 @@ final class SalaryParser
             $parts = $isRange ? [$first, $second] : [$first];
             $markers = array_merge(...array_map(fn (array $token) => $token['markers'], $parts));
 
-            if ($markers === []) {
+            $before = substr($sentence, 0, $first['start']);
+            $after = substr($sentence, $parts[array_key_last($parts)]['end']);
+
+            if ($markers === [] || $this->isBenefit($before, $after)) {
                 $i += $isRange ? 1 : 0;
 
                 continue;
             }
 
             if (! $isRange) {
-                return [$first['value'], null, $this->currency($markers, $hint)];
+                $currency = $this->currency($markers, $hint);
+
+                return preg_match('/\bup\s+to\s*$/iu', $before) === 1
+                    ? [null, $first['value'], $currency]
+                    : [$first['value'], null, $currency];
             }
 
             [$min, $max] = $this->applyThousands($first, $second);
@@ -120,6 +127,17 @@ final class SalaryParser
     }
 
     /**
+     * An amount next to "allowance" or "benefit" is not pay: "benefit of 7500PHP", "$500 allowance".
+     */
+    private function isBenefit(string $before, string $after): bool
+    {
+        $word = '(allowances?|benefits?)\b';
+
+        return preg_match('/\b'.$word.'(\s+\S+)?\s*$/iu', $before) === 1
+            || preg_match('/^\s*(\S+\s+)?'.$word.'/iu', $after) === 1;
+    }
+
+    /**
      * Each number with its currency markers, its "k" and its position in bytes.
      *
      * @return list<array{value: float, k: bool, markers: list<string>, start: int, end: int}>
@@ -129,7 +147,7 @@ final class SalaryParser
         $codes = implode('|', self::CODES);
         $symbols = '(?<![A-Za-z])(?:AU|NZ|CA|US|HK|SG|A|C|S|R)\$|\$|€|£|¥|₹|₱';
         $pattern = '/(?<pre>(?:'.$symbols.')|\b(?:'.$codes.')\s?)?'
-            .'(?<![\d.,])(?<num>\d{1,3}(?:[.,]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)(?![\d])'
+            .'(?<![\d.,\'’])(?<num>\d{1,3}(?:[.,\'’]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)(?![\d])'
             .'(?<k>\s?[kK]\b)?'
             .'(?<post>\s?(?:'.$codes.')\b)?/u';
 
@@ -169,15 +187,15 @@ final class SalaryParser
     }
 
     /**
-     * "160,000.00" and "5.000" use thousands separators. "1,5" and "60.50" have decimals.
+     * "160,000.00", "5.000" and "120’000" (Swiss) use thousands separators. "1,5" and "60.50" have decimals.
      */
     private function number(string $text): ?float
     {
-        if (preg_match('/^\d{1,3}([.,]\d{3})+([.,]\d{1,2})?$/', $text) === 1) {
+        if (preg_match('/^\d{1,3}([.,\'’]\d{3})+([.,]\d{1,2})?$/u', $text) === 1) {
             $decimals = preg_match('/[.,](\d{1,2})$/', $text, $tail) === 1 ? $tail[1] : null;
             $whole = $decimals === null ? $text : substr($text, 0, -strlen($decimals) - 1);
 
-            return (float) (str_replace([',', '.'], '', $whole).($decimals === null ? '' : '.'.$decimals));
+            return (float) (str_replace([',', '.', "'", '’'], '', $whole).($decimals === null ? '' : '.'.$decimals));
         }
 
         return is_numeric(str_replace(',', '.', $text)) ? (float) str_replace(',', '.', $text) : null;
