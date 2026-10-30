@@ -640,3 +640,51 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: the schema is frozen since M1 (AGENTS.md rule 10), and only one fixture string has OTE. If a source sends OTE as a structured field, a schema change can follow with a new decision.
 - Replaces: none
 
+
+## 2026-10-30: Parser wiring in the sources
+
+- Milestone: M6a
+- Decision: a structured source field always wins. A parser fills a field only when the structured value is missing or `unknown`: Jobicy `jobLevel` "Any", Personio `seniority` "experienced", an empty Himalayas `seniority` list, an empty job type.
+- Decision: the location parser reads Greenhouse `location.name`, LaraJobs `job:location`, Jobicy `jobGeo`, Remotive `candidate_required_location` and a We Work Remotely region other than "Anywhere in the World". Jobicy and Remotive keep `remote` as the work mode. Himalayas `locationRestrictions` and the We Work Remotely `country` list go to the country list reader.
+- Decision: Ashby eligibility comes from `address.postalAddress.addressCountry` of the job and of each secondary location. A secondary location named after a city ("Berlin") still has its country there. Hybrid and on-site Ashby jobs give `unknown`, as for Lever.
+- Decision: the salary parser reads the LaraJobs and Remotive salary fields, the Greenhouse `div.pay-range` text, and the Lever `additionalPlain` text when there is no `salaryRange`. For Lever, `raw` is the first sentence with a salary, not the whole text.
+- Decision: the title parser gives the seniority of every source, and the contract type when the source has no value. Personio gets its work mode from the title only. Descriptions are not read for the work mode or the salary.
+- Reason: REQUIREMENTS sections 6 and 7 say structured fields first. Text in descriptions gives too many wrong values, and a wrong value is worse than `unknown`.
+- Replaces: "Source fields that wait for a parser" (2026-10-29) and "M3 source fields that wait for a parser" (2026-10-29)
+
+## 2026-10-30: Himalayas timezone list that wraps past UTC+12
+
+- Milestone: M6a
+- Decision: before the min and the max, each Himalayas offset above 12 becomes the offset minus 24. "United States" gives `[-10, -9, -8, -7, -6, -5, 14]`, so -10 to -5, not -10 to 14. A list with every whole offset from -11 to +12 is worldwide and stays as it is (-11 to 14).
+- Decision: the M6b timezone filter treats a span of 24 hours or more as all offsets.
+- Reason: UTC+14 is the same clock time as UTC-10. Without the rule, the US list looks like a worldwide list. The project owner approved this scope in the M6a session.
+- Replaces: none
+
+## 2026-10-30: Source registry and runner
+
+- Milestone: M6a
+- Decision: `SourceRegistry` lists the v1 sources by key: `ats`, `larajobs`, `jobicy`, `remotive`, `himalayas`, `weworkremotely`. `enabled()` leaves out the keys in `disabledSources`. `SettingsStore::save()` rejects a key that the registry does not know. The runner ignores such a key.
+- Decision: `SourceRunner::run()` runs a source when its last run started at least `minInterval()` ago, also after a failed run. `$since` is the start of the last successful run, so a failed run loses no jobs.
+- Decision: each run stores one `source_runs` row. `items_fetched` counts the raw items, `items_skipped` the items that threw `SkipItem`. The shares come from `UnknownEligibilityShare` and `UnknownSalaryShare`. A failed run has 0 items and no shares.
+- Decision: the error kind is `certificate` for a TLS cURL error (35, 51, 53, 54, 58, 59, 60, 64, 66, 77, 80, 82, 83, 90, 91), `http` for an HTTP status or another connection error, `parse` for `UnreadableResponse` or bad JSON, and `other` for the rest. The board sources now throw `UnreadableResponse`, a `RuntimeException`, for a response that is not RSS or has no job list.
+- Decision: the ATS source keeps its own error for each company in `ats_companies`. A failing company does not make the `ats` run fail.
+- Reason: REQUIREMENTS sections 9 and 10. M8 shows "certificate error" from the error kind.
+- Replaces: none
+
+## 2026-10-30: Job storage, deduplication and retention
+
+- Milestone: M6a
+- Decision: `JobStore::save()` updates a job with the same source and source job ID. A job from another source with the same fingerprint, first stored in the last 14 days (`created_at`), is stored in `job_sources` as "also on", with its own source link, apply link, attribution and fetch time. The first job keeps its links.
+- Decision: when a job is seen again through an "also on" source, the job's `fetched_at` moves to that fetch. Retention (`JobStore::prune()`) deletes the jobs with `fetched_at` older than 30 days, and their `job_sources` rows.
+- Decision: `jobs.notified_at` stores when a job was in a notification. `JobStore::notNotified()` reads the jobs with no `notified_at`. M6c and M7 set it and call `prune()`.
+- Decision: the job model is `App\Models\Job`. The model for `job_sources` is `App\Models\AlsoOnSource`, because `JobSource` is the source interface.
+- Reason: REQUIREMENTS section 9. A job that a second board still lists must not be deleted and notified again as new.
+- Replaces: none
+
+## 2026-10-30: Settings storage and the Mac timezone
+
+- Milestone: M6a
+- Decision: `SettingsStore` stores `Settings::toArray()` as JSON in one row of the `settings` table. Before the first save, `load()` gives `Settings::defaults()` with the Mac timezone.
+- Decision: `SystemTimezone` reads the target of the `/etc/localtime` link and takes the part after `/zoneinfo/`, e.g. "Europe/Rome". A missing link, another path or a name that PHP does not list gives `UTC`.
+- Reason: the "Settings value object" entry says the default timezone comes from the Mac at first run.
+- Replaces: none
