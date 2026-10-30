@@ -22,6 +22,22 @@ Every job keeps its source name, its original link and its original apply link.
 
 Laravel, NativePHP, PHP 8.4, SQLite, Vue 3 with TypeScript, Tailwind CSS.
 
+## Local development
+
+### cURL error 60 in artisan commands
+
+`cURL error 60: unable to get local issuer certificate` means that your local PHP uses an old CA bundle. The installed app is not affected: it uses the CA bundle of NativePHP.
+
+To check one command, give PHP a current bundle, e.g. the Homebrew one:
+
+```bash
+php -d curl.cainfo=/opt/homebrew/etc/ca-certificates/cert.pem \
+    -d openssl.cafile=/opt/homebrew/etc/ca-certificates/cert.pem \
+    artisan <command>
+```
+
+To fix it for good, set `curl.cainfo` and `openssl.cafile` in your `php.ini` (`php --ini` shows the file) to a current bundle. Do not turn off certificate checks.
+
 ## Documentation
 
 - [Requirements](docs/REQUIREMENTS.md)

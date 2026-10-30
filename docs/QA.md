@@ -150,4 +150,6 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `php artisan tinker --execute='$r = app(App\Currency\ExchangeRates::class); dump($r->refresh(), $r->rateDate()?->toDateString(), $r->converter()->convert(100, "EUR", "USD"));'`
   3. Run the same command again.
 - Expected: the terms allow the use in the app when the ECB is named as the source, or the decision entry "Exchange rates come from the ECB directly" says what must change. Step 2 shows `true`, the date of the last TARGET working day and a value near 100 times the USD rate. Step 3 shows `false` and the same date.
-- Result: not run
+- Result: passed 2026-10-30, on a Mac, on main after the merge of #11.
+  - Terms: the ECB copyright notice allows free reuse when the ECB is cited as the source. Data that the user changes (e.g. calculations) must say so. The rates page says the rates are for information only.
+  - Step 2 first gave `false`, `null`, `null`: cURL error 60 in `storage/logs/laravel.log`. The local PHP CA bundle had no root for the ECB certificate. With `php -d curl.cainfo=<Homebrew cert.pem> -d openssl.cafile=<Homebrew cert.pem>`, step 2 gave `true`, `2026-10-29`, `111.3`. Step 3 gave `false`, `2026-10-29`. See the "Local development" section in `README.md`.
