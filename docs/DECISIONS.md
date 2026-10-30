@@ -554,4 +554,45 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the dataset is limited to list words that no fixture title has, one row for each word or spelling: "Jr", "Entry level", "Graduate", "Part-time", "Part time", "Parttime", "Full-time", "Full time", "Fulltime". It also has the near-miss words "Leading" and "Seniority". When a real title has one of these words, the real title replaces the synthetic row.
 - Decision: all other rows come from `tests/Fixtures/`. A test checks that each row is a real title of its file, and that every fixture title has a row.
 - Reason: the cloud session cannot reach the job boards to save new responses, and every list word needs a test.
+
+## 2026-10-29: Salary parser rules
+
+- Milestone: M5
+- Decision: `SalaryParser::parse()` reads one free text salary, with an optional currency hint from the source. It gives a `Salary` with `raw` equal to the input, or `null`. It does not change the `Salary` schema.
+- Decision: the first amount or range with a currency marker wins. A number with no currency marker is not an amount, e.g. "60000 - 70000" or "401(k)". "60-70k" applies the "k" to both sides.
+- Decision: a bare "$" gives USD. With a currency hint, it gives the hint. "¥" can be JPY or CNY, so it needs the hint, else `null`. A code or a symbol with one meaning ("EUR", "€", "A$", "NZ$") wins over the hint. Two different currencies give `null`. The parser never takes the currency from the country.
+- Decision: the parser reads the ISO codes of the ECB reference currencies and EUR. A code counts only when it touches an amount: "1000PHP", "PHP 50,000", "50,000 PHP". Otherwise "PHP" is the language. "PHP" before a number below 100 is a version ("PHP 8.3"), not pesos. "₱" gives PHP.
+- Decision: the period comes only from the sentence with the amount: "/hour", "p/d", "per month", "/mo", "annual" and similar words. No period word, or two different ones, gives `unknown`. A "k" amount is not read as a year, because that is a guess.
+- Decision: one amount gives `min` only. "Up to" before one amount gives `max` and no `min`. A range with min above max gives `null`.
+- Decision: an amount that belongs to an allowance or a benefit is not pay: "allowance of 1000PHP", "benefit of 7500PHP", "$500 allowance", "$500 monthly allowance". The parser skips it and reads the next amount. The amount stays pay when "+", "plus", "and", "with" or "&" joins it to the word ("$120k plus benefits"), or when the word is a heading before it ("Compensation & Benefits $120k").
+- Decision: "'" and "’" between digit groups are thousands separators, as in Swiss amounts ("CHF 120’000").
+- Reason: REQUIREMENTS section 7 says text the rules cannot read gives no value, never a guess. The fixture table in `tests/Unit/Parsers/Salary/salary-table.php` holds the real strings.
+- Replaces: none
+
+## 2026-10-29: Exchange rates come from the ECB directly
+
+- Milestone: M5
+- Decision: `EcbRatesClient` reads `https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml`, not Frankfurter.
+- Reason: Frankfurter only republishes the ECB rates. The direct file has one less third party, which is better for privacy (REQUIREMENTS section 13), and the project already has a real response in `tests/Fixtures/ecb/`.
+- Source terms: the ECB publishes the euro foreign exchange reference rates for information only, on TARGET working days at about 16:00 CET. Reuse is free if the ECB is named as the source. The ECB discourages the rates for transactions. The app shows them as an estimate ("≈"). Not checked live from the cloud session: see the M5 entry in `docs/QA.md`.
+- Checked on: not yet (QA entry "M5: ECB rates terms and live fetch")
+- Replaces: none
+
+## 2026-10-29: Exchange rate storage and conversion
+
+- Milestone: M5
+- Decision: `ExchangeRates::refresh()` stores the ECB rates in `exchange_rates`, one row per currency, for 1 EUR, with the rate date and the fetch time. A new fetch replaces all rows. EUR has no row: it is the base.
+- Decision: after a successful fetch, no new request is made on the same UTC day. A failed fetch logs a warning, keeps the stored rates and does not block a new try. The scheduler (M6b, M7) decides how often it calls `refresh()`.
+- Decision: `rateDate()` gives the date of the stored rates for the settings screen (REQUIREMENTS section 7), or `null` before the first fetch.
+- Decision: `CurrencyConverter` converts through EUR. A currency with no rate gives `null`, not an error. `DisplayCurrency` holds EUR, USD and GBP.
+- Decision: `SalaryValues` holds the filter values: monthly times 12, 13 or 14 payments, hourly times the hours per day (default 8), and the compared value (`max`, else `min`). `UnknownSalaryShare::of()` gives the number and the share of jobs with no salary, for `source_runs`.
+- Reason: REQUIREMENTS sections 7 and 9. The values are pure helpers, so the M6 filters can use them without I/O.
+- Replaces: none
+
+## 2026-10-30: Synthetic salaries for the salary parser
+
+- Milestone: M5
+- Decision: the salary parser tests have one dataset of invented strings, `syntheticSalaries`. The project owner approved this exception to the real strings rule (REQUIREMENTS section 14), as for `syntheticTitles` in M4b.
+- Decision: the dataset has five rows. "CHF 120’000 - 140'000" tests the Swiss thousands separators. "up to $120k" tests "up to" with a currency. "$120k + benefits", "$120k plus benefits" and "Compensation & Benefits $120k" test that a salary next to "benefits" stays a salary. The real Remotive text "earn up to 45K in their first year" has no currency, so it gives `null`. When a real string has one of these forms, the real string replaces the synthetic row.
+- Reason: no fixture has a Swiss amount or an "up to" amount with a currency. The cloud session cannot reach the job boards to save a new response.
 - Replaces: none
