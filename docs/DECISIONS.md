@@ -655,9 +655,10 @@ Not used: `state` (company headquarters), `media:content`.
 ## 2026-10-30: Himalayas timezone list that wraps past UTC+12
 
 - Milestone: M6a
-- Decision: before the min and the max, each Himalayas offset above 12 becomes the offset minus 24. "United States" gives `[-10, -9, -8, -7, -6, -5, 14]`, so -10 to -5, not -10 to 14. A list with every whole offset from -11 to +12 is worldwide and stays as it is (-11 to 14).
+- Decision: the span of a Himalayas list is read twice: as stored, and with each offset above 12 minus 24. The smaller span wins. "United States" gives `[-10, -9, -8, -7, -6, -5, 14]`, so -10 to -5, not -10 to 14. `[12, 13]` stays 12 to 13, not -11 to 12. When both spans are the same, the list stays as stored. A list with every whole offset from -11 to +12 is worldwide and stays as it is (-11 to 14).
+- Decision: the tests have one dataset of invented lists, `syntheticTimezoneLists`: `[5, ..., 13]` and `[12, 13]`. The project owner approved this exception to the real strings rule, as for `syntheticTitles`. No fixture has a list that reaches +13 legitimately.
 - Decision: the M6b timezone filter treats a span of 24 hours or more as all offsets.
-- Reason: UTC+14 is the same clock time as UTC-10. Without the rule, the US list looks like a worldwide list. The project owner approved this scope in the M6a session.
+- Reason: UTC+14 is the same clock time as UTC-10. Without the rule, the US list looks like a worldwide list. Minus 24 for every list made `[12, 13]` almost the whole day, so the smaller span wins (review of #16). The project owner approved this scope in the M6a session.
 - Replaces: none
 
 ## 2026-10-30: Source registry and runner

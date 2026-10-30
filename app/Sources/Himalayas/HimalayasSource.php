@@ -256,20 +256,23 @@ final class HimalayasSource implements JobSource
 
     /**
      * The list can wrap past UTC+12: [-10, ..., -5, 14] is one span, because
-     * UTC+14 is the same clock time as UTC-10. An offset above 12 becomes the
-     * offset minus 24. A list with every whole offset from -11 to +12 is
-     * worldwide and stays as it is.
+     * UTC+14 is the same clock time as UTC-10. The span is read twice: as
+     * stored, and with each offset above 12 minus 24. The smaller span wins,
+     * so [12, 13] stays 12 to 13. A list with every whole offset from -11 to
+     * +12 is worldwide and stays as it is.
      *
      * @param  list<float>  $offsets
      * @return list<float>
      */
     private function timezones(array $offsets): array
     {
-        if (array_diff(range(-11, 12), $offsets) === []) {
+        if ($offsets === [] || array_diff(range(-11, 12), $offsets) === []) {
             return $offsets;
         }
 
-        return array_map(fn (float $offset) => $offset > 12 ? $offset - 24 : $offset, $offsets);
+        $wrapped = array_map(fn (float $offset) => $offset > 12 ? $offset - 24 : $offset, $offsets);
+
+        return max($wrapped) - min($wrapped) < max($offsets) - min($offsets) ? $wrapped : $offsets;
     }
 
     /**

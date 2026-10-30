@@ -171,7 +171,7 @@ it('keeps fractional timezone offsets exact', function () {
         ->and($job->timezoneMax)->toBe(5.75);
 });
 
-it('maps an offset above UTC+12 to the offset minus 24', function (string $fixture, int $index, float $min, float $max) {
+it('keeps the smaller span of a timezone list that wraps past UTC+12', function (string $fixture, int $index, float $min, float $max) {
     $job = (new HimalayasSource)->normalise(himalayasItem($index, fixture: $fixture));
 
     expect($job->timezoneMin)->toBe($min)
@@ -184,6 +184,23 @@ it('maps an offset above UTC+12 to the offset minus 24', function (string $fixtu
     'worldwide' => ['himalayas/search.json', 0, -11.0, 14.0],
     'one offset' => ['himalayas/search.json', 1, 2.0, 2.0],
 ]);
+
+/*
+ * Synthetic timezone lists. The project owner approved this exception to the
+ * real strings rule, as for syntheticTitles. No fixture has a list that reaches
+ * +13 legitimately. When a real list has this form, it replaces the synthetic row.
+ */
+dataset('syntheticTimezoneLists', [
+    'from +5 to +13' => [[5, 6, 7, 8, 9, 10, 11, 12, 13], 5.0, 13.0],
+    'from +12 to +13' => [[12, 13], 12.0, 13.0],
+]);
+
+it('keeps a list that reaches +13 as it is when that span is smaller', function (array $offsets, float $min, float $max) {
+    $job = (new HimalayasSource)->normalise(himalayasItem(1, ['timezoneRestrictions' => $offsets]));
+
+    expect($job->timezoneMin)->toBe($min)
+        ->and($job->timezoneMax)->toBe($max);
+})->with('syntheticTimezoneLists');
 
 it('gives no timezone for an empty timezone list', function () {
     $job = (new HimalayasSource)->normalise(himalayasItem(0, ['timezoneRestrictions' => []]));
