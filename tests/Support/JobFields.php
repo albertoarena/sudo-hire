@@ -48,6 +48,49 @@ final class JobFields
         ];
     }
 
+    /**
+     * Only the fields the parsers fill: work mode, eligibility, office,
+     * timezone, salary, contract type and seniority.
+     *
+     * @return array<string, mixed>
+     */
+    public static function parsed(NormalisedJob $job): array
+    {
+        return array_intersect_key(self::of($job), array_flip([
+            'workMode', 'eligibility', 'officeLocation', 'timezoneMin', 'timezoneMax', 'salary', 'contractType', 'seniority',
+        ]));
+    }
+
+    /**
+     * The expected value of parsed(). Fields not given are unknown or null.
+     *
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    public static function expected(array $fields): array
+    {
+        return array_merge([
+            'workMode' => 'unknown',
+            'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
+            'officeLocation' => null,
+            'timezoneMin' => null,
+            'timezoneMax' => null,
+            'salary' => null,
+            'contractType' => 'unknown',
+            'seniority' => 'unknown',
+        ], $fields);
+    }
+
+    /**
+     * @param  list<string>  $countries
+     * @param  list<string>  $regions
+     * @return array{type: string, regions: list<string>, countries: list<string>}
+     */
+    public static function restricted(array $countries, array $regions = []): array
+    {
+        return ['type' => 'restricted', 'regions' => $regions, 'countries' => $countries];
+    }
+
     public static function fixture(string $path): string
     {
         return (string) file_get_contents(__DIR__.'/../Fixtures/'.$path);

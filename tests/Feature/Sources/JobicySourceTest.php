@@ -54,7 +54,7 @@ it('normalises a job field by field', function () {
         'company' => 'Huntress',
         'tags' => ['cybersecurity'],
         'workMode' => 'remote',
-        'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
+        'eligibility' => ['type' => 'restricted', 'regions' => [], 'countries' => ['US']],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
@@ -70,6 +70,41 @@ it('normalises a job field by field', function () {
     expect($job->description)
         ->toStartWith("What We Do:\n\nCybercrime is growing")
         ->not->toContain('<p>');
+});
+
+it('reads the location and the title of each job', function (string $fixture, int $index, array $fields) {
+    $job = (new JobicySource)->normalise(JobFields::json($fixture)['jobs'][$index]);
+
+    expect(JobFields::parsed($job))->toBe(JobFields::expected(['workMode' => 'remote', 'contractType' => 'full_time'] + $fields));
+})->with([
+    'USA, any level, no level in the title' => ['jobicy/remote-jobs.json', 0, [
+        'eligibility' => JobFields::restricted(['US']),
+        'salary' => ['min' => 100000.0, 'max' => 125000.0, 'currency' => 'USD', 'period' => 'year', 'raw' => '100000 - 125000 USD yearly'],
+    ]],
+    'Europe, director' => ['jobicy/remote-jobs.json', 1, [
+        'eligibility' => JobFields::restricted([], ['europe']),
+        'seniority' => 'lead',
+    ]],
+    'Philippines, any level' => ['jobicy/remote-jobs.json', 2, [
+        'eligibility' => JobFields::restricted(['PH']),
+    ]],
+    // The job level says "Senior" and the title says "Junior": the job level wins.
+    'Philippines, the job level wins over the title' => ['jobicy/remote-jobs-junior.json', 0, [
+        'eligibility' => JobFields::restricted(['PH']),
+        'seniority' => 'senior',
+    ]],
+]);
+
+it('takes the seniority from the title when the job level is "Any"', function () {
+    $item = array_merge(JobFields::json('jobicy/remote-jobs-junior.json')['jobs'][0], ['jobLevel' => 'Any']);
+
+    $job = (new JobicySource)->normalise($item);
+
+    expect($job->seniority->value)->toBe('junior');
+});
+
+it('takes the contract type from the title when the job type is empty', function () {
+    expect((new JobicySource)->normalise(jobicyItem(0, ['jobType' => [], 'jobTitle' => 'Freelance Writer']))->contractType->value)->toBe('contract');
 });
 
 it('gives no salary when the job has no salary fields', function () {

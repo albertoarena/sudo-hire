@@ -2,8 +2,8 @@
 
 namespace App\Sources\Jobicy;
 
+use App\Parsers\Location\LocationParser;
 use App\Schema\ContractType;
-use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
 use App\Schema\NormalisedJob;
 use App\Schema\Salary;
@@ -13,6 +13,7 @@ use App\Schema\WorkMode;
 use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
@@ -63,6 +64,8 @@ final class JobicySource implements JobSource
         }
 
         $url = $this->required($raw, 'url');
+        $title = $this->required($raw, 'jobTitle');
+        $location = (new LocationParser)->parse($this->text($raw, 'jobGeo') ?? '');
 
         try {
             return new NormalisedJob(
@@ -71,30 +74,30 @@ final class JobicySource implements JobSource
                 // Jobicy terms: the apply link is the Jobicy job page.
                 sourceUrl: $url,
                 applyUrl: $url,
-                title: $this->required($raw, 'jobTitle'),
+                title: $title,
                 company: $this->required($raw, 'companyName'),
                 description: HtmlToText::convert($this->text($raw, 'jobDescription')),
                 tags: $this->list($raw, 'jobIndustry'),
                 workMode: WorkMode::Remote,
-                // jobGeo is free text: the eligibility parser (M4) reads it.
-                eligibility: Eligibility::unknown(),
+                // jobGeo is free text. The work mode stays remote: Jobicy lists remote jobs only.
+                eligibility: $location->eligibility,
                 officeLocation: null,
-                timezoneMin: null,
-                timezoneMax: null,
+                timezoneMin: $location->timezoneMin,
+                timezoneMax: $location->timezoneMax,
                 salary: $this->salary($raw),
-                contractType: match ($this->list($raw, 'jobType')[0] ?? null) {
+                contractType: TitleFallback::contractType(match ($this->list($raw, 'jobType')[0] ?? null) {
                     'Full-Time' => ContractType::FullTime,
                     'Part-Time' => ContractType::PartTime,
                     'Contract' => ContractType::Contract,
                     default => ContractType::Unknown,
-                },
-                seniority: match ($this->text($raw, 'jobLevel')) {
+                }, $title),
+                seniority: TitleFallback::seniority(match ($this->text($raw, 'jobLevel')) {
                     'Junior' => Seniority::Junior,
                     'Midweight' => Seniority::Mid,
                     'Senior' => Seniority::Senior,
                     'Manager', 'Director' => Seniority::Lead,
                     default => Seniority::Unknown,
-                },
+                }, $title),
                 postedAt: $this->postedAt($this->required($raw, 'pubDate')),
                 fetchedAt: CarbonImmutable::now(),
                 expiresAt: null,

@@ -2,15 +2,16 @@
 
 namespace App\Sources\LaraJobs;
 
+use App\Parsers\Location\LocationParser;
+use App\Parsers\Salary\SalaryParser;
 use App\Schema\ContractType;
-use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
 use App\Schema\NormalisedJob;
 use App\Schema\Seniority;
-use App\Schema\WorkMode;
 use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
@@ -67,6 +68,9 @@ final class LaraJobsSource implements JobSource
         }
 
         $link = $this->required($raw, 'link');
+        $title = $this->required($raw, 'title');
+        $location = (new LocationParser)->parse($this->text($raw, 'location') ?? '');
+        $salary = $this->text($raw, 'salary');
 
         try {
             return new NormalisedJob(
@@ -74,24 +78,23 @@ final class LaraJobsSource implements JobSource
                 sourceJobId: $this->text($raw, 'guid') ?? $link,
                 sourceUrl: $link,
                 applyUrl: $link,
-                title: $this->required($raw, 'title'),
+                title: $title,
                 company: $this->text($raw, 'company') ?? $this->text($raw, 'creator') ?? throw SkipItem::because('The job has no company.'),
                 description: HtmlToText::convert($this->text($raw, 'content') ?? $this->text($raw, 'description')),
                 tags: explode(',', $this->text($raw, 'tags') ?? ''),
-                // Location, salary and seniority are free text: the parsers (M4, M5, M4b) read them.
-                workMode: WorkMode::Unknown,
-                eligibility: Eligibility::unknown(),
-                officeLocation: null,
-                timezoneMin: null,
-                timezoneMax: null,
-                salary: null,
-                contractType: match ($this->text($raw, 'job_type')) {
+                workMode: $location->workMode,
+                eligibility: $location->eligibility,
+                officeLocation: $location->officeLocation,
+                timezoneMin: $location->timezoneMin,
+                timezoneMax: $location->timezoneMax,
+                salary: $salary === null ? null : (new SalaryParser)->parse($salary),
+                contractType: TitleFallback::contractType(match ($this->text($raw, 'job_type')) {
                     'FULL_TIME' => ContractType::FullTime,
                     'PART_TIME' => ContractType::PartTime,
                     'CONTRACT' => ContractType::Contract,
                     default => ContractType::Unknown,
-                },
-                seniority: Seniority::Unknown,
+                }, $title),
+                seniority: TitleFallback::seniority(Seniority::Unknown, $title),
                 postedAt: $this->postedAt($this->required($raw, 'pubDate')),
                 fetchedAt: CarbonImmutable::now(),
                 expiresAt: null,

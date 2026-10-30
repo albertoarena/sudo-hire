@@ -41,8 +41,8 @@ it('normalises a job field by field', function () {
         'title' => 'Backend Engineer (Ruby), Plan: Spec-Driven Development',
         'company' => 'GitLab',
         'tags' => ['devops engineering'],
-        'workMode' => 'unknown',
-        'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
+        'workMode' => 'remote',
+        'eligibility' => ['type' => 'restricted', 'regions' => [], 'countries' => ['PL']],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
@@ -54,6 +54,34 @@ it('normalises a job field by field', function () {
         'expiresAt' => null,
         'attribution' => 'via GitLab careers',
     ]);
+});
+
+it('reads the location, the pay range and the title of each job', function (int $index, array $fields) {
+    $item = JobFields::json('greenhouse/jobs.json')['jobs'][$index];
+
+    $job = (new GreenhouseReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt));
+
+    expect(JobFields::parsed($job))->toBe(JobFields::expected($fields));
+})->with([
+    'remote in Canada and the US, with a pay range' => [0, [
+        'workMode' => 'remote',
+        'eligibility' => JobFields::restricted(['CA', 'US']),
+        'salary' => ['min' => 115200.0, 'max' => 162000.0, 'currency' => 'USD', 'period' => 'unknown', 'raw' => "\$115,200\u{2014}\$162,000 USD"],
+    ]],
+    'remote in Poland' => [1, [
+        'workMode' => 'remote',
+        'eligibility' => JobFields::restricted(['PL']),
+    ]],
+    'a city and a country, manager' => [2, [
+        'eligibility' => JobFields::restricted(['IN']),
+        'seniority' => 'lead',
+    ]],
+]);
+
+it('reads the contract type from the title', function () {
+    $job = (new GreenhouseReader)->normalise(new AtsItem($this->company, greenhouseItem(['title' => 'Recruiting Coordinator (Contract)']), $this->fetchedAt));
+
+    expect($job->contractType->value)->toBe('contract');
 });
 
 it('decodes the entities of the content and then makes it plain text', function () {

@@ -2,6 +2,7 @@
 
 namespace App\Sources\Ats\Readers;
 
+use App\Parsers\Location\LocationParser;
 use App\Schema\ContractType;
 use App\Schema\Eligibility;
 use App\Schema\NormalisedJob;
@@ -13,6 +14,7 @@ use App\Sources\Ats\Ats;
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\AtsReader;
 use App\Sources\Ats\CompanyEntry;
+use App\Sources\Support\TitleFallback;
 
 /**
  * Ashby posting API. See the field mapping in docs/DECISIONS.md.
@@ -44,6 +46,7 @@ final class AshbyReader implements AtsReader
     {
         $raw = $item->data;
         $jobUrl = $this->required($raw['jobUrl'] ?? null, 'link');
+        $title = $this->required($raw['title'] ?? null, 'title');
         $workMode = match ($this->text($raw['workplaceType'] ?? null)) {
             'Remote' => WorkMode::Remote,
             'Hybrid' => WorkMode::Hybrid,
@@ -54,26 +57,53 @@ final class AshbyReader implements AtsReader
         return $this->job($item, $this->required($raw['id'] ?? null, 'id'), $item->company->displayName, [
             'sourceUrl' => $jobUrl,
             'applyUrl' => $this->text($raw['applyUrl'] ?? null) ?? $jobUrl,
-            'title' => $this->required($raw['title'] ?? null, 'title'),
+            'title' => $title,
             'description' => $this->text($raw['descriptionPlain'] ?? null),
             'tags' => $this->texts([$raw['department'] ?? null, $raw['team'] ?? null]),
             'workMode' => $workMode,
-            // Locations are country names: the country table (M4) maps them.
-            'eligibility' => Eligibility::unknown(),
+            'eligibility' => $this->eligibility($workMode, $raw),
             'officeLocation' => in_array($workMode, [WorkMode::Hybrid, WorkMode::Onsite], true) ? $this->text($raw['location'] ?? null) : null,
             'timezoneMin' => null,
             'timezoneMax' => null,
             'salary' => $this->salary($raw['compensation'] ?? null),
-            'contractType' => match ($this->text($raw['employmentType'] ?? null)) {
+            'contractType' => TitleFallback::contractType(match ($this->text($raw['employmentType'] ?? null)) {
                 'FullTime' => ContractType::FullTime,
                 'PartTime' => ContractType::PartTime,
                 'Contract' => ContractType::Contract,
                 default => ContractType::Unknown,
-            },
-            'seniority' => Seniority::Unknown,
+            }, $title),
+            'seniority' => TitleFallback::seniority(Seniority::Unknown, $title),
             'postedAt' => $this->date($raw['publishedAt'] ?? null, 'publish date'),
             'expiresAt' => null,
         ]);
+    }
+
+    /**
+     * The address country of the job and of each secondary location, e.g.
+     * "European Union" (region eu) and "Spain". A secondary location named
+     * after a city ("Berlin") still has its country in the address.
+     * Hybrid and on-site jobs give unknown: their places are offices.
+     *
+     * @param  array<mixed>  $raw
+     */
+    private function eligibility(WorkMode $workMode, array $raw): Eligibility
+    {
+        if (in_array($workMode, [WorkMode::Hybrid, WorkMode::Onsite], true)) {
+            return Eligibility::unknown();
+        }
+
+        $secondary = is_array($raw['secondaryLocations'] ?? null) ? $raw['secondaryLocations'] : [];
+        $countries = $this->texts(array_map(fn (mixed $location) => $this->addressCountry($location), [$raw, ...$secondary]));
+
+        return $countries === [] ? Eligibility::unknown() : (new LocationParser)->countryList($countries);
+    }
+
+    private function addressCountry(mixed $location): mixed
+    {
+        $address = is_array($location) ? ($location['address'] ?? null) : null;
+        $postal = is_array($address) ? ($address['postalAddress'] ?? null) : null;
+
+        return is_array($postal) ? ($postal['addressCountry'] ?? null) : null;
     }
 
     /**

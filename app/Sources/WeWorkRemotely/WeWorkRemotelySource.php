@@ -2,6 +2,7 @@
 
 namespace App\Sources\WeWorkRemotely;
 
+use App\Parsers\Location\LocationParser;
 use App\Schema\ContractType;
 use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
@@ -11,6 +12,7 @@ use App\Schema\WorkMode;
 use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
@@ -77,22 +79,18 @@ final class WeWorkRemotelySource implements JobSource
                 description: HtmlToText::convert($this->text($raw, 'description')),
                 tags: [...$this->skills($this->text($raw, 'skills') ?? ''), $this->text($raw, 'category') ?? ''],
                 workMode: WorkMode::Remote,
-                // The country list needs the country table (M4). It wins over the region.
-                eligibility: $this->text($raw, 'country') === null && $this->text($raw, 'region') === 'Anywhere in the World'
-                    ? Eligibility::worldwide()
-                    : Eligibility::unknown(),
+                eligibility: $this->eligibility($this->text($raw, 'country'), $this->text($raw, 'region')),
                 officeLocation: null,
                 timezoneMin: null,
                 timezoneMax: null,
                 salary: null,
-                contractType: match ($this->text($raw, 'type')) {
+                contractType: TitleFallback::contractType(match ($this->text($raw, 'type')) {
                     'Full-Time' => ContractType::FullTime,
                     'Part-Time' => ContractType::PartTime,
                     'Contract' => ContractType::Contract,
                     default => ContractType::Unknown,
-                },
-                // Seniority from the title waits for the title parser (M4b).
-                seniority: Seniority::Unknown,
+                }, $title),
+                seniority: TitleFallback::seniority(Seniority::Unknown, $title),
                 postedAt: $this->date($this->required($raw, 'pubDate')),
                 fetchedAt: CarbonImmutable::now(),
                 expiresAt: $expiresAt === null ? null : $this->date($expiresAt),
@@ -125,6 +123,24 @@ final class WeWorkRemotelySource implements JobSource
         }
 
         return $fields;
+    }
+
+    /**
+     * The country list wins over the region, which often says "Anywhere in the
+     * World" even for European jobs. An empty country list and "Anywhere in the
+     * World" give worldwide. Another region is free text.
+     */
+    private function eligibility(?string $country, ?string $region): Eligibility
+    {
+        if ($country !== null) {
+            return (new LocationParser)->countryText($country);
+        }
+
+        return match ($region) {
+            null => Eligibility::unknown(),
+            'Anywhere in the World' => Eligibility::worldwide(),
+            default => (new LocationParser)->parse($region)->eligibility,
+        };
     }
 
     /**

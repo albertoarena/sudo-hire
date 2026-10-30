@@ -2,6 +2,7 @@
 
 namespace App\Sources\Himalayas;
 
+use App\Parsers\Location\LocationParser;
 use App\Schema\ContractType;
 use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
@@ -13,6 +14,7 @@ use App\Schema\WorkMode;
 use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
@@ -100,7 +102,9 @@ final class HimalayasSource implements JobSource
         }
 
         $guid = $this->required($raw, 'guid');
-        $timezones = $this->numbers($raw, 'timezoneRestrictions');
+        $title = $this->required($raw, 'title');
+        $timezones = $this->timezones($this->numbers($raw, 'timezoneRestrictions'));
+        $locations = $this->list($raw, 'locationRestrictions');
         $expiryDate = $this->text($raw, 'expiryDate');
 
         try {
@@ -110,7 +114,7 @@ final class HimalayasSource implements JobSource
                 sourceUrl: $guid,
                 // Himalayas terms: keep the apply link as it is, with its UTM parameter.
                 applyUrl: $this->text($raw, 'applicationLink') ?? $guid,
-                title: $this->required($raw, 'title'),
+                title: $title,
                 company: $this->required($raw, 'companyName'),
                 description: HtmlToText::convert($this->text($raw, 'description')),
                 tags: array_map(
@@ -118,19 +122,18 @@ final class HimalayasSource implements JobSource
                     [...$this->list($raw, 'categories'), ...$this->list($raw, 'parentCategories')],
                 ),
                 workMode: WorkMode::Remote,
-                // Country names need the country table (M4).
-                eligibility: $this->list($raw, 'locationRestrictions') === [] ? Eligibility::worldwide() : Eligibility::unknown(),
+                eligibility: $locations === [] ? Eligibility::worldwide() : (new LocationParser)->countryList($locations),
                 officeLocation: null,
                 timezoneMin: $timezones === [] ? null : min($timezones),
                 timezoneMax: $timezones === [] ? null : max($timezones),
                 salary: $this->salary($raw),
-                contractType: match ($this->text($raw, 'employmentType')) {
+                contractType: TitleFallback::contractType(match ($this->text($raw, 'employmentType')) {
                     'Full Time' => ContractType::FullTime,
                     'Part Time' => ContractType::PartTime,
                     'Contractor' => ContractType::Contract,
                     default => ContractType::Unknown,
-                },
-                seniority: $this->seniority($this->list($raw, 'seniority')),
+                }, $title),
+                seniority: TitleFallback::seniority($this->seniority($this->list($raw, 'seniority')), $title),
                 postedAt: $this->date($this->required($raw, 'pubDate')),
                 fetchedAt: CarbonImmutable::now(),
                 expiresAt: $expiryDate === null ? null : $this->date($expiryDate),
@@ -249,6 +252,24 @@ final class HimalayasSource implements JobSource
             fn (int|float $value) => (float) $value,
             array_filter($values, fn (mixed $value) => is_int($value) || is_float($value)),
         ));
+    }
+
+    /**
+     * The list can wrap past UTC+12: [-10, ..., -5, 14] is one span, because
+     * UTC+14 is the same clock time as UTC-10. An offset above 12 becomes the
+     * offset minus 24. A list with every whole offset from -11 to +12 is
+     * worldwide and stays as it is.
+     *
+     * @param  list<float>  $offsets
+     * @return list<float>
+     */
+    private function timezones(array $offsets): array
+    {
+        if (array_diff(range(-11, 12), $offsets) === []) {
+            return $offsets;
+        }
+
+        return array_map(fn (float $offset) => $offset > 12 ? $offset - 24 : $offset, $offsets);
     }
 
     /**

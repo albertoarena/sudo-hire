@@ -171,6 +171,20 @@ it('keeps fractional timezone offsets exact', function () {
         ->and($job->timezoneMax)->toBe(5.75);
 });
 
+it('maps an offset above UTC+12 to the offset minus 24', function (string $fixture, int $index, float $min, float $max) {
+    $job = (new HimalayasSource)->normalise(himalayasItem($index, fixture: $fixture));
+
+    expect($job->timezoneMin)->toBe($min)
+        ->and($job->timezoneMax)->toBe($max);
+})->with([
+    // [-10, -9, -8, -7, -6, -5, 14]: UTC+14 is the same clock time as UTC-10.
+    'United States' => ['himalayas/jobs.json', 0, -10.0, -5.0],
+    'United States, mid or senior' => ['himalayas/search-mid.json', 2, -10.0, -5.0],
+    // Every offset from -11 to +12 is in the list: it stays as it is.
+    'worldwide' => ['himalayas/search.json', 0, -11.0, 14.0],
+    'one offset' => ['himalayas/search.json', 1, 2.0, 2.0],
+]);
+
 it('gives no timezone for an empty timezone list', function () {
     $job = (new HimalayasSource)->normalise(himalayasItem(0, ['timezoneRestrictions' => []]));
 
@@ -182,8 +196,27 @@ it('gives worldwide for an empty location list', function () {
     expect((new HimalayasSource)->normalise(himalayasItem(0, ['locationRestrictions' => []]))->eligibility->type->value)->toBe('worldwide');
 });
 
-it('gives unknown eligibility for country names until the country table exists', function () {
-    expect((new HimalayasSource)->normalise(himalayasItem(1))->eligibility->type->value)->toBe('unknown');
+it('reads the location list and the seniority of each job', function (string $fixture, int $index, array $fields) {
+    $job = (new HimalayasSource)->normalise(himalayasItem($index, fixture: $fixture));
+
+    expect(array_intersect_key(JobFields::parsed($job), $fields))->toBe($fields);
+})->with([
+    'Bulgaria' => ['himalayas/search.json', 1, ['eligibility' => JobFields::restricted(['BG']), 'seniority' => 'senior']],
+    // The seniority list says "Senior" and the title says "Lead": the list wins.
+    'Serbia, the list wins over the title' => ['himalayas/search.json', 2, ['eligibility' => JobFields::restricted(['RS']), 'seniority' => 'senior']],
+    'United States' => ['himalayas/jobs.json', 0, ['eligibility' => JobFields::restricted(['US']), 'seniority' => 'senior']],
+    'Germany and Italy' => ['himalayas/jobs.json', 1, ['eligibility' => JobFields::restricted(['DE', 'IT']), 'seniority' => 'senior']],
+    'United Kingdom' => ['himalayas/jobs.json', 2, ['eligibility' => JobFields::restricted(['GB']), 'contractType' => 'contract', 'seniority' => 'mid']],
+    'Spain' => ['himalayas/search-mid.json', 0, ['eligibility' => JobFields::restricted(['ES']), 'seniority' => 'mid']],
+    'worldwide' => ['himalayas/search-mid.json', 1, ['eligibility' => ['type' => 'worldwide', 'regions' => [], 'countries' => []], 'seniority' => 'mid']],
+]);
+
+it('gives unknown eligibility for a location that is not in the tables', function () {
+    expect((new HimalayasSource)->normalise(himalayasItem(1, ['locationRestrictions' => ['Bulgaria', 'Atlantis']]))->eligibility->type->value)->toBe('unknown');
+});
+
+it('takes the seniority from the title when the list has no known level', function () {
+    expect((new HimalayasSource)->normalise(himalayasItem(2, ['seniority' => []]))->seniority->value)->toBe('lead');
 });
 
 it('gives no salary when the period and currency have no amounts', function () {
@@ -213,8 +246,9 @@ it('takes the lowest seniority in the list', function (array $levels, string $se
     [['Director', 'Senior'], 'senior'],
     [['Manager'], 'lead'],
     [['Executive'], 'lead'],
-    [['Intern'], 'unknown'],
-    [[], 'unknown'],
+    // No known level in the list: the title "SR. PHP DEVELOPER" gives the seniority.
+    [['Intern'], 'senior'],
+    [[], 'senior'],
 ]);
 
 it('reads the lowest seniority of a real job', function () {

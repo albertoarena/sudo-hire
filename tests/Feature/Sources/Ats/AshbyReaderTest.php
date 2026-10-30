@@ -42,13 +42,13 @@ it('normalises a job field by field', function () {
         'company' => 'Ashby',
         'tags' => ['engineering', 'emea engineering'],
         'workMode' => 'remote',
-        'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
+        'eligibility' => ['type' => 'restricted', 'regions' => ['eu'], 'countries' => ['ES', 'IT', 'CH', 'HR', 'IE', 'SE', 'RO', 'PT', 'DE', 'EE']],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
         'salary' => ['min' => 108000.0, 'max' => 145000.0, 'currency' => 'EUR', 'period' => 'year', 'raw' => '€108K - €145K'],
         'contractType' => 'full_time',
-        'seniority' => 'unknown',
+        'seniority' => 'senior',
         'postedAt' => '2026-04-30T19:45:44Z',
         'fetchedAt' => '2026-10-29T10:00:00Z',
         'expiresAt' => null,
@@ -100,6 +100,29 @@ it('gives no salary when the job has no compensation', function () {
     unset($item['compensation']);
 
     expect((new AshbyReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->salary)->toBeNull();
+});
+
+it('reads the countries of the job and its secondary locations', function (int $index, array $eligibility, string $seniority) {
+    $job = (new AshbyReader)->normalise(new AtsItem($this->company, ashbyItem($index), $this->fetchedAt));
+
+    expect(JobFields::of($job)['eligibility'])->toBe($eligibility)
+        ->and($job->seniority->value)->toBe($seniority);
+})->with([
+    'European Union and countries' => [0, JobFields::restricted(['ES', 'IT', 'CH', 'HR', 'IE', 'SE', 'RO', 'PT', 'DE', 'EE'], ['eu']), 'senior'],
+    'Australia' => [1, JobFields::restricted(['AU']), 'unknown'],
+    'Australia and APAC countries' => [2, JobFields::restricted(['AU', 'NZ', 'SG', 'KR', 'JP']), 'unknown'],
+]);
+
+it('gives unknown eligibility for a hybrid or on-site job', function (string $type) {
+    $job = (new AshbyReader)->normalise(new AtsItem($this->company, ashbyItem(1, ['workplaceType' => $type, 'isRemote' => false]), $this->fetchedAt));
+
+    expect($job->eligibility->type->value)->toBe('unknown');
+})->with(['Hybrid', 'OnSite']);
+
+it('takes the contract type from the title when the employment type has no case', function () {
+    $item = ashbyItem(1, ['employmentType' => 'Temporary', 'title' => 'Recruiting Coordinator (Contract)']);
+
+    expect((new AshbyReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->contractType->value)->toBe('contract');
 });
 
 it('maps the workplace type', function (?string $type, bool $isRemote, string $mode, ?string $office) {

@@ -53,14 +53,14 @@ it('normalises an item field by field', function () {
         'title' => 'Senior Full Stack Software Engineer (PHP/Laravel) - US Only',
         'company' => 'Evolution Collect, LLC',
         'tags' => ['full time', 'fullstack', 'laravel', 'mysql', 'vuejs'],
-        'workMode' => 'unknown',
-        'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
+        'workMode' => 'remote',
+        'eligibility' => ['type' => 'restricted', 'regions' => [], 'countries' => ['US']],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
-        'salary' => null,
+        'salary' => ['min' => 160000.0, 'max' => 180000.0, 'currency' => 'USD', 'period' => 'unknown', 'raw' => '$160,000.00 - $180,000.00'],
         'contractType' => 'full_time',
-        'seniority' => 'unknown',
+        'seniority' => 'senior',
         'postedAt' => '2026-10-25T18:21:28Z',
         'fetchedAt' => '2026-10-29T10:00:00Z',
         'expiresAt' => null,
@@ -72,6 +72,46 @@ it('normalises an item field by field', function () {
 
 it('gives no tags for an empty tag list', function () {
     expect((new LaraJobsSource)->normalise(laraJobsItems()[2])->tags)->toBe([]);
+});
+
+it('reads the location, the salary and the title of each item', function (int $index, array $fields) {
+    $job = (new LaraJobsSource)->normalise(laraJobsItems()[$index]);
+
+    expect(JobFields::parsed($job))->toBe(JobFields::expected($fields));
+})->with([
+    'remote in the US' => [0, [
+        'workMode' => 'remote',
+        'eligibility' => JobFields::restricted(['US']),
+        'salary' => ['min' => 160000.0, 'max' => 180000.0, 'currency' => 'USD', 'period' => 'unknown', 'raw' => '$160,000.00 - $180,000.00'],
+        'contractType' => 'full_time',
+        'seniority' => 'senior',
+    ]],
+    'hybrid in London' => [1, [
+        'workMode' => 'hybrid',
+        'officeLocation' => 'London, UK',
+        'salary' => ['min' => 70000.0, 'max' => 90000.0, 'currency' => 'GBP', 'period' => 'unknown', 'raw' => '£70,000 - £90,000'],
+        'contractType' => 'full_time',
+        'seniority' => 'senior',
+    ]],
+    'remote with a time zone' => [2, [
+        'workMode' => 'remote',
+        'timezoneMin' => 1.0,
+        'timezoneMax' => 2.0,
+        'contractType' => 'full_time',
+        'seniority' => 'senior',
+    ]],
+]);
+
+it('takes the contract type from the title when the job type is empty', function () {
+    $item = array_merge(laraJobsItems()[0], ['job_type' => '', 'title' => 'Senior Laravel Developer (Contract)']);
+
+    expect((new LaraJobsSource)->normalise($item)->contractType->value)->toBe('contract');
+});
+
+it('keeps the job type over the title', function () {
+    $item = array_merge(laraJobsItems()[0], ['job_type' => 'FULL_TIME', 'title' => 'Senior Laravel Developer (Contract)']);
+
+    expect((new LaraJobsSource)->normalise($item)->contractType->value)->toBe('full_time');
 });
 
 it('maps the job type to the contract type', function (string $type, string $contract) {
