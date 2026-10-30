@@ -54,7 +54,8 @@ it('normalises a position field by field', function () {
         'timezoneMax' => null,
         'salary' => null,
         'contractType' => 'full_time',
-        'seniority' => 'unknown',
+        // "experienced" gives no level: the title "Head of" gives it.
+        'seniority' => 'lead',
         'postedAt' => '2026-09-22T11:03:32Z',
         'fetchedAt' => '2026-10-29T10:00:00Z',
         'expiresAt' => null,
@@ -89,6 +90,27 @@ it('gives the keywords and the department as tags', function () {
     expect($job->tags)->toBe(['ai engineering', 'ai platforms', 'ai architecture', 'ai use cases', 'data & analytics', 'genai']);
 });
 
+it('reads the title of each position', function (int $index, string $contract, string $seniority) {
+    $job = (new PersonioReader)->normalise(new AtsItem($this->company, personioItems($this->company)[$index], $this->fetchedAt));
+
+    expect(JobFields::parsed($job))->toBe(JobFields::expected([
+        'officeLocation' => 'München',
+        'contractType' => $contract,
+        'seniority' => $seniority,
+    ]));
+})->with([
+    'head of' => [0, 'full_time', 'lead'],
+    'senior' => [1, 'full_time', 'senior'],
+    // The seniority field says "student": it wins over the title.
+    'student' => [2, 'unknown', 'junior'],
+]);
+
+it('reads the work mode from the title', function () {
+    $item = array_merge(personioItems($this->company)[1], ['name' => 'Senior AI Engineer (Remote)']);
+
+    expect((new PersonioReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->workMode->value)->toBe('remote');
+});
+
 it('maps an intern student job', function () {
     $job = (new PersonioReader)->normalise(new AtsItem($this->company, personioItems($this->company)[2], $this->fetchedAt));
 
@@ -116,7 +138,8 @@ it('maps the seniority', function (string $seniority, string $expected) {
 })->with([
     ['entry-level', 'junior'],
     ['student', 'junior'],
-    ['experienced', 'unknown'],
+    // No level: the title "Head of Finance" gives it.
+    ['experienced', 'lead'],
     ['senior', 'senior'],
     ['lead', 'lead'],
 ]);

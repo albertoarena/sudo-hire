@@ -153,3 +153,26 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Result: passed 2026-10-30, on a Mac, on main after the merge of #11.
   - Terms: the ECB copyright notice allows free reuse when the ECB is cited as the source. Data that the user changes (e.g. calculations) must say so. The rates page says the rates are for information only.
   - Step 2 first gave `false`, `null`, `null`: cURL error 60 in `storage/logs/laravel.log`. The local PHP CA bundle had no root for the ECB certificate. With `php -d curl.cainfo=<Homebrew cert.pem> -d openssl.cafile=<Homebrew cert.pem>`, step 2 gave `true`, `2026-10-29`, `111.3`. Step 3 gave `false`, `2026-10-29`. See the "Local development" section in `README.md`.
+
+## M6a: Default timezone matches System Settings
+
+- Added: 2026-10-30, branch m6a/storage-runner
+- Why manual: tests use a fake `/etc/localtime` link. The cloud container is Linux.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`, `php artisan migrate:fresh`.
+- Steps:
+  1. Open System Settings, General, Date & Time. Note the time zone.
+  2. Run `php artisan tinker --execute='dump(app(App\Settings\SettingsStore::class)->load()->timezone);'`
+  3. In System Settings, set another time zone by hand (for example "Tokyo"). Run step 2 again. Set the time zone back.
+- Expected: step 2 shows the IANA name of the time zone from step 1, for example `Europe/Rome`, not `UTC`. Step 3 shows the new time zone, for example `Asia/Tokyo`.
+- Result: not run
+
+## M6a: Source runner with live data
+
+- Added: 2026-10-30, branch m6a/storage-runner
+- Why manual: tests use fixtures only. The cloud session cannot reach the sources.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`, `php artisan migrate:fresh`, `php artisan ats:add greenhouse:gitlab`.
+- Steps:
+  1. Run `php artisan tinker --execute='$s = app(App\Settings\SettingsStore::class)->load(); foreach (app(App\Sources\SourceRunner::class)->run($s) as $r) { dump($r->only("source", "items_fetched", "items_skipped", "unknown_eligibility_share", "unknown_salary_share", "error_kind", "error")); } dump(App\Models\Job::count(), App\Models\AlsoOnSource::count());'`
+  2. Run the same command again at once.
+- Expected: step 1 shows one row for each of the 6 sources. Each row has `error_kind` null, or an error that makes sense. The shares are from 0 to 1. Step 2 shows no rows: no source is due yet. Run step 1 at most once for Remotive on a day: it allows 4 requests a day.
+- Result: not run

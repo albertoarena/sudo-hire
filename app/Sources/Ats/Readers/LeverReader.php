@@ -2,6 +2,7 @@
 
 namespace App\Sources\Ats\Readers;
 
+use App\Parsers\Salary\SalaryParser;
 use App\Schema\ContractType;
 use App\Schema\Eligibility;
 use App\Schema\NormalisedJob;
@@ -15,6 +16,7 @@ use App\Sources\Ats\AtsReader;
 use App\Sources\Ats\CompanyEntry;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
 use Carbon\CarbonImmutable;
 
 /**
@@ -46,6 +48,7 @@ final class LeverReader implements AtsReader
         $raw = $item->data;
         $categories = is_array($raw['categories'] ?? null) ? $raw['categories'] : [];
         $hostedUrl = $this->required($raw['hostedUrl'] ?? null, 'link');
+        $title = $this->required($raw['text'] ?? null, 'title');
         $workMode = match (strtolower($this->text($raw['workplaceType'] ?? null) ?? '')) {
             'remote' => WorkMode::Remote,
             'hybrid' => WorkMode::Hybrid,
@@ -56,7 +59,7 @@ final class LeverReader implements AtsReader
         return $this->job($item, $this->required($raw['id'] ?? null, 'id'), $item->company->displayName, [
             'sourceUrl' => $hostedUrl,
             'applyUrl' => $this->text($raw['applyUrl'] ?? null) ?? $hostedUrl,
-            'title' => $this->required($raw['text'] ?? null, 'title'),
+            'title' => $title,
             'description' => $this->description($raw),
             'tags' => $this->texts([$categories['team'] ?? null, $categories['department'] ?? null]),
             'workMode' => $workMode,
@@ -64,14 +67,14 @@ final class LeverReader implements AtsReader
             'officeLocation' => in_array($workMode, [WorkMode::Hybrid, WorkMode::Onsite], true) ? $this->officeLocation($categories) : null,
             'timezoneMin' => null,
             'timezoneMax' => null,
-            'salary' => $this->salary($raw['salaryRange'] ?? null),
-            'contractType' => match (strtolower($this->text($categories['commitment'] ?? null) ?? '')) {
+            'salary' => $this->salary($raw['salaryRange'] ?? null) ?? $this->salaryText($this->text($raw['additionalPlain'] ?? null)),
+            'contractType' => TitleFallback::contractType(match (strtolower($this->text($categories['commitment'] ?? null) ?? '')) {
                 'permanent', 'full-time', 'full time' => ContractType::FullTime,
                 'part-time', 'part time' => ContractType::PartTime,
                 'contract' => ContractType::Contract,
                 default => ContractType::Unknown,
-            },
-            'seniority' => Seniority::Unknown,
+            }, $title),
+            'seniority' => TitleFallback::seniority(Seniority::Unknown, $title),
             'postedAt' => $this->createdAt($raw['createdAt'] ?? null),
             'expiresAt' => null,
         ]);
@@ -141,6 +144,21 @@ final class LeverReader implements AtsReader
         $amount = implode(' - ', $this->texts([$range['min'] ?? null, $range['max'] ?? null]));
 
         return new Salary($min, $max, $currency, self::PERIODS[$interval] ?? SalaryPeriod::Unknown, trim("{$amount} {$currency} {$interval}"));
+    }
+
+    /**
+     * The first sentence of the additional text with a salary. The raw text is
+     * that sentence, not the whole text.
+     */
+    private function salaryText(?string $text): ?Salary
+    {
+        foreach (preg_split('/(?<=[.!?])\s+|\n+/u', $text ?? '') ?: [] as $sentence) {
+            if (($salary = (new SalaryParser)->parse(trim($sentence))) !== null) {
+                return $salary;
+            }
+        }
+
+        return null;
     }
 
     /**

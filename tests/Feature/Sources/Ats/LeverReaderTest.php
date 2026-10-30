@@ -14,6 +14,8 @@ beforeEach(function () {
     $this->fetchedAt = CarbonImmutable::parse('2026-10-29T10:00:00Z');
 });
 
+const LEVER_BASE_RANGE = "The United States base range for this position is \$164,448\u{2013}\$234,926 USD, plus equity.";
+
 function leverItem(int $index = 0, array $changes = []): array
 {
     return array_merge(JobFields::json('lever/postings.json')[$index], $changes);
@@ -46,9 +48,9 @@ it('normalises a remote job field by field', function () {
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
-        'salary' => null,
+        'salary' => ['min' => 164448.0, 'max' => 234926.0, 'currency' => 'USD', 'period' => 'unknown', 'raw' => LEVER_BASE_RANGE],
         'contractType' => 'full_time',
-        'seniority' => 'unknown',
+        'seniority' => 'senior',
         'postedAt' => '2026-08-13T18:12:43Z',
         'fetchedAt' => '2026-10-29T10:00:00Z',
         'expiresAt' => null,
@@ -121,6 +123,35 @@ it('maps the commitment to the contract type', function (?string $commitment, st
     [null, 'unknown'],
 ]);
 
+it('reads the salary text and the title of each job', function (int $index, array $fields) {
+    $job = (new LeverReader)->normalise(new AtsItem($this->company, leverItem($index), $this->fetchedAt));
+
+    expect(array_intersect_key(JobFields::parsed($job), $fields))->toBe($fields);
+})->with([
+    'a base range in the additional text' => [0, [
+        'salary' => ['min' => 164448.0, 'max' => 234926.0, 'currency' => 'USD', 'period' => 'unknown', 'raw' => LEVER_BASE_RANGE],
+        'seniority' => 'senior',
+    ]],
+    'no additional text' => [1, ['salary' => null, 'seniority' => 'senior']],
+    'additional text with no amount' => [2, ['salary' => null, 'seniority' => 'unknown']],
+]);
+
+it('keeps the salary range over the salary text', function () {
+    $company = CompanyEntry::parse('lever:matchgroup', 'Match Group');
+    $item = JobFields::json('lever/postings-salary.json')[0];
+    $item['additionalPlain'] = LEVER_BASE_RANGE;
+
+    $job = (new LeverReader)->normalise(new AtsItem($company, $item, $this->fetchedAt));
+
+    expect($job->salary?->raw)->toBe('150000 - 180000 USD per-year-salary');
+});
+
+it('takes the contract type from the title when the commitment says nothing', function () {
+    $item = leverItem(0, ['text' => 'Recruiting Coordinator (Contract)', 'categories' => ['commitment' => 'None']]);
+
+    expect((new LeverReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->contractType->value)->toBe('contract');
+});
+
 it('gives a remote job with no country an unknown eligibility', function () {
     $job = (new LeverReader)->normalise(new AtsItem($this->company, leverItem(0, ['country' => null]), $this->fetchedAt));
 
@@ -160,7 +191,8 @@ it('reads the salary range of real postings', function (int $index, array $salar
 ]);
 
 it('gives no salary for a salary range with no amount or currency', function (array $range) {
-    $job = (new LeverReader)->normalise(new AtsItem($this->company, leverItem(0, ['salaryRange' => $range]), $this->fetchedAt));
+    // No additional text, so the salary text cannot give a salary either.
+    $job = (new LeverReader)->normalise(new AtsItem($this->company, leverItem(0, ['salaryRange' => $range, 'additionalPlain' => '']), $this->fetchedAt));
 
     expect($job->salary)->toBeNull();
 })->with([

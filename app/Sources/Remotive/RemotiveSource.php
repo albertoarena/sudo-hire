@@ -2,8 +2,9 @@
 
 namespace App\Sources\Remotive;
 
+use App\Parsers\Location\LocationParser;
+use App\Parsers\Salary\SalaryParser;
 use App\Schema\ContractType;
-use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
 use App\Schema\NormalisedJob;
 use App\Schema\Seniority;
@@ -11,11 +12,12 @@ use App\Schema\WorkMode;
 use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
+use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Http;
-use RuntimeException;
 use Throwable;
 
 /**
@@ -41,7 +43,7 @@ final class RemotiveSource implements JobSource
         $jobs = Http::timeout(20)->get(self::API_URL, ['search' => 'php'])->throw()->json('jobs');
 
         if (! is_array($jobs) || ! array_is_list($jobs)) {
-            throw new RuntimeException('The Remotive response has no job list.');
+            throw new UnreadableResponse('The Remotive response has no job list.');
         }
 
         yield from array_values(array_filter($jobs, 'is_array'));
@@ -54,6 +56,9 @@ final class RemotiveSource implements JobSource
         }
 
         $url = $this->required($raw, 'url');
+        $title = $this->required($raw, 'title');
+        $location = (new LocationParser)->parse($this->text($raw, 'candidate_required_location') ?? '');
+        $salary = $this->text($raw, 'salary');
 
         try {
             return new NormalisedJob(
@@ -62,24 +67,24 @@ final class RemotiveSource implements JobSource
                 // Remotive terms: the apply link is the Remotive job page.
                 sourceUrl: $url,
                 applyUrl: $url,
-                title: $this->required($raw, 'title'),
+                title: $title,
                 company: $this->required($raw, 'company_name'),
                 description: HtmlToText::convert($this->text($raw, 'description')),
                 tags: $this->list($raw, 'tags'),
                 workMode: WorkMode::Remote,
-                // Location, salary and seniority are free text: the parsers (M4, M5, M4b) read them.
-                eligibility: Eligibility::unknown(),
+                // The work mode stays remote: Remotive lists remote jobs only.
+                eligibility: $location->eligibility,
                 officeLocation: null,
-                timezoneMin: null,
-                timezoneMax: null,
-                salary: null,
-                contractType: match ($this->text($raw, 'job_type')) {
+                timezoneMin: $location->timezoneMin,
+                timezoneMax: $location->timezoneMax,
+                salary: $salary === null ? null : (new SalaryParser)->parse($salary),
+                contractType: TitleFallback::contractType(match ($this->text($raw, 'job_type')) {
                     'full_time' => ContractType::FullTime,
                     'part_time' => ContractType::PartTime,
                     'contract', 'freelance' => ContractType::Contract,
                     default => ContractType::Unknown,
-                },
-                seniority: Seniority::Unknown,
+                }, $title),
+                seniority: TitleFallback::seniority(Seniority::Unknown, $title),
                 postedAt: $this->postedAt($this->required($raw, 'publication_date')),
                 fetchedAt: CarbonImmutable::now(),
                 expiresAt: null,

@@ -2,11 +2,11 @@
 
 namespace App\Sources\Ats\Readers;
 
+use App\Parsers\Location\LocationParser;
 use App\Schema\ContractType;
 use App\Schema\Eligibility;
 use App\Schema\NormalisedJob;
 use App\Schema\Seniority;
-use App\Schema\WorkMode;
 use App\Sources\Ats\Ats;
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\AtsReader;
@@ -14,6 +14,7 @@ use App\Sources\Ats\CompanyEntry;
 use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
+use App\Sources\Support\TitleFallback;
 use SimpleXMLElement;
 
 /**
@@ -57,6 +58,7 @@ final class PersonioReader implements AtsReader
     {
         $raw = $item->data;
         $id = $this->required($raw['id'] ?? null, 'id');
+        $title = $this->required($raw['name'] ?? null, 'title');
 
         if (preg_match('/^\d+$/', $id) !== 1) {
             throw SkipItem::because("The job id \"{$id}\" is not a number.");
@@ -69,29 +71,29 @@ final class PersonioReader implements AtsReader
         return $this->job($item, $id, $item->company->displayName, [
             'sourceUrl' => $url,
             'applyUrl' => $url,
-            'title' => $this->required($raw['name'] ?? null, 'title'),
+            'title' => $title,
             'description' => $this->description($raw['jobDescriptions'] ?? null),
             'tags' => [...explode(',', $this->text($raw['keywords'] ?? null) ?? ''), $this->text($raw['department'] ?? null) ?? ''],
-            // No remote field: the title and description parser (M4) gives the work mode.
-            'workMode' => WorkMode::Unknown,
+            // No remote field: the work mode comes from the title. The description is not read.
+            'workMode' => (new LocationParser)->parse($title)->workMode,
             'eligibility' => Eligibility::unknown(),
             'officeLocation' => $offices === [] ? null : implode('; ', array_values(array_unique($offices))),
             'timezoneMin' => null,
             'timezoneMax' => null,
             'salary' => null,
-            'contractType' => match ([$this->text($raw['employmentType'] ?? null), $this->text($raw['schedule'] ?? null)]) {
+            'contractType' => TitleFallback::contractType(match ([$this->text($raw['employmentType'] ?? null), $this->text($raw['schedule'] ?? null)]) {
                 ['permanent', 'full-time'] => ContractType::FullTime,
                 ['permanent', 'part-time'] => ContractType::PartTime,
                 default => in_array($this->text($raw['employmentType'] ?? null), ['freelance', 'temporary'], true)
                     ? ContractType::Contract
                     : ContractType::Unknown,
-            },
-            'seniority' => match ($this->text($raw['seniority'] ?? null)) {
+            }, $title),
+            'seniority' => TitleFallback::seniority(match ($this->text($raw['seniority'] ?? null)) {
                 'entry-level', 'student' => Seniority::Junior,
                 'senior' => Seniority::Senior,
                 'lead' => Seniority::Lead,
                 default => Seniority::Unknown,
-            },
+            }, $title),
             'postedAt' => $this->date($raw['createdAt'] ?? null, 'created date'),
             'expiresAt' => null,
         ]);

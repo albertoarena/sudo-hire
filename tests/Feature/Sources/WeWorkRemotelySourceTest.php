@@ -27,6 +27,11 @@ function wwrItems(): array
     return iterator_to_array((new WeWorkRemotelySource)->fetch(), false);
 }
 
+const WWR_COUNTRIES = [
+    'AD', 'AL', 'AT', 'BA', 'BG', 'CH', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR',
+    'HU', 'IT', 'LT', 'MD', 'ME', 'MK', 'NL', 'NO', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK', 'UA',
+];
+
 function wwrItem(int $index = 0, array $changes = []): array
 {
     return array_merge(wwrItems()[$index], $changes);
@@ -59,14 +64,14 @@ it('normalises an item field by field', function () {
         'company' => 'Twikey',
         'tags' => ['java', 'postgresql', 'spring', 'back-end programming'],
         'workMode' => 'remote',
-        // The country list needs the country table (M4).
-        'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
+        // The country list wins over the region "Anywhere in the World".
+        'eligibility' => ['type' => 'restricted', 'regions' => [], 'countries' => WWR_COUNTRIES],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
         'salary' => null,
         'contractType' => 'full_time',
-        'seniority' => 'unknown',
+        'seniority' => 'senior',
         'postedAt' => '2026-09-17T10:51:23Z',
         'fetchedAt' => '2026-10-29T10:00:00Z',
         'expiresAt' => '2026-11-16T10:51:23Z',
@@ -90,8 +95,25 @@ it('gives worldwide for an empty country and "Anywhere in the World"', function 
     expect((new WeWorkRemotelySource)->normalise(wwrItem(1))->eligibility->type->value)->toBe('worldwide');
 });
 
-it('gives unknown eligibility for a region other than "Anywhere in the World"', function () {
-    expect((new WeWorkRemotelySource)->normalise(wwrItem(1, ['region' => 'Europe Only']))->eligibility->type->value)->toBe('unknown');
+it('reads the country list and the title of each item', function (int $index, array $fields) {
+    expect(JobFields::parsed((new WeWorkRemotelySource)->normalise(wwrItem($index))))
+        ->toBe(JobFields::expected(['workMode' => 'remote', 'contractType' => 'full_time'] + $fields));
+})->with([
+    'a country list' => [0, ['eligibility' => JobFields::restricted(WWR_COUNTRIES), 'seniority' => 'senior']],
+    'anywhere, senior' => [1, ['eligibility' => ['type' => 'worldwide', 'regions' => [], 'countries' => []], 'seniority' => 'senior']],
+    'anywhere, staff' => [2, ['eligibility' => ['type' => 'worldwide', 'regions' => [], 'countries' => []], 'seniority' => 'lead']],
+]);
+
+it('reads a region other than "Anywhere in the World" with the location parser', function () {
+    $job = (new WeWorkRemotelySource)->normalise(wwrItem(1, ['region' => 'Europe Only']));
+
+    expect($job->eligibility->type->value)->toBe('restricted')
+        ->and($job->eligibility->regions)->toBe(['europe'])
+        ->and($job->workMode->value)->toBe('remote');
+});
+
+it('takes the contract type from the title when the type is empty', function () {
+    expect((new WeWorkRemotelySource)->normalise(wwrItem(1, ['type' => '', 'title' => 'Acme: Senior Backend Developer (Contract)']))->contractType->value)->toBe('contract');
 });
 
 it('reads "and" lists of skills as tags', function () {
