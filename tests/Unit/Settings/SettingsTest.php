@@ -1,9 +1,9 @@
 <?php
 
+use App\Currency\DisplayCurrency;
 use App\Schema\ContractType;
 use App\Schema\Seniority;
 use App\Schema\WorkMode;
-use App\Settings\DisplayCurrency;
 use App\Settings\InvalidSettings;
 use App\Settings\Settings;
 use App\Settings\UnknownEligibilityMode;
