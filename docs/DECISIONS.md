@@ -640,3 +640,47 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: the schema is frozen since M1 (AGENTS.md rule 10), and only one fixture string has OTE. If a source sends OTE as a structured field, a schema change can follow with a new decision.
 - Replaces: none
 
+
+## 2026-10-30: Filter rules for unknown values
+
+- Milestone: M6b
+- Decision: an unknown work mode, contract type or seniority always passes these three filters, whatever the setting.
+- Decision: when `country` is null (first run not done), the eligibility filter is off. Every job passes it.
+- Decision: an amount whose period does not fit the salary filter is not comparable, so it follows `unknownSalary`. Examples: an hourly or daily amount on an employee job, a yearly, monthly or no-period amount on a contract job. The filter does not convert with a number of working days.
+- Decision: expiry is a filter. A job with `expiresAt` before now fails. M6a retention deletes old jobs later.
+- Reason: approved by the project owner in the M6b brief.
+- Replaces: none
+
+## 2026-10-30: Filter result
+
+- Milestone: M6b
+- Decision: `JobFilter::evaluate()` runs every filter and gives a `FilterResult`. A job passes when no filter fails. `reasons` holds one `FailReason` for each failing filter. Keywords give two reasons: `keyword_missing` and `keyword_excluded`.
+- Decision: a job with unknown eligibility in group mode passes, with `locationNotStated` set. M6c does not count it in the notification.
+- Decision: `salaryUnknown` (the "?" badge) is set only when the salary filter is on for the job, the salary is missing or not comparable, and the mode is lenient. When the minimum for the job is null, the filter is off and the flag stays false.
+- Decision: `ote` is set when `Salary::raw` has "OTE" or "on target earnings", also when the salary filter is off.
+- Decision: the filters are pure classes with static methods. They have no I/O.
+- Reason: REQUIREMENTS sections 6 to 8. M6c and M8 need the flags, and the reasons make tests and debugging clear.
+- Replaces: none
+
+## 2026-10-30: Timezone overlap on a 24-hour circle
+
+- Milestone: M6b
+- Decision: the timezone filter compares offsets on a 24-hour circle, so UTC+14 is UTC-10. It takes the user's offset from `timezone` at the time of the check, so summer time counts. A job with only one timezone value uses it as one offset. A job with no timezone passes.
+- Decision: the Himalayas "United States" list is -10 to -5 and 14. `HimalayasSource` stores min -10 and max 14, so the job covers every offset and passes every user. The filter cannot see that 14 means -10. The project owner chose this over a change in `app/Sources/` in M6b.
+- Reason: REQUIREMENTS section 8. A later fix in `HimalayasSource` can map 13 and 14 to -11 and -10 before it takes min and max.
+- Replaces: none
+
+## 2026-10-30: Keyword matching
+
+- Milestone: M6b
+- Decision: a keyword matches when no letter, digit, "_", "#" or "+" touches it. So "c" does not match "c#" or "c++", and "laravel" matches "PHP/Laravel". A hyphen splits words: "stack" matches "Full-Stack".
+- Decision: the include and exclude lists match the title, each tag and, when `matchDescription` is on, the description.
+- Reason: REQUIREMENTS section 8 says whole words. Real tags such as "C#", "C++" and "node.js" need these rules.
+- Replaces: none
+
+## 2026-10-30: Synthetic OTE string
+
+- Milestone: M6b
+- Decision: the OTE test has one invented string, "$90k on-target earnings", marked "not from a fixture". No fixture has the hyphenated form. The other OTE rows are real strings from `tests/Fixtures/`.
+- Reason: the M6b brief names "on-target earnings", and every rule needs a test. The cloud session cannot reach the job boards to save a new response. This exception needs the approval of the project owner, as for `syntheticTitles` and `syntheticSalaries`.
+- Replaces: none
