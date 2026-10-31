@@ -164,7 +164,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `php artisan tinker --execute='dump(app(App\Settings\SettingsStore::class)->load()->timezone);'`
   3. In System Settings, set another time zone by hand (for example "Tokyo"). Run step 2 again. Set the time zone back.
 - Expected: step 2 shows the IANA name of the time zone from step 1, for example `Europe/Rome`, not `UTC`. Step 3 shows the new time zone, for example `Asia/Tokyo`.
-- Result: not run
+- Result: passed 2026-10-31, on a Mac, on main after the merge of #16. Step 2 gave `Europe/Rome`. Step 3 gave `Asia/Tokyo`. No settings were stored yet, so each load read the Mac time zone.
 
 ## M6a: Source runner with live data
 
@@ -175,4 +175,9 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   1. Run `php artisan tinker --execute='$s = app(App\Settings\SettingsStore::class)->load(); foreach (app(App\Sources\SourceRunner::class)->run($s) as $r) { dump($r->only("source", "items_fetched", "items_skipped", "unknown_eligibility_share", "unknown_salary_share", "error_kind", "error")); } dump(App\Models\Job::count(), App\Models\AlsoOnSource::count());'`
   2. Run the same command again at once.
 - Expected: step 1 shows one row for each of the 6 sources. Each row has `error_kind` null, or an error that makes sense. The shares are from 0 to 1. Step 2 shows no rows: no source is due yet. Run step 1 at most once for Remotive on a day: it allows 4 requests a day.
-- Result: not run
+- Result: passed 2026-10-31, on a Mac, on main after the merge of #16, with the Homebrew CA bundle (see `README.md`, "Local development").
+  - Setup: `php artisan migrate:fresh` is necessary. An older local database has no `expires_at` column, and step 1 then fails with an SQL error for each source.
+  - Step 1 on 2026-10-30: all 6 sources, `error_kind` null, 0 skipped. Items: ats 405 (4 companies), LaraJobs 5, Jobicy 0, Remotive 12, Himalayas 151, We Work Remotely 9. 582 jobs, 0 "also on" rows.
+  - Step 1 again on 2026-10-31, when all sources were due: all 6 sources, `error_kind` null, 0 skipped. Items: ats 410, LaraJobs 5, Jobicy 0, Remotive 13, Himalayas 38 (only jobs after the last run), We Work Remotely 11. 597 jobs, 0 "also on" rows.
+  - Step 2: no rows, 597 jobs, 0 "also on" rows.
+  - Jobicy 0 items: the Jobicy API itself gives "No jobs found" for `tag=php`, also on the new `/api/jobs` endpoint. Without a tag it gives 100 jobs. Not a fault in the source.
