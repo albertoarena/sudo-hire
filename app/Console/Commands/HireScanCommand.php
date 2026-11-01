@@ -96,6 +96,7 @@ class HireScanCommand extends Command implements Isolatable
             NotificationOutcome::NotDue => $this->line('Notification not due: the last one was sent at '.$result->lastSentAt?->utc()->format('Y-m-d H:i').' UTC.'),
             NotificationOutcome::Off => $this->line('Notification off (--no-notify).'),
             NotificationOutcome::Failed => $this->error("Notification failed: {$result->notificationError}"),
+            NotificationOutcome::NoCountry => $this->line('No notification: set your country first.'),
         };
     }
 

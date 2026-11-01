@@ -31,6 +31,7 @@ beforeEach(function () {
     $this->notifier = new FakeNotifier;
     app()->instance(Notifier::class, $this->notifier);
     app()->instance(SourceRegistry::class, new SourceRegistry([]));
+    commandSettings();
     Http::fake(['www.ecb.europa.eu/*' => Http::response(JobFields::fixture('ecb/eurofxref-daily.xml'))]);
 });
 
@@ -38,16 +39,29 @@ afterEach(function () {
     CarbonImmutable::setTestNow();
 });
 
+/**
+ * Stores the settings. The country is IT unless the test changes it.
+ */
+function commandSettings(array $overrides = []): void
+{
+    StoredSettings::query()->delete();
+    StoredSettings::query()->create(['data' => Make::settings(array_merge(['country' => 'IT'], $overrides))->toArray()]);
+}
+
+/**
+ * Stores one job, open worldwide unless the test changes it.
+ */
 function commandJob(array $overrides): void
 {
     app(JobStore::class)->save([new NormalisedJob(...jobAttributes(array_merge([
+        'eligibility' => Eligibility::worldwide(),
         'postedAt' => CarbonImmutable::parse('2026-10-28T08:00:00Z'),
         'fetchedAt' => CarbonImmutable::now(),
     ], $overrides)))]);
 }
 
 it('prints the matches with the salary, the eligibility, the source and the apply link', function () {
-    StoredSettings::query()->create(['data' => Make::settings(['country' => 'IT', 'keywordsInclude' => ['Laravel', 'PHP']])->toArray()]);
+    commandSettings(['keywordsInclude' => ['Laravel', 'PHP']]);
     commandJob([
         'sourceJobId' => '1',
         'title' => 'Senior Laravel Developer',
@@ -62,7 +76,7 @@ it('prints the matches with the salary, the eligibility, the source and the appl
         'eligibility' => Eligibility::worldwide(),
         'applyUrl' => 'https://example.com/jobs/2/apply',
     ]);
-    commandJob(['sourceJobId' => '3', 'title' => 'PHP Developer', 'company' => 'Initech']);
+    commandJob(['sourceJobId' => '3', 'title' => 'PHP Developer', 'company' => 'Initech', 'eligibility' => Eligibility::unknown()]);
 
     $this->artisan('hire:scan')
         ->expectsTable(
@@ -84,7 +98,7 @@ it('prints one line for each source run and exits with 0 when a source fails', f
     ]);
     app()->instance(SourceRegistry::class, new SourceRegistry([new LaraJobsSource, new FakeSource]));
     // The FakeSource jobs are up to 74 hours old.
-    StoredSettings::query()->create(['data' => Make::settings(['postedWithinHours' => 168])->toArray()]);
+    commandSettings(['postedWithinHours' => 168]);
 
     $this->artisan('hire:scan')
         ->expectsOutputToContain('larajobs: 0 items, error: certificate')
@@ -132,6 +146,19 @@ it('says when the notification failed and still exits with 0', function () {
     $this->artisan('hire:scan')
         ->expectsOutputToContain('Notification failed: osascript failed.')
         ->assertExitCode(0);
+});
+
+it('says when there is no country and sends nothing', function () {
+    commandSettings(['country' => null]);
+    commandJob(['sourceJobId' => '1']);
+
+    $this->artisan('hire:scan')
+        ->expectsOutputToContain('Senior Laravel Developer')
+        ->expectsOutputToContain('No notification: set your country first.')
+        ->assertExitCode(0);
+
+    expect($this->notifier->sent)->toBe([])
+        ->and(Job::query()->whereNotNull('notified_at')->count())->toBe(0);
 });
 
 it('is isolated, also without the --isolated option', function () {
