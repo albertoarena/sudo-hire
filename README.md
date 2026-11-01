@@ -35,6 +35,8 @@ php artisan hire:scan
 - Each source has its own minimum interval. A scan never fetches a source more often than that.
 - The exit code is 0 also when a source fails. The output shows the error kind of each failed source.
 
+A running scan holds a lock in the cache. If the scan process is killed hard (for example with `kill -9`), the lock stays. Then each later scan prints "The [hire:scan] command is already running." and exits, for up to one hour. To remove the lock at once, run `php artisan cache:clear --locks`. A plain `php artisan cache:clear` does not remove it.
+
 ### Run a scan from launchd or cron
 
 launchd and cron do not read your shell profile. Use full paths: find the path of `php` with `which php` (for example `/opt/homebrew/bin/php`), and use the full path of the project folder.

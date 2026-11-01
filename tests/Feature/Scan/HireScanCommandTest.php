@@ -157,3 +157,18 @@ it('runs again when the lock is free', function () {
 
     expect($this->notifier->sent)->toBe(['1 new job']);
 });
+
+it('frees a lock that a killed scan left with cache:clear --locks, not with cache:clear', function () {
+    // .env.example uses the database cache store. The locks are in the cache_locks table.
+    config(['cache.default' => 'database']);
+    app()->instance(SourceRegistry::class, new SourceRegistry([new FakeSource]));
+    Cache::store('database')->lock('framework'.DIRECTORY_SEPARATOR.'command-hire:scan', 3600)->get();
+
+    $this->artisan('cache:clear')->assertSuccessful();
+    $this->artisan('hire:scan')->expectsOutputToContain('The [hire:scan] command is already running.');
+    expect(SourceRun::query()->count())->toBe(0);
+
+    $this->artisan('cache:clear', ['--locks' => true])->assertSuccessful();
+    $this->artisan('hire:scan')->assertExitCode(0);
+    expect(SourceRun::query()->count())->toBe(1);
+});
