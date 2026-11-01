@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\AtsCompany;
+use App\Sources\RunErrorKind;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -38,9 +39,17 @@ class AtsListCommand extends Command
     private function lastResult(AtsCompany $company): string
     {
         return match (true) {
-            $company->last_error !== null => "Error: {$company->last_error}",
+            $company->last_error !== null => "Error ({$this->kind($company)}): {$company->last_error}",
             $company->last_job_count !== null => $company->last_job_count === 1 ? '1 job' : "{$company->last_job_count} jobs",
             default => 'not checked yet',
         };
+    }
+
+    /**
+     * Rows stored before the error kind existed have none: they show "other".
+     */
+    private function kind(AtsCompany $company): string
+    {
+        return ($company->last_error_kind ?? RunErrorKind::Other)->value;
     }
 }

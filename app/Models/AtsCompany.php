@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Sources\Ats\Ats;
 use App\Sources\Ats\CompanyEntry;
+use App\Sources\RunErrorKind;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,8 +20,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable|null $last_checked_at
  * @property int|null $last_job_count
  * @property string|null $last_error
+ * @property RunErrorKind|null $last_error_kind
  */
-#[Fillable(['ats', 'slug', 'display_name', 'enabled', 'last_checked_at', 'last_job_count', 'last_error'])]
+#[Fillable(['ats', 'slug', 'display_name', 'enabled', 'last_checked_at', 'last_job_count', 'last_error', 'last_error_kind'])]
 class AtsCompany extends Model
 {
     /** @var array<string, mixed> */
@@ -52,6 +54,7 @@ class AtsCompany extends Model
             'enabled' => 'boolean',
             'last_checked_at' => 'immutable_datetime',
             'last_job_count' => 'integer',
+            'last_error_kind' => RunErrorKind::class,
         ];
     }
 }

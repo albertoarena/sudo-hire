@@ -5,6 +5,7 @@ use App\Sources\Ats\AtsSource;
 use App\Sources\Ats\CompanyEntry;
 use App\Sources\JobSource;
 use App\Sources\NormaliseItems;
+use App\Sources\RunErrorKind;
 use App\Sources\SkipItem;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\Request;
@@ -89,21 +90,23 @@ it('normalises the items of each ATS', function () {
         ->toBe(['greenhouse', 'greenhouse', 'greenhouse', 'lever', 'lever', 'lever', 'ashby', 'ashby', 'ashby', 'personio', 'personio', 'personio']);
 });
 
-it('stores the error of a failing company and still reads the next one', function (string $entry, Closure $response, string $error) {
+it('stores the error of a failing company and still reads the next one', function (string $entry, Closure $response, string $error, RunErrorKind $kind) {
     fakeAtsResponses($response());
     $companies = companyList([$entry, 'lever:spotify']);
 
     expect(fetchedCompanies(new AtsSource($companies)))->toBe(['lever:spotify', 'lever:spotify', 'lever:spotify'])
         ->and($companies->errors)->toBe([$entry => $error])
+        ->and($companies->errorKinds)->toBe([$entry => $kind])
         ->and($companies->jobCounts)->toBe(['lever:spotify' => 3])
         ->and($companies->checkedAt[$entry]->toIso8601ZuluString())->toBe('2026-10-29T10:00:00Z');
 })->with([
-    '404' => ['greenhouse:nobody', fn () => ['boards-api.greenhouse.io/v1/boards/nobody/*' => Http::response('{"status":404,"error":"Job not found"}', 404)], 'HTTP 404'],
-    'HTML instead of XML' => ['personio:nobody', fn () => ['nobody.jobs.personio.de/*' => Http::response('<!DOCTYPE html><html><body>Not found</body></html>', 200)], 'The response is not Personio XML.'],
-    'Personio 404 HTML' => ['personio:nobody', fn () => ['nobody.jobs.personio.de/*' => Http::response('<!DOCTYPE html><html><body>Not found</body></html>', 404)], 'HTTP 404'],
-    'timeout' => ['ashby:slow', fn () => ['api.ashbyhq.com/posting-api/job-board/slow*' => Http::failedConnection('cURL error 28: Operation timed out')], 'Connection failed: cURL error 28: Operation timed out'],
-    'bad JSON' => ['greenhouse:broken', fn () => ['boards-api.greenhouse.io/v1/boards/broken/*' => Http::response('{"jobs": [', 200)], 'The response is not valid JSON.'],
-    'JSON with no job list' => ['ashby:odd', fn () => ['api.ashbyhq.com/posting-api/job-board/odd*' => Http::response('{"apiVersion":"1"}', 200)], 'The response has no job list.'],
+    '404' => ['greenhouse:nobody', fn () => ['boards-api.greenhouse.io/v1/boards/nobody/*' => Http::response('{"status":404,"error":"Job not found"}', 404)], 'HTTP 404', RunErrorKind::Http],
+    'HTML instead of XML' => ['personio:nobody', fn () => ['nobody.jobs.personio.de/*' => Http::response('<!DOCTYPE html><html><body>Not found</body></html>', 200)], 'The response is not Personio XML.', RunErrorKind::Parse],
+    'Personio 404 HTML' => ['personio:nobody', fn () => ['nobody.jobs.personio.de/*' => Http::response('<!DOCTYPE html><html><body>Not found</body></html>', 404)], 'HTTP 404', RunErrorKind::Http],
+    'timeout' => ['ashby:slow', fn () => ['api.ashbyhq.com/posting-api/job-board/slow*' => Http::failedConnection('cURL error 28: Operation timed out')], 'Connection failed: cURL error 28: Operation timed out', RunErrorKind::Http],
+    'certificate' => ['greenhouse:tls', fn () => ['boards-api.greenhouse.io/v1/boards/tls/*' => Http::failedConnection('cURL error 60: SSL certificate problem: unable to get local issuer certificate')], 'Connection failed: cURL error 60: SSL certificate problem: unable to get local issuer certificate', RunErrorKind::Certificate],
+    'bad JSON' => ['greenhouse:broken', fn () => ['boards-api.greenhouse.io/v1/boards/broken/*' => Http::response('{"jobs": [', 200)], 'The response is not valid JSON.', RunErrorKind::Parse],
+    'JSON with no job list' => ['ashby:odd', fn () => ['api.ashbyhq.com/posting-api/job-board/odd*' => Http::response('{"apiVersion":"1"}', 200)], 'The response has no job list.', RunErrorKind::Parse],
 ]);
 
 it('gives 0 items and no error for a Personio company with no positions', function () {

@@ -4,6 +4,7 @@ namespace Tests\Fakes;
 
 use App\Sources\Ats\CompanyEntry;
 use App\Sources\Ats\CompanyList;
+use App\Sources\RunErrorKind;
 use Carbon\CarbonImmutable;
 
 /**
@@ -19,6 +20,9 @@ final class InMemoryCompanyList implements CompanyList
 
     /** @var array<string, string> */
     public array $errors = [];
+
+    /** @var array<string, RunErrorKind> */
+    public array $errorKinds = [];
 
     /**
      * @param  list<CompanyEntry>  $companies
@@ -39,13 +43,14 @@ final class InMemoryCompanyList implements CompanyList
     {
         $this->checkedAt[$company->key()] = $checkedAt;
         $this->jobCounts[$company->key()] = $jobCount;
-        unset($this->errors[$company->key()]);
+        unset($this->errors[$company->key()], $this->errorKinds[$company->key()]);
     }
 
-    public function recordError(CompanyEntry $company, string $error, CarbonImmutable $checkedAt): void
+    public function recordError(CompanyEntry $company, string $error, RunErrorKind $kind, CarbonImmutable $checkedAt): void
     {
         $this->checkedAt[$company->key()] = $checkedAt;
         $this->errors[$company->key()] = $error;
+        $this->errorKinds[$company->key()] = $kind;
         unset($this->jobCounts[$company->key()]);
     }
 }

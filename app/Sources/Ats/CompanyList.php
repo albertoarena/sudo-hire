@@ -2,6 +2,7 @@
 
 namespace App\Sources\Ats;
 
+use App\Sources\RunErrorKind;
 use Carbon\CarbonImmutable;
 use Illuminate\Container\Attributes\Bind;
 
@@ -24,5 +25,5 @@ interface CompanyList
 
     public function recordJobs(CompanyEntry $company, int $jobCount, CarbonImmutable $checkedAt): void;
 
-    public function recordError(CompanyEntry $company, string $error, CarbonImmutable $checkedAt): void;
+    public function recordError(CompanyEntry $company, string $error, RunErrorKind $kind, CarbonImmutable $checkedAt): void;
 }

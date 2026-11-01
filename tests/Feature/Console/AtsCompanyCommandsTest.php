@@ -72,7 +72,7 @@ it('fails to remove a company that is not in the list', function () {
 
 it('lists the companies with the last result of each', function () {
     AtsCompany::create(['ats' => Ats::Greenhouse, 'slug' => 'gitlab', 'display_name' => 'GitLab', 'last_checked_at' => '2026-10-29 08:00:00', 'last_job_count' => 3]);
-    AtsCompany::create(['ats' => Ats::Personio, 'slug' => 'nobody', 'display_name' => 'Nobody', 'last_checked_at' => '2026-10-29 09:00:00', 'last_error' => 'HTTP 404']);
+    AtsCompany::create(['ats' => Ats::Personio, 'slug' => 'nobody', 'display_name' => 'Nobody', 'last_checked_at' => '2026-10-29 09:00:00', 'last_error' => 'HTTP 404', 'last_error_kind' => 'http']);
     AtsCompany::create(['ats' => Ats::Lever, 'slug' => 'spotify', 'display_name' => 'Spotify', 'enabled' => false]);
 
     $this->artisan('ats:list')
@@ -80,7 +80,7 @@ it('lists the companies with the last result of each', function () {
             ['Entry', 'Name', 'Enabled', 'Last checked', 'Last result'],
             [
                 ['greenhouse:gitlab', 'GitLab', 'yes', '2026-10-29 08:00 UTC', '3 jobs'],
-                ['personio:nobody', 'Nobody', 'yes', '2026-10-29 09:00 UTC', 'Error: HTTP 404'],
+                ['personio:nobody', 'Nobody', 'yes', '2026-10-29 09:00 UTC', 'Error (http): HTTP 404'],
                 ['lever:spotify', 'Spotify', 'no', 'never', 'not checked yet'],
             ],
         )
