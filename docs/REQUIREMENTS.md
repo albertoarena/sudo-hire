@@ -186,7 +186,7 @@ Structured fields first. Free text with rules, e.g. "60-70k EUR DOE", "£450 p/d
 | Work mode | remote, hybrid, onsite (multi) | remote |
 | Work from (country) | ISO country | set on first run |
 | Unknown eligibility | group / strict / lenient | group |
-| Timezone overlap | e.g. ±3 hours from user | off |
+| Time difference | 0 to 12 hours from the user's UTC offset, e.g. ±3 | off |
 | Keywords include | list | empty |
 | Keywords exclude | list | empty |
 | Min annual salary | amount in display currency | off |
@@ -194,7 +194,7 @@ Structured fields first. Free text with rules, e.g. "60-70k EUR DOE", "£450 p/d
 | Unknown salary | strict / lenient | lenient |
 | Contract type | full_time, part_time, contract (multi) | all |
 | Seniority | junior, mid, senior, lead (multi) | all |
-| Posted within | 24h, 3 days, 7 days | 3 days |
+| Posted within | 24h, 3 days, 7 days, 14 days, 30 days | 3 days |
 | Company blocklist | list | empty |
 | Sources | toggle per source | all on |
 

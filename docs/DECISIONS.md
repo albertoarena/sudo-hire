@@ -790,3 +790,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: `ats_companies.last_error_kind` stores the kind next to `last_error`. A successful read clears both. `CompanyList::recordError()` takes the kind. `ats:list` shows "Error (certificate): ...". A row from before this change has no kind and shows "other".
 - Reason: one company with a certificate error was stored as text only, so M8 could not show "certificate error" for it.
 - Replaces: none
+
+## 2026-11-01: Posted within 14 and 30 days
+
+- Milestone: UI design
+- Decision: "Posted within" accepts 24, 72, 168, 336 and 720 hours: 24 hours, 3 days, 7 days, 14 days and 30 days. The default stays 3 days.
+- Decision: the timezone filter is named "Time difference" in REQUIREMENTS section 8 and in the error message. The settings key stays `timezoneOverlapHours`, so stored settings keep working.
+- Reason: the UI design offers 14 and 30 days for users who check less often. Jobs are kept for 30 days after they were last seen, so 30 days is the longest useful window. The filter keeps a job when its timezones are within ±N hours of the user's UTC offset, so "time difference" describes it better than "overlap".
+- Replaces: "24h, 3 days, 7 days" in REQUIREMENTS section 8

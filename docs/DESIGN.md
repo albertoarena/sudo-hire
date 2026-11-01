@@ -385,7 +385,7 @@ Eight panes, in order:
 1. **Where you work** (pin): country (the country combobox), a live stamp preview with two real jobs, timezone, work mode, "Location not stated" mode, time difference.
    - **Time difference:** a select with Off, Up to 1 hour, through Up to 6 hours, and Custom. Custom shows a number field (0 to 12) followed by "hours". The filter keeps jobs whose timezone is within plus or minus N hours of the user's. Jobs with no timezone always pass. The hint says so; with Custom it gives an example instead ("Vancouver is 9 hours behind Rome").
 2. **Jobs** (search): include and exclude keyword chips, "also match the description", contract, seniority, posted within, hidden companies.
-   - **Posted within:** 24 hours, 3 days, 7 days, 14 days, 30 days. The default is 3 days. Hint: "Jobs are kept for 30 days." The 14 and 30 day options need a rule change (Settings and REQUIREMENTS section 8) before M8.
+   - **Posted within:** 24 hours, 3 days, 7 days, 14 days, 30 days. The default is 3 days. Hint: "Jobs are kept for 30 days."
 3. **Pay** (coin): display currency, minimum per year, payments per year (12, 13, 14), minimum per day, salary not stated. A note with the ECB rate date.
 4. **Notifications** (bell): interval slider (1 to 24 hours) and a sample notification.
 5. **Sources** (feed): a table with On (switch), Source, Last read, Status. Status is a 7px dot plus text. A green dot shows the job count. A red dot shows the error name, with one plain sentence in `ink-2` below it.
@@ -459,7 +459,6 @@ Short and functional: the toast (0.2s and 0.25s), the chevron (0.2s), the switch
 ## Open items
 
 - **Final icon drawing:** the app icon and the menu bar mark at every macOS size, 16 to 1024px (M9).
-- **Posted within, 14 and 30 days:** these options need a rule change (Settings and REQUIREMENTS section 8) before M8.
 - **When rows become seen:** the review page fades one stamp after 6 seconds as a demo. The real moment (on open, on scroll into view, or on close) is not set.
 - **OTE badge:** PRODUCT.md lists an "OTE" badge. The build does not show it. Style it like the "also on" badge until designed.
 - **Keyboard:** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed.
