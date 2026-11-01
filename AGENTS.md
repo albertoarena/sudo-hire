@@ -56,6 +56,9 @@ These apply to every commit and pull request.
   - Run `git grep --cached -nE '/(Users|home)/[A-Za-z]' -- ':!scripts/cloud-setup.sh'`. It must find nothing: no local paths in git. The setup script is skipped because it names container paths.
   - When you copy files from a skeleton or a template, keep its nested `.gitignore` files. Do not use `git add -f`.
   - If a file must stay local, add it to `.gitignore` in the same commit.
+- Before every commit and every pull request, do two passes. Do them on the changed files and on the message text. Show the result with the text. A cloud session shows it once, in its single approval message with all commit messages and the pull request text.
+  - Clarity pass: read the text as a new reader. Apply the writing rules below and STE. Use one word for one meaning in the whole repository (for example "license", not also "licence"). Fix unclear, inconsistent or long sentences.
+  - Confidentiality pass: do not name any repository except this one and its dependencies, or any person except the copyright holder. Job sources and ATS providers are allowed. Do not name any AI session or review, and do not give an evaluation of a tool or company. Do not add secrets, private notes or personal data. This also applies to fixtures, comments and test names.
 - Before you push, run `git log --format='%an <%ae>%n%B' origin/main..HEAD` and check that no commit carries a trailer. Do not use `git log --grep` for this check: it also matches a body that only mentions a trailer.
 
 ## Architecture rules
