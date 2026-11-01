@@ -39,7 +39,7 @@ A running scan holds a lock in the cache. If the scan process is killed hard (fo
 
 ### Run a scan from launchd or cron
 
-launchd and cron do not read your shell profile. Use full paths: find the path of `php` with `which php` (for example `/opt/homebrew/bin/php`), and use the full path of the project folder.
+launchd and cron do not read your shell profile. Use full paths: find the path of the PHP binary with `php -r 'echo PHP_BINARY, PHP_EOL;'` in the project folder (for example `/opt/homebrew/bin/php`). A version manager can put a shim on PATH, so `which php` can give the wrong path. Use the full path of the project folder too.
 
 With launchd, save this file as `~/Library/LaunchAgents/dev.sudohire.scan.plist`. Change the two paths. It runs a scan every 10 minutes and writes the output to `storage/logs/scan.log`.
 

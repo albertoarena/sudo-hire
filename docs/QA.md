@@ -193,7 +193,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Run `php artisan hire:scan` again at once.
   4. Run `php artisan hire:scan --no-notify`.
 - Expected: step 2 prints a table of matches, a "Location not stated" count if there are such jobs, one line for each source run, and "Notification sent: N new jobs: ...". A macOS notification with the same text and the title "Sudo Hire" appears. macOS can first ask to allow notifications for Script Editor: allow them, then run steps 1 and 2 again. Step 3 shows no notification. It prints "No notification: 0 new matches." or "Notification not due: ...". Step 4 prints "Notification off (--no-notify)." and shows no notification. If step 2 finds 0 matches, set fewer filters and run steps 1 and 2 again.
-- Result: not run
+- Result: passed 2026-11-01, on a Mac, on branch m6c/scan.
 
 ## M6c: Scan from launchd or cron writes its log
 
@@ -201,10 +201,10 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Why manual: the cloud container has no launchd, and its cron does not run as a Mac user.
 - Setup: as for "M6c: Scan shows a macOS notification".
 - Steps:
-  1. Set up the scan with launchd as in `README.md`, "Run a scan from launchd or cron". Use the full path of `php` (`which php`) and of the project folder.
-  2. Wait for one interval (10 minutes in the example).
+  1. Set up the scan with launchd as in `README.md`, "Run a scan from launchd or cron". Use the full path of the PHP binary and of the project folder.
+  2. Run `launchctl kickstart gui/$(id -u)/dev.sudohire.scan`, or wait for one interval (10 minutes in the example).
   3. Read `storage/logs/scan.log`.
-  4. Run `php artisan hire:scan` in the terminal while a scan from launchd runs (start it at once after `launchctl kickstart`).
+  4. Make the sources due: run `php artisan tinker --execute='App\Models\SourceRun::query()->each(fn ($r) => $r->update(["started_at" => $r->started_at->subDay()]));'`. Then run `php artisan hire:scan --no-notify & sleep 1; launchctl kickstart gui/$(id -u)/dev.sudohire.scan; wait` and read the end of `storage/logs/scan.log`.
   5. Remove the job as in the README. Optional: do steps 1 to 3 with the cron line instead of launchd.
-- Expected: step 3 shows the output of at least one scan: the matches or "No new matches.", and the source lines. No "command not found" and no cURL error 60. A notification appears when there are new matches. Step 4 exits at once and prints "The [hire:scan] command is already running.": the scan is isolated.
-- Result: not run
+- Expected: step 3 shows the output of at least one scan: the matches or "No new matches.", and the source lines. No "command not found" and no cURL error 60. `launchctl print gui/$(id -u)/dev.sudohire.scan` shows `last exit code = 0`. In step 4 the scan from launchd starts while the terminal scan runs, and the log shows "The [hire:scan] command is already running.": the scan is isolated. A scan with no due source ends in under a second, so step 4 first makes the sources due.
+- Result: passed 2026-11-01, on a Mac, on branch m6c/scan, with launchd. Cron was not run. The scan from launchd fetched all sources (LaraJobs 5 items, Remotive 12, Himalayas 38, We Work Remotely 11, ATS and Jobicy 0) and exited with code 0. The first run of step 4 did not overlap, because no source was due. Step 4 now makes the sources due first.
