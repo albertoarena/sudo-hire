@@ -218,17 +218,17 @@ Office location (city and radius) for hybrid and on-site jobs is **v2**.
 - No notification if there are 0 new matches.
 - Clicking the notification opens the menu bar list.
 
-## 11. UI (to be detailed later)
+## 11. UI
 
 Minimum for v1:
 
 - Menu bar icon with a badge for unseen matches.
 - List of new matches: title, company, salary (original and converted), eligibility, source attribution, posted date. Apply opens the original apply link in the browser.
-- Settings screen for all filters, intervals, sources, display currency.
+- Settings screen for all filters, intervals, sources, display currency. It also has a Privacy pane (what the app sends and stores, a link to `PRIVACY.md`) and a Troubleshooting pane (common problems, the log folder, a diagnostic report with no personal data, and a link to open an issue).
 - Source status: last success and last error per source.
 - Clear message if the internal PHP server stopped (see `AGENTS.md`, NativePHP notes).
 
-Detailed UI design will be added in a later revision.
+The detailed design is in `docs/DESIGN.md`, with the product record in `docs/PRODUCT.md` and an interactive prototype in `docs/design/sudo-hire-ui.html`.
 
 ## 12. Premium readiness (not built in v1)
 
@@ -285,5 +285,4 @@ M6a and M6b run in parallel, after a local prep pull request that adds the share
 
 ## 17. Open questions
 
-- UI design for the menu bar list and settings.
 - Spatie Event Sourcing is not planned for v1 (local app, simple state). Reconsider for the Premium server.
