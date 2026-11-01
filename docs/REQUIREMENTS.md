@@ -274,7 +274,7 @@ Tag, CI builds, signs and notarises a **draft** GitHub release. A human installs
 | M6a | Storage, source registry and runner, parser wiring, deduplication, retention, `source_runs` stats | Cloud |
 | M6b | Filters (section 8), as pure classes over the job and the settings | Cloud |
 | M6c | `php artisan hire:scan`: fetch due sources, filter, print matches, one summary notification through `osascript`. Runs from cron or launchd, no NativePHP needed | Cloud + Mac check |
-| M7 | NativePHP scheduler wiring and native notifications, reusing M6b | Mac or cloud + Mac check |
+| M7 | NativePHP scheduler wiring and native notifications, reusing the M6c scan (`App\Scan\Scan`) and the `sent_notifications` table. Clicking the notification opens the menu bar list | Mac or cloud + Mac check |
 | UI design | Screens, states and design tokens for the menu bar list and settings, with Impeccable. Updates section 11 | Local |
 | M8 | Menu bar UI and settings | Mac or cloud + Mac check |
 | M9 | Signing, notarisation, release flow | Mac |

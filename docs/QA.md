@@ -181,3 +181,30 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   - Step 1 again on 2026-10-31, when all sources were due: all 6 sources, `error_kind` null, 0 skipped. Items: ats 410, LaraJobs 5, Jobicy 0, Remotive 13, Himalayas 38 (only jobs after the last run), We Work Remotely 11. 597 jobs, 0 "also on" rows.
   - Step 2: no rows, 597 jobs, 0 "also on" rows.
   - Jobicy 0 items: the Jobicy API itself gives "No jobs found" for `tag=php`, also on the new `/api/jobs` endpoint. Without a tag it gives 100 jobs. Not a fault in the source.
+
+## M6c: Scan shows a macOS notification
+
+- Added: 2026-11-01, branch m6c/scan
+- Why manual: tests use a fake notifier. The cloud container has no `osascript` and no macOS notifications.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`, `php artisan migrate`. If the local PHP gives cURL error 60, use the fix in `README.md`, "cURL error 60 in artisan commands".
+- Steps:
+  1. Run `php artisan tinker --execute='App\Models\Job::query()->update(["notified_at" => null]); App\Models\SentNotification::query()->delete();'`
+  2. Run `php artisan hire:scan`.
+  3. Run `php artisan hire:scan` again at once.
+  4. Run `php artisan hire:scan --no-notify`.
+- Expected: step 2 prints a table of matches, a "Location not stated" count if there are such jobs, one line for each source run, and "Notification sent: N new jobs: ...". A macOS notification with the same text and the title "Sudo Hire" appears. macOS can first ask to allow notifications for Script Editor: allow them, then run steps 1 and 2 again. Step 3 shows no notification. It prints "No notification: 0 new matches." or "Notification not due: ...". Step 4 prints "Notification off (--no-notify)." and shows no notification. If step 2 finds 0 matches, set fewer filters and run steps 1 and 2 again.
+- Result: not run
+
+## M6c: Scan from launchd or cron writes its log
+
+- Added: 2026-11-01, branch m6c/scan
+- Why manual: the cloud container has no launchd, and its cron does not run as a Mac user.
+- Setup: as for "M6c: Scan shows a macOS notification".
+- Steps:
+  1. Set up the scan with launchd as in `README.md`, "Run a scan from launchd or cron". Use the full path of `php` (`which php`) and of the project folder.
+  2. Wait for one interval (10 minutes in the example).
+  3. Read `storage/logs/scan.log`.
+  4. Run `php artisan hire:scan` in the terminal while a scan from launchd runs (start it at once after `launchctl kickstart`).
+  5. Remove the job as in the README. Optional: do steps 1 to 3 with the cron line instead of launchd.
+- Expected: step 3 shows the output of at least one scan: the matches or "No new matches.", and the source lines. No "command not found" and no cURL error 60. A notification appears when there are new matches. Step 4 exits at once and prints "The [hire:scan] command is already running.": the scan is isolated.
+- Result: not run

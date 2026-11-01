@@ -746,3 +746,47 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the app is released under the MIT license.
 - Reason: the paid Premium part is a separate server and a curated company list (data, not code), so nothing paid lives in this repository. The name and the icon need their own trademark notice, because MIT does not cover them.
 - Replaces: none
+
+## 2026-11-01: The scan command
+
+- Milestone: M6c
+- Decision: `php artisan hire:scan` runs one scan in this order: refresh the exchange rates, run the due sources, prune, filter the jobs with no `notified_at`, print the matches, then send the summary notification when it is due. The service is `App\Scan\Scan`, so M7 can run the same scan from the NativePHP scheduler.
+- Decision: a failed rates fetch, a failed source and a failed notification do not stop the scan. They are in the output. The exit code is 0.
+- Decision: the command is always isolated (`Isolatable`), also without the `--isolated` option. A second scan that starts while one runs exits at once with code 0. The lock is in the cache store.
+- Decision: `--no-notify` prints the matches, sends nothing and sets no `notified_at`.
+- Reason: approved in the M6c brief. Cron can start a scan every few minutes, and a slow scan must not run twice.
+- Replaces: none
+
+## 2026-11-01: "Also on" and disabled sources
+
+- Milestone: M6c
+- Decision: a job passes the source filter when its main source or one of its "also on" sources is enabled. `SourceFilter::passes()` and `JobFilter::evaluate()` take an optional last argument, the list of the "also on" source keys. Existing calls keep working.
+- Decision: the output and the notification use the links of the first enabled source: the main source, else the first "also on" source in stored order. The stored apply links never change (AGENTS.md rule 11).
+- Reason: approved in the M6c brief. A job that a disabled board found first is still a real job on an enabled board.
+- Replaces: none
+
+## 2026-11-01: Notification interval and notified_at
+
+- Milestone: M6c
+- Decision: a notification is sent when there are new matches and no notification was sent in the last `notificationIntervalHours`. A scan with 0 matches sends nothing and does not reset the interval. Matches found between two notifications wait for the next one.
+- Decision: when a notification is sent, `notified_at` is set on the jobs that it counts, and only on them. Jobs that fail the filters and jobs in the "Location not stated" group keep `notified_at` null, so a change in the settings can still show them later.
+- Decision: when the notifier fails, the scan sets no `notified_at` and stores no notification. The next scan tries again.
+- Reason: approved in the M6c brief (REQUIREMENTS section 10).
+- Replaces: none
+
+## 2026-11-01: Summary text and the macOS notifier
+
+- Milestone: M6c
+- Decision: the text is "6 new jobs: 4 Laravel, 2 PHP". Each job counts once, under the first include keyword that it matches, in the order of `keywordsInclude`. A keyword with 0 jobs is left out. With no include keywords the text is "6 new jobs". One job gives "1 new job". `KeywordFilter::firstInclude()` gives the keyword, with the same rules as the filter.
+- Decision: the `Notifier` interface has one method, `send()`. `MacNotifier` runs `osascript` with `display notification` and the title "Sudo Hire". The text is an argument of the script (`on run argv`), and `Process` gets an argument list, so quotes in a job title cannot break the script.
+- Decision: the `sent_notifications` table stores the sent time, the job count and the text of each sent notification. The scan reads the last sent time for the interval. M7 and M8 read it too. The model is `App\Models\SentNotification`, next to the other models.
+- Reason: REQUIREMENTS section 10. A shell string or a text inside the script breaks on a title with `"` or `\`.
+- Replaces: none
+
+## 2026-11-01: Error kind for each ATS company
+
+- Milestone: M6c
+- Decision: `ReadFailed` keeps the cause as the previous exception. `ReadFailed::kind()` gives the `RunErrorKind` of the cause: an HTTP status is `http`, bad JSON or a response with no job list is `parse`, a TLS cURL error is `certificate`. With no cause, the kind is `other`.
+- Decision: `ats_companies.last_error_kind` stores the kind next to `last_error`. A successful read clears both. `CompanyList::recordError()` takes the kind. `ats:list` shows "Error (certificate): ...". A row from before this change has no kind and shows "other".
+- Reason: one company with a certificate error was stored as text only, so M8 could not show "certificate error" for it.
+- Replaces: none
