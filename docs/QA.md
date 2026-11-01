@@ -208,3 +208,45 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   5. Remove the job as in the README. Optional: do steps 1 to 3 with the cron line instead of launchd.
 - Expected: step 3 shows the output of at least one scan: the matches or "No new matches.", and the source lines. No "command not found" and no cURL error 60. `launchctl print gui/$(id -u)/dev.sudohire.scan` shows `last exit code = 0`. In step 4 the scan from launchd starts while the terminal scan runs, and the log shows "The [hire:scan] command is already running.": the scan is isolated. A scan with no due source ends in under a second, so step 4 first makes the sources due.
 - Result: passed 2026-11-01, on a Mac, on branch m6c/scan, with launchd. Cron was not run. The scan from launchd fetched all sources (LaraJobs 5 items, Remotive 12, Himalayas 38, We Work Remotely 11, ATS and Jobicy 0) and exited with code 0. The first run of step 4 did not overlap, because no source was due. Step 4 now makes the sources due first.
+
+## M7: The app scans on its own and shows a native notification
+
+- Added: 2026-11-01, branch m7/native-scheduler
+- Why manual: tests fake the internal API. The cloud container cannot run the app, the scheduler or macOS notifications.
+- Setup: the branch checked out on a Mac, `composer install`, `.env` from `.env.example`, `php artisan key:generate`, `npm run build`. In development the app uses `database/nativephp.sqlite`. The commands below use it with `DB_DATABASE`.
+- Steps:
+  1. Run `php artisan native:run` once, wait until the menu bar icon shows, then quit the app. This creates `database/nativephp.sqlite`.
+  2. Store a country, and make the jobs new: run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='$s = app(App\Settings\SettingsStore::class); $s->save(App\Settings\Settings::fromArray(array_merge($s->load()->toArray(), ["country" => "IT"]))); App\Models\Job::query()->update(["notified_at" => null]); App\Models\SentNotification::query()->delete();'`
+  3. Run `php artisan native:run` and wait up to 6 minutes.
+  4. Run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='dump(App\Models\SourceRun::query()->latest("id")->take(6)->get(["source", "started_at", "error_kind"])->toArray(), App\Models\SentNotification::query()->get(["sent_at", "text"])->toArray());'`
+- Expected: in step 3 a native notification appears, with the title "Sudo Hire" and a text like "6 new jobs: 4 Laravel, 2 PHP". Step 4 shows source runs from the last minutes and one sent notification with the same text. macOS can first ask to allow notifications for the app: allow them. If there are 0 new matches, no notification appears and step 4 shows no sent notification: set fewer filters and do steps 2 and 3 again.
+
+## M7: A click on the notification opens the menu bar list
+
+- Added: 2026-11-01, branch m7/native-scheduler
+- Why manual: tests fake the internal API. The cloud container cannot open the menu bar or click a notification.
+- Setup: as for "M7: The app scans on its own and shows a native notification", with the app still running.
+- Steps:
+  1. Do steps 2 and 3 of "M7: The app scans on its own and shows a native notification", so that a notification appears.
+  2. Click the notification.
+- Expected: the menu bar list opens under the menu bar icon. Before M8 the list can be empty or show the placeholder page.
+
+## M7: No notification with no settings stored
+
+- Added: 2026-11-01, branch m7/native-scheduler
+- Why manual: tests fake the scheduler and the internal API.
+- Setup: as for "M7: The app scans on its own and shows a native notification", with the app not running.
+- Steps:
+  1. Remove the stored settings and make the sources due: run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='App\Models\StoredSettings::query()->delete(); App\Models\Job::query()->update(["notified_at" => null]); App\Models\SentNotification::query()->delete(); App\Models\SourceRun::query()->each(fn ($r) => $r->update(["started_at" => $r->started_at->subDay()]));'`
+  2. Run `php artisan native:run` and wait up to 6 minutes.
+  3. Run step 4 of "M7: The app scans on its own and shows a native notification".
+- Expected: no notification appears. Step 3 shows new source runs from the last minutes and no sent notification.
+
+## M7: hire:scan in a terminal still uses osascript
+
+- Added: 2026-11-01, branch m7/native-scheduler
+- Why manual: the cloud container has no `osascript` and no macOS notifications.
+- Setup: as for "M6c: Scan shows a macOS notification". The app does not need to run. The settings in `database/database.sqlite` must have a country.
+- Steps:
+  1. Do steps 1 and 2 of "M6c: Scan shows a macOS notification".
+- Expected: the same result as in that check: "Notification sent: ..." and a macOS notification from Script Editor, not from the app. With no country in the settings, the command prints "No notification: set your country first." and no notification appears.

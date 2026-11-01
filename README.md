@@ -22,6 +22,12 @@ Every job keeps its source name, its original link and its original apply link.
 
 Laravel, NativePHP, PHP 8.4, SQLite, Vue 3 with TypeScript, Tailwind CSS.
 
+## Scans in the app
+
+While the app runs, it starts a scan every 5 minutes on its own. It shows a native notification when there are new matches, and a click on it opens the menu bar list. You do not need launchd or cron for the app. They are for scans without the app.
+
+With no country in the settings, a scan stores the jobs but sends no notification.
+
 ## Run a scan from the terminal
 
 One scan fetches the sources that are due, filters the new jobs, prints the matches and sends one summary notification when it is due. It does not need the app.

@@ -798,3 +798,29 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the timezone filter is named "Time difference" in REQUIREMENTS section 8 and in the error message. The settings key stays `timezoneOverlapHours`, so stored settings keep working.
 - Reason: the UI design offers 14 and 30 days for users who check less often. Jobs are kept for 30 days after they were last seen, so 30 days is the longest useful window. The filter keeps a job when its timezones are within ±N hours of the user's UTC offset, so "time difference" describes it better than "overlap".
 - Replaces: "24h, 3 days, 7 days" in REQUIREMENTS section 8
+
+## 2026-11-01: Scan cadence in the app
+
+- Milestone: M7
+- Decision: `routes/console.php` schedules `hire:scan` every 5 minutes. NativePHP starts `schedule:run` every minute while the app runs, so the schedule runs only while the app runs.
+- Decision: the schedule has no `withoutOverlapping()`. The command is isolated already.
+- Decision: a scan fetches only the sources that are due, so a scan with no due source ends in under a second. After the Mac wakes, the next scan starts within 5 minutes.
+- Reason: approved in the M7 brief (REQUIREMENTS section 10).
+- Replaces: none
+
+## 2026-11-01: No country, no notification
+
+- Milestone: M7
+- Decision: when the settings have no country, a scan runs the sources, prunes and filters as usual, but sends no notification and sets no `notified_at`. The outcome is `NotificationOutcome::NoCountry`. `hire:scan` prints "No notification: set your country first." With `--no-notify`, the outcome stays "off".
+- Decision: the M6c tests now store the country IT, and their jobs are open worldwide unless a test changes it. The M6c rules do not change.
+- Reason: approved in the M7 brief. Without a country the eligibility filter is off, so the matches cannot be trusted. M8 onboarding sets the country.
+- Replaces: none
+
+## 2026-11-01: Notifier choice and the click on the summary
+
+- Milestone: M7
+- Decision: inside the app (`nativephp-internal.running` is true), `AppServiceProvider` binds `Notifier` to `NativeNotifier`. Outside the app (terminal, cron, launchd), it binds `MacNotifier` (`osascript`). This binding replaces the `#[Bind]` attribute on `Notifier`.
+- Decision: `NativeNotifier` posts the title "Sudo Hire", the summary text and the fixed reference `sudo-hire-summary` to the internal API. It gets `Native\Desktop\Notification`, the class behind the facade, so PHPStan knows the types. The internal API gives the reference back only when it shows the notification. A missing reference or a failed request throws `NotificationFailed`, so the M6c rules apply.
+- Decision: the listener `App\Listeners\OpenListOnSummaryClick` opens the menu bar list with `MenuBar::show()` when the reference of `NotificationClicked` is `sudo-hire-summary`. It ignores other references. Laravel finds the listener in `app/Listeners`, so no provider registers it.
+- Reason: approved in the M7 brief (REQUIREMENTS section 10). The fixed reference is the only link between the notification and the click event.
+- Replaces: none
