@@ -73,3 +73,26 @@ it('passes a job with no description when the setting is on', function () {
 
     expect(KeywordFilter::passesExclude(Make::job(['description' => null]), $settings))->toBeTrue();
 });
+
+it('gives the first include keyword that matches, in the order of the settings', function (string $title, array $tags, array $include, ?string $first) {
+    $job = Make::job(['title' => $title, 'tags' => $tags]);
+
+    expect(KeywordFilter::firstInclude($job, Make::settings(['keywordsInclude' => $include])))->toBe($first);
+})->with([
+    'no include keywords' => [LARAVEL_TITLE, [], [], null],
+    'no keyword matches' => [LARAVEL_TITLE, [], ['symfony', 'django'], null],
+    'one keyword matches' => [LARAVEL_TITLE, [], ['symfony', 'Laravel'], 'Laravel'],
+    'two keywords match, the first in the settings wins' => [LARAVEL_TITLE, [], ['PHP', 'Laravel'], 'PHP'],
+    'two keywords match, other order' => [LARAVEL_TITLE, [], ['Laravel', 'PHP'], 'Laravel'],
+    'keyword in a tag' => [BACKEND_TITLE, BACKEND_TAGS, ['rails', 'node.js'], 'node.js'],
+    'same whole word rule as the filter' => [BACKEND_TITLE, BACKEND_TAGS, ['c', 'c#'], 'c#'],
+]);
+
+it('gives the first include keyword in the description only when the setting is on', function (bool $matchDescription, ?string $first) {
+    $job = Make::job(['title' => BACKEND_TITLE, 'description' => OTE_TEXT]);
+
+    expect(KeywordFilter::firstInclude($job, Make::settings(['keywordsInclude' => ['sales'], 'matchDescription' => $matchDescription])))->toBe($first);
+})->with([
+    'setting off' => [false, null],
+    'setting on' => [true, 'sales'],
+]);

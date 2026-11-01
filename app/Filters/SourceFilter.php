@@ -6,12 +6,15 @@ use App\Schema\NormalisedJob;
 use App\Settings\Settings;
 
 /**
- * The job's source is not disabled. Pure: no I/O.
+ * The job's source, or one of its "also on" sources, is not disabled. Pure: no I/O.
  */
 final class SourceFilter
 {
-    public static function passes(NormalisedJob $job, Settings $settings): bool
+    /**
+     * @param  list<string>  $alsoOn  the keys of the job's "also on" sources
+     */
+    public static function passes(NormalisedJob $job, Settings $settings, array $alsoOn = []): bool
     {
-        return ! in_array($job->source, $settings->disabledSources, true);
+        return array_diff([$job->source, ...$alsoOn], $settings->disabledSources) !== [];
     }
 }
