@@ -17,4 +17,8 @@ it('passes a job posted within the hours of the setting', function (string $post
     '4 days ago, 3 days' => ['2026-10-26T12:00:00Z', 72, false],
     '6 days ago, 7 days' => ['2026-10-24T12:00:00Z', 168, true],
     '8 days ago, 7 days' => ['2026-10-22T12:00:00Z', 168, false],
+    '13 days ago, 14 days' => ['2026-10-17T12:00:00Z', 336, true],
+    '15 days ago, 14 days' => ['2026-10-15T12:00:00Z', 336, false],
+    '29 days ago, 30 days' => ['2026-10-01T12:00:00Z', 720, true],
+    '31 days ago, 30 days' => ['2026-09-29T12:00:00Z', 720, false],
 ]);

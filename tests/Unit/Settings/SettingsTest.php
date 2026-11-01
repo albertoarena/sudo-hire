@@ -87,6 +87,10 @@ it('trims the lists and removes empty and repeated entries', function () {
         ->and($settings->companyBlocklist)->toBe(['Acme']);
 });
 
+it('accepts each posted within value', function (int $hours) {
+    expect(Settings::fromArray(['country' => 'IT', 'timezone' => 'Europe/Rome', 'postedWithinHours' => $hours])->postedWithinHours)->toBe($hours);
+})->with([24, 72, 168, 336, 720]);
+
 it('rejects invalid values', function (array $data) {
     Settings::fromArray($data);
 })->throws(InvalidSettings::class)->with([
@@ -107,6 +111,7 @@ it('rejects invalid values', function (array $data) {
     'no seniority' => [['seniorities' => []]],
     'unknown seniority' => [['seniorities' => ['unknown']]],
     'posted within 48 hours' => [['postedWithinHours' => 48]],
+    'posted within 60 days' => [['postedWithinHours' => 1440]],
     'display currency CHF' => [['displayCurrency' => 'CHF']],
     '15 monthly payments' => [['monthlyPayments' => 15]],
     'zero hours per day' => [['hoursPerDay' => 0]],

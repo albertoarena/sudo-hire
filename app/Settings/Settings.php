@@ -18,7 +18,7 @@ use DateTimeZone;
  */
 final readonly class Settings
 {
-    private const array POSTED_WITHIN_HOURS = [24, 72, 168];
+    private const array POSTED_WITHIN_HOURS = [24, 72, 168, 336, 720];
 
     private const array MONTHLY_PAYMENTS = [12, 13, 14];
 
@@ -68,7 +68,7 @@ final readonly class Settings
         self::requireKnown('seniority', $seniorities, Seniority::Unknown);
 
         if ($timezoneOverlapHours !== null && ($timezoneOverlapHours < 0 || $timezoneOverlapHours > 12)) {
-            throw new InvalidSettings('Timezone overlap must be from 0 to 12 hours.');
+            throw new InvalidSettings('Time difference must be from 0 to 12 hours.');
         }
 
         if (($minAnnualSalary !== null && $minAnnualSalary <= 0) || ($minDayRate !== null && $minDayRate <= 0)) {
@@ -76,7 +76,7 @@ final readonly class Settings
         }
 
         if (! in_array($postedWithinHours, self::POSTED_WITHIN_HOURS, true)) {
-            throw new InvalidSettings('Posted within must be 24, 72 or 168 hours.');
+            throw new InvalidSettings('Posted within must be 24, 72, 168, 336 or 720 hours.');
         }
 
         if (! in_array($monthlyPayments, self::MONTHLY_PAYMENTS, true)) {
