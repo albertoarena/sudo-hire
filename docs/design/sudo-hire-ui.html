@@ -1,0 +1,722 @@
+<title>Sudo Hire UI</title>
+<style>
+/* Layout: a light review page; each app surface sits in its own macOS frame, side by side on wide screens, stacked on narrow ones. */
+:root {
+  --burgundy: #5E1B2B;      /* passport cover: header strip, selection, primary */
+  --burgundy-ink: #F4E8EA;  /* text on the cover */
+  --page: #F7F5F2;          /* visa page */
+  --panel: #FFFFFF;         /* controls, popover rows on hover */
+  --sunk: #EEEBE6;          /* footer, track, wells */
+  --ink: #1E2230;           /* text */
+  --ink-2: #4F5361;         /* secondary text, 7.4:1 on page */
+  --ink-3: #62666F;         /* tertiary text, 5.6:1 on page */
+  --rule: #DCD7D0;
+  --ok: #2B6648;            /* stamp: admitted */
+  --no: #A63F2A;            /* stamp: refused, errors */
+  --unk: #5F636C;           /* stamp: not stated */
+  --warn-bg: #FBEEE9;
+  --stage: #E4E0DA;         /* review page ground */
+  --focus: #8A2E44;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --shadow: 0 18px 40px -12px rgba(30, 34, 48, .28), 0 2px 6px rgba(30, 34, 48, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --burgundy: #6A2133; --burgundy-ink: #F6E9EC; --page: #1D1B1F; --panel: #29262B; --sunk: #242126;
+    --ink: #ECE8EA; --ink-2: #B7B1B6; --ink-3: #A49EA4; --rule: #3A363C;
+    --ok: #7CC29E; --no: #EE8B74; --unk: #A9A4AA; --warn-bg: #3A2522; --stage: #141215; --focus: #E59AAE;
+    --shadow: 0 18px 40px -12px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --burgundy: #6A2133; --burgundy-ink: #F6E9EC; --page: #1D1B1F; --panel: #29262B; --sunk: #242126;
+  --ink: #ECE8EA; --ink-2: #B7B1B6; --ink-3: #A49EA4; --rule: #3A363C;
+  --ok: #7CC29E; --no: #EE8B74; --unk: #A9A4AA; --warn-bg: #3A2522; --stage: #141215; --focus: #E59AAE;
+  --shadow: 0 18px 40px -12px rgba(0,0,0,.6), 0 2px 6px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--stage); color: var(--ink); font: 13px/1.45 var(--font); margin: 0;
+  -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; }
+::selection { background: color-mix(in srgb, var(--burgundy) 30%, transparent); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+button, input, select { font: inherit; color: inherit; }
+option { background: var(--panel); color: var(--ink); }
+button { cursor: pointer; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 64px; }
+
+/* Review page chrome */
+.intro { display: grid; gap: 6px; max-width: 70ch; margin-bottom: 28px; }
+.intro h1 { font-size: 22px; line-height: 1.2; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+.intro p { margin: 0; color: var(--ink-2); }
+.cmd { font-family: var(--mono); font-size: 13px; color: var(--ink); }
+.cmd b { color: var(--burgundy); font-weight: 600; }
+:root[data-theme="dark"] .cmd b { color: var(--focus); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cmd b { color: var(--focus); } }
+.theme { display: inline-flex; gap: 2px; background: var(--sunk); border-radius: 7px; padding: 2px; width: max-content; margin-top: 8px; }
+.theme button { border: 0; background: none; padding: 3px 10px; border-radius: 5px; font-size: 12px; color: var(--ink-2); }
+.theme button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 0 0 .5px var(--rule); }
+section.s { margin-top: 44px; }
+section.s > h2 { font-size: 15px; margin: 0 0 4px; }
+section.s > p.lead { margin: 0 0 16px; color: var(--ink-2); max-width: 70ch; }
+.row-frames { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start; }
+.row-frames > * { min-width: 0; max-width: 100%; }
+.intro, .legend, section.s { min-width: 0; }
+.cap { font-size: 12px; color: var(--ink-3); margin: 10px 2px 0; max-width: 400px; }
+
+/* Menu bar */
+.menubar { width: 400px; max-width: 100%; height: 26px; display: flex; justify-content: flex-end; align-items: center; gap: 14px;
+  padding: 0 10px; font-size: 12px; color: var(--ink-2); }
+.mb-icon { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 4px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
+.mb-icon svg { width: 15px; height: 15px; }
+.mb-icon b { font-size: 11px; font-weight: 600; }
+
+/* Popover */
+.pop { width: 400px; max-width: 100%; height: 640px; background: var(--page); border-radius: 11px; overflow: hidden;
+  box-shadow: var(--shadow), 0 0 0 .5px var(--rule); display: flex; flex-direction: column; position: relative; }
+.pop.short { height: 340px; }
+.strip { flex: none; height: 42px; display: flex; align-items: center; gap: 10px; padding: 0 14px;
+  background-color: var(--burgundy); color: var(--burgundy-ink);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='42' viewBox='0 0 96 42'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='.55'%3E%3Cpath stroke-opacity='.10' d='M0 6 C12 -1 36 -1 48 6 S84 13 96 6'/%3E%3Cpath stroke-opacity='.10' d='M0 12 C12 5 36 5 48 12 S84 19 96 12'/%3E%3Cpath stroke-opacity='.10' d='M0 18 C12 11 36 11 48 18 S84 25 96 18'/%3E%3Cpath stroke-opacity='.10' d='M0 24 C12 17 36 17 48 24 S84 31 96 24'/%3E%3Cpath stroke-opacity='.10' d='M0 30 C12 23 36 23 48 30 S84 37 96 30'/%3E%3Cpath stroke-opacity='.10' d='M0 36 C12 29 36 29 48 36 S84 43 96 36'/%3E%3Cpath stroke-opacity='.07' d='M0 3 C12 10 36 10 48 3 S84 -4 96 3'/%3E%3Cpath stroke-opacity='.07' d='M0 9 C12 16 36 16 48 9 S84 2 96 9'/%3E%3Cpath stroke-opacity='.07' d='M0 15 C12 22 36 22 48 15 S84 8 96 15'/%3E%3Cpath stroke-opacity='.07' d='M0 21 C12 28 36 28 48 21 S84 14 96 21'/%3E%3Cpath stroke-opacity='.07' d='M0 27 C12 34 36 34 48 27 S84 20 96 27'/%3E%3Cpath stroke-opacity='.07' d='M0 33 C12 40 36 40 48 33 S84 26 96 33'/%3E%3Cpath stroke-opacity='.07' d='M0 39 C12 46 36 46 48 39 S84 32 96 39'/%3E%3C/g%3E%3C/svg%3E"); }
+.strip .name { font-weight: 600; font-size: 13px; letter-spacing: .01em; }
+.strip .count { margin-left: auto; font-size: 12px; opacity: .92; }
+.seg-wrap { flex: none; padding: 10px 14px; border-bottom: .5px solid var(--rule); }
+.seg { display: flex; background: var(--sunk); border-radius: 7px; padding: 2px; }
+.seg button { flex: 1; border: 0; background: none; padding: 4px 0; border-radius: 5px; font-size: 12px; color: var(--ink-2); }
+.seg button[aria-selected="true"] { background: var(--panel); color: var(--ink); font-weight: 500; box-shadow: 0 0 0 .5px var(--rule), 0 1px 2px rgba(0,0,0,.06); }
+.seg .n { margin-left: 4px; color: var(--ink-3); }
+.list { flex: 1; overflow-y: auto; overscroll-behavior: contain; }
+.list::-webkit-scrollbar { width: 8px; } .list::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+
+.job { display: grid; gap: 3px; padding: 9px 14px 7px 24px; border-bottom: .5px solid var(--rule); position: relative; }
+.job:hover { background: color-mix(in srgb, var(--panel) 60%, transparent); }
+.job .dot { position: absolute; left: 10px; top: 15px; width: 7px; height: 7px; border-radius: 50%; background: var(--burgundy); }
+:root[data-theme="dark"] .job .dot { background: var(--focus); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .job .dot { background: var(--focus); } }
+.job .top { display: flex; gap: 10px; align-items: flex-start; }
+.job .t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; font-weight: 500; text-wrap: pretty; }
+.job.unseen .t { font-weight: 600; }
+.job .meta { font-size: 12px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 0 6px; }
+.job .meta .sep { color: var(--ink-3); }
+.also { font-size: 11px; color: var(--ink-2); border: .5px solid var(--rule); border-radius: 4px; padding: 0 5px; }
+.pay { font-size: 12px; display: flex; flex-wrap: wrap; gap: 0 6px; align-items: baseline; }
+.pay .conv { color: var(--ink-2); }
+.q { display: inline-grid; place-items: center; width: 16px; height: 16px; font-size: 11px; font-weight: 600;
+  border: 1px solid var(--ink-3); color: var(--ink-2); border-radius: 4px; }
+.terms { color: var(--ink-2); }
+
+/* Signature: the entry stamp */
+.stamp { flex: none; display: inline-flex; flex-direction: column; align-items: center; padding: 2px 7px 3px;
+  border: 1.5px solid currentColor; border-radius: 4px; color: var(--ok); text-transform: uppercase; line-height: 1.15;
+  transform: rotate(var(--r, -1.5deg)); }
+.stamp .c { font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+.stamp .w { font-size: 11px; font-weight: 600; letter-spacing: .06em; }
+.stamp.no { color: var(--no); } .stamp.unk { color: var(--unk); border-style: dashed; }
+.job:not(.unseen) .stamp { opacity: .92; }
+.combo ul { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 4px); margin: 0; padding: 4px; list-style: none; background: var(--panel);
+  border-radius: 8px; box-shadow: var(--shadow), 0 0 0 .5px var(--rule); max-height: 220px; overflow-y: auto; }
+.combo li { padding: 4px 8px; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+.combo li span { color: var(--ink-3); font-size: 12px; }
+.combo li[aria-selected="true"], .combo li:hover { background: var(--burgundy); color: var(--burgundy-ink); }
+.combo li[aria-selected="true"] span, .combo li:hover span { color: var(--burgundy-ink); }
+details.faq { border-bottom: .5px solid var(--rule); padding: 8px 0; }
+details.faq summary { cursor: pointer; font-weight: 500; }
+details.faq p { margin: 6px 0 2px; color: var(--ink-2); max-width: 60ch; }
+ul.plain { margin: 0; padding-left: 18px; color: var(--ink-2); display: grid; gap: 3px; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.ctl.btnrow { display: flex; justify-items: start; }
+.act { white-space: nowrap; }  /* fresh ink = unseen, faded ink = seen */
+
+.acts { display: flex; align-items: center; gap: 2px; margin: 1px 0 0 -6px; }
+.act { display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; padding: 3px 6px; border-radius: 5px;
+  font-size: 12px; color: var(--ink-2); }
+.act:hover { background: var(--sunk); color: var(--ink); }
+.act svg, .btn svg { width: 14px; height: 14px; flex: none; }
+.act[aria-pressed="true"] { color: var(--ink); font-weight: 500; }
+.sp { flex: 1; }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: .5px solid color-mix(in srgb, var(--ink) 22%, transparent); background: var(--panel);
+  border-radius: 6px; padding: 3px 10px; font-size: 12px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.btn:hover { border-color: color-mix(in srgb, var(--ink) 40%, transparent); }
+.btn.primary { background: var(--burgundy); border-color: var(--burgundy); color: var(--burgundy-ink); }
+.btn.primary:hover { filter: brightness(1.12); }
+
+.group { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; text-align: left;
+  padding: 10px 14px; font-size: 12px; color: var(--ink-2); border-bottom: .5px solid var(--rule); border-top: .5px solid var(--rule);
+  position: sticky; bottom: 0; background: var(--page); z-index: 1; margin-top: -.5px;
+  box-shadow: 0 -10px 12px -6px color-mix(in srgb, var(--page) 90%, transparent); }
+.group:hover { color: var(--ink); background: color-mix(in srgb, var(--panel) 60%, transparent); }
+.group svg { width: 14px; height: 14px; margin-left: auto; transition: transform .2s; }
+.group[aria-expanded="true"] svg { transform: rotate(90deg); }
+.group-note { padding: 8px 14px 6px 24px; font-size: 12px; color: var(--ink-2); }
+
+.empty { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 44px 28px; color: var(--ink-2); }
+.empty .big { font-size: 14px; font-weight: 600; color: var(--ink); }
+.empty .cmd { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+
+.foot { flex: none; border-top: .5px solid var(--rule); background: var(--sunk); }
+.warn { display: flex; align-items: center; gap: 8px; padding: 7px 14px; font-size: 12px; color: var(--no); background: var(--warn-bg);
+  border-bottom: .5px solid var(--rule); width: 100%; border-left: 0; border-right: 0; border-top: 0; text-align: left; }
+.warn svg { width: 14px; height: 14px; flex: none; }
+.warn .more { margin-left: auto; color: var(--ink-2); }
+.bar { display: flex; align-items: center; gap: 4px; padding: 6px 8px 7px 14px; font-size: 12px; color: var(--ink-2); }
+.bar .act { color: var(--ink); }
+
+.toast { position: absolute; left: 50%; bottom: 74px; transform: translate(-50%, 8px); opacity: 0; pointer-events: none;
+  background: var(--ink); color: var(--page); font-size: 12px; padding: 6px 12px; border-radius: 6px; transition: opacity .2s, transform .25s cubic-bezier(.2,.8,.2,1); white-space: nowrap; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.toast button { border: 0; background: none; color: inherit; text-decoration: underline; text-underline-offset: 2px; margin-left: 8px; font-size: 12px; padding: 0; }
+
+/* Stopped state */
+.stopped { flex: 1; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; padding: 28px; }
+.stopped svg.big { width: 30px; height: 30px; color: var(--no); }
+.stopped h3 { margin: 0; font-size: 14px; }
+.stopped p { margin: 0; color: var(--ink-2); max-width: 30ch; }
+
+/* Window */
+.win { width: 720px; max-width: 100%; background: var(--page); border-radius: 11px; overflow: hidden; box-shadow: var(--shadow), 0 0 0 .5px var(--rule); }
+.titlebar { height: 34px; display: flex; align-items: center; padding: 0 12px; gap: 8px; background: var(--sunk); border-bottom: .5px solid var(--rule); }
+.lights { display: flex; gap: 7px; } .lights i { width: 11px; height: 11px; border-radius: 50%; background: #E2584E; }
+.lights i:nth-child(2) { background: #E7B33D; } .lights i:nth-child(3) { background: #5DBE4B; }
+.titlebar .tt { flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: var(--ink-2); margin-right: 50px; }
+.settings { display: grid; grid-template-columns: 170px 1fr; min-height: 470px; }
+.side { background: var(--sunk); border-right: .5px solid var(--rule); padding: 10px 8px; display: grid; align-content: start; gap: 1px; }
+.side button { display: flex; align-items: center; gap: 8px; border: 0; background: none; text-align: left; padding: 5px 8px; border-radius: 6px; font-size: 13px; color: var(--ink); }
+.side button svg { width: 15px; height: 15px; color: var(--ink-2); }
+.side button[aria-selected="true"] { background: var(--burgundy); color: var(--burgundy-ink); }
+.side button[aria-selected="true"] svg { color: var(--burgundy-ink); }
+.side .bad { margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: var(--no); }
+.pane { padding: 18px 22px 22px; display: grid; align-content: start; gap: 16px; min-width: 0; }
+.pane h3 { margin: 0; font-size: 15px; }
+.pane .sub { margin: -10px 0 0; color: var(--ink-2); font-size: 12px; }
+.form { display: grid; grid-template-columns: 170px 1fr; gap: 12px 16px; align-items: start; }
+.form > label, .form > .lbl { padding-top: 4px; color: var(--ink-2); text-align: right; }
+.ctl { display: grid; gap: 6px; min-width: 0; }
+.ctl .hint { font-size: 12px; color: var(--ink-3); }
+.in, select.in { background: var(--panel); border: .5px solid color-mix(in srgb, var(--ink) 25%, transparent); border-radius: 6px; padding: 4px 8px; min-width: 0; }
+select.in { padding-right: 24px; }
+.inline { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.check { display: inline-flex; align-items: center; gap: 6px; }
+.check input { accent-color: var(--burgundy); margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; background: var(--panel); border: .5px solid color-mix(in srgb, var(--ink) 25%, transparent); border-radius: 6px; padding: 4px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; background: var(--sunk); border-radius: 4px; padding: 1px 4px 1px 7px; font-size: 12px; }
+.chip button { border: 0; background: none; padding: 2px; color: var(--ink-3); display: inline-grid; place-items: center; border-radius: 3px; }
+.chip button:hover { color: var(--ink); background: var(--rule); }
+.chips input { border: 0; background: none; outline: none; flex: 1; min-width: 80px; font-size: 12px; padding: 2px; }
+.preview { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 10px 12px; background: var(--panel); border-radius: 8px; border: .5px solid var(--rule); }
+.preview .lab { font-size: 12px; color: var(--ink-2); }
+.preview .pair { display: inline-flex; gap: 8px; align-items: center; }
+.note { font-size: 12px; color: var(--ink-2); padding: 10px 12px; border-radius: 8px; background: var(--sunk); }
+table.src { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.src th { white-space: nowrap; text-align: left; font-weight: 500; color: var(--ink-3); padding: 0 8px 6px; border-bottom: .5px solid var(--rule); }
+table.src td { padding: 8px; border-bottom: .5px solid var(--rule); vertical-align: top; }
+table.src td:first-child { padding-left: 0; width: 44px; }
+table.src td:nth-child(2) { min-width: 150px; } table.src th:first-child { padding-left: 0; }
+.status { display: inline-flex; align-items: center; gap: 6px; }
+.status i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+.status.err { color: var(--no); } .status.err i { background: var(--no); }
+.mono { font-family: var(--mono); font-size: 12px; }
+.tablewrap { overflow-x: auto; }
+.switch { appearance: none; width: 30px; height: 18px; border-radius: 9px; background: var(--rule); position: relative; margin: 0; transition: background .15s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: left .15s; }
+.switch:checked { background: var(--burgundy); } .switch:checked::after { left: 14px; }
+
+/* First run */
+.fr { width: 520px; max-width: 100%; }
+.fr .body { padding: 26px 30px 22px; display: grid; gap: 16px; min-height: 380px; align-content: start; }
+.fr .cmdline { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.fr h3 { margin: 0; font-size: 17px; text-wrap: balance; }
+.fr p { margin: 0; color: var(--ink-2); max-width: 52ch; }
+.fr .steps { display: flex; gap: 6px; } .fr .steps i { width: 22px; height: 3px; border-radius: 2px; background: var(--rule); }
+.fr .steps i.on { background: var(--burgundy); }
+.fr .nav { display: flex; gap: 8px; justify-content: flex-end; padding: 12px 18px; border-top: .5px solid var(--rule); background: var(--sunk); }
+.fr .nav .sp { flex: 1; }
+.scanlist { display: grid; gap: 6px; font-size: 12px; }
+.scanlist div { display: flex; gap: 8px; align-items: center; }
+.scanlist .ok { color: var(--ok); } .scanlist svg { width: 14px; height: 14px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; padding: 16px; background: var(--page); border-radius: 10px; box-shadow: 0 0 0 .5px var(--rule); }
+.legend .it { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--ink-2); max-width: 260px; }
+.open { columns: 2 280px; column-gap: 32px; color: var(--ink-2); padding-left: 18px; margin: 0; }
+.open li { margin-bottom: 6px; break-inside: avoid; }
+
+
+/* Icon concepts */
+.icons { display: grid; grid-template-columns: minmax(0, 420px); gap: 20px; }
+.iconcard { background: var(--page); border-radius: 10px; box-shadow: 0 0 0 .5px var(--rule); padding: 18px; display: grid; gap: 14px; align-content: start; }
+.iconcard h3 { margin: 0; font-size: 14px; }
+.iconcard p { margin: 0; color: var(--ink-2); font-size: 12px; }
+.sizes { display: flex; align-items: flex-end; gap: 18px; }
+.sizes svg { filter: drop-shadow(0 6px 10px rgba(30,34,48,.22)) drop-shadow(0 1px 2px rgba(30,34,48,.12)); }
+.bars { display: grid; gap: 6px; }
+.mbar { height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 0 10px; font-size: 12px; }
+.mbar.l { background: #E9E8EA; color: #1D1D1F; } .mbar.d { background: #2A282C; color: #F2F2F2; }
+.mbar .m { display: inline-flex; align-items: center; gap: 3px; } .mbar .m svg { width: 18px; height: 18px; } .mbar .m b { font-size: 11px; font-weight: 600; }
+
+@media (max-width: 680px) {
+  .settings { grid-template-columns: 1fr; }
+  .side { display: flex; flex-wrap: wrap; gap: 2px; border-right: 0; border-bottom: .5px solid var(--rule); }
+  .side button { flex: none; }
+  .form { grid-template-columns: 1fr; gap: 4px 0; }
+  .form > label, .form > .lbl { text-align: left; padding-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-ext" viewBox="0 0 16 16"><path d="M6 3H3.5A1.5 1.5 0 0 0 2 4.5v8A1.5 1.5 0 0 0 3.5 14h8a1.5 1.5 0 0 0 1.5-1.5V10M9 2h5v5M14 2 7.5 8.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-save" viewBox="0 0 16 16"><path d="M4 2.5h8v11l-4-3-4 3z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-saved" viewBox="0 0 16 16"><path d="M4 2.5h8v11l-4-3-4 3z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-hide" viewBox="0 0 16 16"><path d="M2 8s2.2-4 6-4 6 4 6 4-2.2 4-6 4-6-4-6-4zM3 13 13 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="8" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="m3 8.5 3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-help" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.3 6.3a1.8 1.8 0 1 1 2.4 1.7c-.5.2-.7.6-.7 1.1v.4M8 11.4v.1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 16 16"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 16 16"><path d="M8 2.2 14.5 13.5h-13z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6.5v3.2M8 11.6v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-stamp" viewBox="0 0 16 16"><rect x="2" y="3.5" width="12" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(-6 8 8)"/><path d="m5.3 8.4 1.8 1.6 3.6-3.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 16 16"><path d="M8 14.5s4.5-4.3 4.5-8A4.5 4.5 0 0 0 3.5 6.5c0 3.7 4.5 8 4.5 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="6.5" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="m10.5 10.5 3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M10 5.6A3 3 0 1 0 10 10.4M4.8 7.2h4M4.8 8.8h4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 16 16"><path d="M4 11V7a4 4 0 0 1 8 0v4l1.2 1.5H2.8zM6.5 14h3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-feed" viewBox="0 0 16 16"><path d="M3 3.5a9.5 9.5 0 0 1 9.5 9.5M3 7.5A5.5 5.5 0 0 1 8.5 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="3.8" cy="12.2" r="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-building" viewBox="0 0 16 16"><path d="M3 14V3h6v11M9 6.5h4V14M2 14h12M5 5.5h2M5 8h2M5 10.5h2M11 9h0M11 11.5h0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-power" viewBox="0 0 16 16"><path d="M8 2v6M4.6 4.2a5 5 0 1 0 6.8 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="sq"><rect x="100" y="100" width="824" height="824" rx="184"/></clipPath>
+    <symbol id="ic-c" viewBox="0 0 1024 1024"><g clip-path="url(#sq)"><rect x="100" y="100" width="824" height="824" fill="#5E1B2B"/><path d="M80 130 C 230 96, 380 96, 512 130 S 794 164, 944 130" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 143 C 230 177, 380 177, 512 143 S 794 109, 944 143" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 156 C 230 122, 380 122, 512 156 S 794 190, 944 156" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 169 C 230 203, 380 203, 512 169 S 794 135, 944 169" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 182 C 230 148, 380 148, 512 182 S 794 216, 944 182" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 195 C 230 229, 380 229, 512 195 S 794 161, 944 195" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 208 C 230 174, 380 174, 512 208 S 794 242, 944 208" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 221 C 230 255, 380 255, 512 221 S 794 187, 944 221" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 234 C 230 200, 380 200, 512 234 S 794 268, 944 234" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 247 C 230 281, 380 281, 512 247 S 794 213, 944 247" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 260 C 230 226, 380 226, 512 260 S 794 294, 944 260" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 273 C 230 307, 380 307, 512 273 S 794 239, 944 273" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 286 C 230 252, 380 252, 512 286 S 794 320, 944 286" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 299 C 230 333, 380 333, 512 299 S 794 265, 944 299" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 312 C 230 278, 380 278, 512 312 S 794 346, 944 312" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 325 C 230 359, 380 359, 512 325 S 794 291, 944 325" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 338 C 230 304, 380 304, 512 338 S 794 372, 944 338" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 351 C 230 385, 380 385, 512 351 S 794 317, 944 351" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 364 C 230 330, 380 330, 512 364 S 794 398, 944 364" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 377 C 230 411, 380 411, 512 377 S 794 343, 944 377" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 390 C 230 356, 380 356, 512 390 S 794 424, 944 390" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 403 C 230 437, 380 437, 512 403 S 794 369, 944 403" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 416 C 230 382, 380 382, 512 416 S 794 450, 944 416" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 429 C 230 463, 380 463, 512 429 S 794 395, 944 429" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 442 C 230 408, 380 408, 512 442 S 794 476, 944 442" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 455 C 230 489, 380 489, 512 455 S 794 421, 944 455" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 468 C 230 434, 380 434, 512 468 S 794 502, 944 468" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 481 C 230 515, 380 515, 512 481 S 794 447, 944 481" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 494 C 230 460, 380 460, 512 494 S 794 528, 944 494" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 507 C 230 541, 380 541, 512 507 S 794 473, 944 507" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 520 C 230 486, 380 486, 512 520 S 794 554, 944 520" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 533 C 230 567, 380 567, 512 533 S 794 499, 944 533" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 546 C 230 512, 380 512, 512 546 S 794 580, 944 546" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 559 C 230 593, 380 593, 512 559 S 794 525, 944 559" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 572 C 230 538, 380 538, 512 572 S 794 606, 944 572" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 585 C 230 619, 380 619, 512 585 S 794 551, 944 585" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 598 C 230 564, 380 564, 512 598 S 794 632, 944 598" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 611 C 230 645, 380 645, 512 611 S 794 577, 944 611" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 624 C 230 590, 380 590, 512 624 S 794 658, 944 624" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 637 C 230 671, 380 671, 512 637 S 794 603, 944 637" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 650 C 230 616, 380 616, 512 650 S 794 684, 944 650" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 663 C 230 697, 380 697, 512 663 S 794 629, 944 663" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 676 C 230 642, 380 642, 512 676 S 794 710, 944 676" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 689 C 230 723, 380 723, 512 689 S 794 655, 944 689" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 702 C 230 668, 380 668, 512 702 S 794 736, 944 702" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 715 C 230 749, 380 749, 512 715 S 794 681, 944 715" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 728 C 230 694, 380 694, 512 728 S 794 762, 944 728" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 741 C 230 775, 380 775, 512 741 S 794 707, 944 741" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 754 C 230 720, 380 720, 512 754 S 794 788, 944 754" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 767 C 230 801, 380 801, 512 767 S 794 733, 944 767" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 780 C 230 746, 380 746, 512 780 S 794 814, 944 780" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 793 C 230 827, 380 827, 512 793 S 794 759, 944 793" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 806 C 230 772, 380 772, 512 806 S 794 840, 944 806" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 819 C 230 853, 380 853, 512 819 S 794 785, 944 819" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 832 C 230 798, 380 798, 512 832 S 794 866, 944 832" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 845 C 230 879, 380 879, 512 845 S 794 811, 944 845" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 858 C 230 824, 380 824, 512 858 S 794 892, 944 858" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 871 C 230 905, 380 905, 512 871 S 794 837, 944 871" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 884 C 230 850, 380 850, 512 884 S 794 918, 944 884" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 897 C 230 931, 380 931, 512 897 S 794 863, 944 897" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/><path d="M80 910 C 230 876, 380 876, 512 910 S 794 944, 944 910" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/><path d="M80 923 C 230 957, 380 957, 512 923 S 794 889, 944 923" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+      <g transform="rotate(-8 512 512)"><rect x="242" y="352" width="540" height="320" rx="42" fill="none" stroke="#F4E8EA" stroke-width="32"/>
+      <path d="M382 512 L470 600 L644 420" fill="none" stroke="#F4E8EA" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/></g></g></symbol>
+    <mask id="mbc-mask"><rect width="18" height="18" fill="#fff"/><g transform="rotate(-8 9 9)"><path d="M5.8 9.1 7.9 11.1 12.2 6.9" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g></mask>
+    <symbol id="mb-c" viewBox="0 0 18 18"><g mask="url(#mbc-mask)"><g transform="rotate(-8 9 9)"><rect x="1.8" y="4.3" width="14.4" height="9.4" rx="1.8" fill="currentColor"/></g></g></symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>Sudo Hire: the app UI, for approval</h1>
+    <p>Every job carries an entry stamp that says if you can apply from where you live. The menu bar list, its states, the settings window and the first run are below. Click around: the controls work. Jobs, companies and sources come from a real scan on 31 October 2026. The certificate error and the stopped server are example states.</p>
+    <span class="cmd">$ sudo hire <b>--remote-from here</b></span>
+    <div class="theme" role="group" aria-label="Appearance">
+      <button type="button" data-theme-set="" aria-pressed="true">System</button>
+      <button type="button" data-theme-set="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">Dark</button>
+    </div>
+  </header>
+
+  <section class="s" aria-labelledby="h-stamps">
+    <h2 id="h-stamps">The stamp</h2>
+    <p class="lead" id="sig-lead"></p>
+    <div class="legend" id="legend">
+    </div>
+  </section>
+
+  <section class="s" aria-labelledby="h-pop">
+    <h2 id="h-pop">Menu bar list</h2>
+    <p class="lead">Opens from the menu bar icon or the summary notification. Save, Not for me and Applied move the job; Apply opens the original link of the source in your browser.</p>
+    <div class="row-frames">
+      <div>
+        <div class="menubar" aria-hidden="true"><span>Sun 1 Nov 16:12</span><span class="mb-icon"><svg><use href="#mb-c"/></svg><b id="mb-count">3</b></span></div>
+        <div class="pop" id="pop">
+          <div class="strip"><span class="name">Sudo Hire</span><span class="count" id="unseen-label">3 unseen</span></div>
+          <div class="seg-wrap"><div class="seg" role="tablist" aria-label="Job lists">
+            <button role="tab" aria-selected="true" data-tab="new">New<span class="n" id="n-new">4</span></button>
+            <button role="tab" aria-selected="false" data-tab="saved">Saved<span class="n" id="n-saved">0</span></button>
+            <button role="tab" aria-selected="false" data-tab="applied">Applied<span class="n" id="n-applied">0</span></button>
+          </div></div>
+          <div class="list" id="list" role="tabpanel"></div>
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+          <div class="foot">
+            <button class="warn" type="button" data-goto="sources"><svg><use href="#i-warn"/></svg>We Work Remotely: certificate error<span class="more">Details</span></button>
+            <div class="bar"><span>Last scan 16:05, next 18:05</span><span class="sp"></span>
+              <button class="act" type="button" data-goto="where"><svg><use href="#i-gear"/></svg>Settings</button>
+              <button class="act" type="button"><svg><use href="#i-power"/></svg>Quit</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; gap:28px">
+        <div>
+          <div class="pop short">
+            <div class="strip"><span class="name">Sudo Hire</span><span class="count">0 unseen</span></div>
+            <div class="seg-wrap"><div class="seg"><button aria-selected="true">New<span class="n">0</span></button><button>Saved<span class="n">2</span></button><button>Applied<span class="n">1</span></button></div></div>
+            <div class="list"><div class="empty"><span class="big">Nothing new since 16:05</span><span>Next scan at 18:05. You get one notification when new jobs match.</span></div></div>
+          </div>
+          <p class="cap">Empty: no new matches. Says when the next scan runs.</p>
+        </div>
+        <div>
+          <div class="pop short">
+            <div class="strip"><span class="name">Sudo Hire</span></div>
+            <div class="stopped"><svg class="big"><use href="#i-warn"/></svg><h3>Sudo Hire stopped in the background</h3><p>The app cannot scan for new jobs until it starts again. Your saved jobs are safe.</p><button class="btn primary" type="button">Restart Sudo Hire</button></div>
+          </div>
+          <p class="cap">The internal server stopped (see AGENTS.md, NativePHP notes).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" aria-labelledby="h-set" id="settings-section">
+    <h2 id="h-set">Settings</h2>
+    <p class="lead">One window, eight panes. Set once on the first run, changed rarely. The preview shows how jobs look for your country.</p>
+    <div class="win">
+      <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span class="tt" id="win-title">Where you work</span></div>
+      <div class="settings">
+        <nav class="side" role="tablist" aria-label="Settings">
+          <button role="tab" data-pane="where" aria-selected="true"><svg><use href="#i-pin"/></svg>Where you work</button>
+          <button role="tab" data-pane="jobs" aria-selected="false"><svg><use href="#i-search"/></svg>Jobs</button>
+          <button role="tab" data-pane="pay" aria-selected="false"><svg><use href="#i-coin"/></svg>Pay</button>
+          <button role="tab" data-pane="notify" aria-selected="false"><svg><use href="#i-bell"/></svg>Notifications</button>
+          <button role="tab" data-pane="sources" aria-selected="false"><svg><use href="#i-feed"/></svg>Sources<span class="bad" title="1 source has an error"></span></button>
+          <button role="tab" data-pane="companies" aria-selected="false"><svg><use href="#i-building"/></svg>Companies</button>
+          <button role="tab" data-pane="privacy" aria-selected="false"><svg><use href="#i-lock"/></svg>Privacy</button>
+          <button role="tab" data-pane="help" aria-selected="false"><svg><use href="#i-help"/></svg>Troubleshooting</button>
+        </nav>
+
+        <div class="pane" data-panel="where">
+          <h3>Where you work</h3><p class="sub">Jobs must accept people in your country.</p>
+          <div class="form">
+            <label for="country">Country</label>
+            <div class="ctl"><div class="combo" data-combo="country"><input class="in" id="country" role="combobox" aria-expanded="false" aria-controls="country-list" aria-autocomplete="list" value="Italy" autocomplete="off"><ul id="country-list" role="listbox" hidden></ul></div><span class="hint">Type to search all countries.</span></div>
+            <span class="lbl">Preview</span>
+            <div class="ctl"><div class="preview" id="stamp-preview"></div><span class="hint">How two real jobs look for the country you choose.</span></div>
+            <label for="tz">Timezone</label>
+            <div class="ctl"><select class="in" id="tz"><option>Europe/Rome</option></select><span class="hint">Read from your Mac.</span></div>
+            <span class="lbl">Work mode</span>
+            <div class="ctl inline"><label class="check"><input type="checkbox" checked>Remote</label><label class="check"><input type="checkbox">Hybrid</label><label class="check"><input type="checkbox">On-site</label></div>
+            <label for="unk">Location not stated</label>
+            <div class="ctl"><select class="in" id="unk"><option selected>Show apart from matches</option><option>Hide</option><option>Show with matches</option></select><span class="hint">Many jobs do not say where you can work from.</span></div>
+            <label for="ovl">Time difference</label>
+            <div class="ctl"><div class="inline"><select class="in" id="ovl"><option value="" selected>Off</option><option value="1">Up to 1 hour</option><option value="2">Up to 2 hours</option><option value="3">Up to 3 hours</option><option value="4">Up to 4 hours</option><option value="5">Up to 5 hours</option><option value="6">Up to 6 hours</option><option value="custom">Custom…</option></select><span id="ovl-custom" hidden><input class="in" type="number" min="0" max="12" value="9" id="ovl-n" style="width:64px" aria-label="Hours"> hours</span></div><span class="hint" id="ovl-hint">Keeps jobs whose timezone is at most this far from yours. Jobs that do not state a timezone always show.</span></div>
+          </div>
+        </div>
+
+        <div class="pane" data-panel="jobs" hidden>
+          <h3>Jobs</h3><p class="sub">Keywords match the title and tags, as whole words.</p>
+          <div class="form">
+            <span class="lbl">Include</span>
+            <div class="ctl"><div class="chips" data-chips><span class="chip">laravel<button aria-label="Remove laravel"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span><span class="chip">php<button aria-label="Remove php"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span><input aria-label="Add a keyword" placeholder="Add a keyword"></div><span class="hint">The notification groups jobs by these, in this order: "6 new jobs: 4 Laravel, 2 PHP".</span></div>
+            <span class="lbl">Exclude</span>
+            <div class="ctl"><div class="chips" data-chips><span class="chip">wordpress<button aria-label="Remove wordpress"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span><input aria-label="Add a keyword to exclude" placeholder="Add a keyword"></div></div>
+            <span class="lbl"></span>
+            <div class="ctl"><label class="check"><input type="checkbox">Also match the job description</label></div>
+            <span class="lbl">Contract</span>
+            <div class="ctl inline"><label class="check"><input type="checkbox" checked>Full time</label><label class="check"><input type="checkbox" checked>Part time</label><label class="check"><input type="checkbox" checked>Contract</label></div>
+            <span class="lbl">Seniority</span>
+            <div class="ctl inline"><label class="check"><input type="checkbox" checked>Junior</label><label class="check"><input type="checkbox" checked>Mid</label><label class="check"><input type="checkbox" checked>Senior</label><label class="check"><input type="checkbox" checked>Lead</label></div>
+            <label for="posted">Posted within</label>
+            <div class="ctl"><select class="in" id="posted"><option>24 hours</option><option selected>3 days</option><option>7 days</option><option>14 days</option><option>30 days</option></select><span class="hint">Jobs are kept for 30 days.</span></div>
+            <span class="lbl">Hide companies</span>
+            <div class="ctl"><div class="chips" data-chips><input aria-label="Add a company to hide" placeholder="Add a company"></div></div>
+          </div>
+        </div>
+
+        <div class="pane" data-panel="pay" hidden>
+          <h3>Pay</h3><p class="sub">Filters compare converted amounts. The job always shows the original too.</p>
+          <div class="form">
+            <label for="cur">Show amounts in</label>
+            <div class="ctl"><select class="in" id="cur"><option selected>EUR</option><option>USD</option><option>GBP</option></select></div>
+            <label for="minyr">Minimum per year</label>
+            <div class="ctl"><input class="in" id="minyr" value="€60,000" style="max-width:160px"><span class="hint">For employee jobs.</span></div>
+            <label for="payments">Payments per year</label>
+            <div class="ctl"><select class="in" id="payments"><option selected>12</option><option>13</option><option>14</option></select><span class="hint">Monthly salaries are multiplied by this. Italian offers often quote 13 or 14.</span></div>
+            <label for="minday">Minimum per day</label>
+            <div class="ctl"><input class="in" id="minday" placeholder="Off" style="max-width:160px"><span class="hint">For contract jobs. Hourly rates count 8 hours a day.</span></div>
+            <label for="unks">Salary not stated</label>
+            <div class="ctl"><select class="in" id="unks"><option selected>Show with "?"</option><option>Hide</option></select></div>
+          </div>
+          <div class="note">Rates: European Central Bank reference rates of 29 October 2026, checked once a day. Amounts marked ≈ are converted.</div>
+        </div>
+
+        <div class="pane" data-panel="notify" hidden>
+          <h3>Notifications</h3><p class="sub">One summary, only when there is something new.</p>
+          <div class="form">
+            <label for="every">Notify at most every</label>
+            <div class="ctl"><div class="inline"><input type="range" id="every" min="1" max="24" value="2" style="accent-color:var(--burgundy)"><span id="every-v">2 hours</span></div></div>
+            <span class="lbl">Example</span>
+            <div class="ctl"><div class="preview"><svg style="width:16px;height:16px;color:var(--ink-2)"><use href="#i-stamp"/></svg><span><b>Sudo Hire</b><br><span class="lab">6 new jobs: 4 Laravel, 2 PHP</span></span></div><span class="hint">No notification when no new job matches.</span></div>
+          </div>
+        </div>
+
+        <div class="pane" data-panel="sources" hidden>
+          <h3>Sources</h3><p class="sub">Each source is read no more often than its terms allow.</p>
+          <div class="tablewrap"><table class="src">
+            <thead><tr><th>On</th><th>Source</th><th>Last read</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><input type="checkbox" class="switch" checked aria-label="Company career pages"></td><td>Company career pages<br><span class="hint" style="color:var(--ink-3)">4 companies, <span style="white-space:nowrap">every 6 hours</span></span></td><td>16:05</td><td><span class="status"><i></i>410 jobs</span></td></tr>
+              <tr><td><input type="checkbox" class="switch" checked aria-label="LaraJobs"></td><td>LaraJobs</td><td>16:05</td><td><span class="status"><i></i>5 jobs</span></td></tr>
+              <tr><td><input type="checkbox" class="switch" checked aria-label="Jobicy"></td><td>Jobicy</td><td>16:05</td><td><span class="status"><i></i>0 jobs</span></td></tr>
+              <tr><td><input type="checkbox" class="switch" checked aria-label="Remotive"></td><td>Remotive</td><td>14:05</td><td><span class="status"><i></i>13 jobs</span></td></tr>
+              <tr><td><input type="checkbox" class="switch" checked aria-label="Himalayas"></td><td>Himalayas</td><td>16:05</td><td><span class="status"><i></i>38 jobs</span></td></tr>
+              <tr><td><input type="checkbox" class="switch" checked aria-label="We Work Remotely"></td><td>We Work Remotely</td><td>12:05</td><td><span class="status err"><i></i>Certificate error</span><br><span style="color:var(--ink-2)">The secure connection failed. Sudo Hire tries again at the next scan. If it continues, update the app.</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+
+        <div class="pane" data-panel="companies" hidden>
+          <h3>Companies</h3><p class="sub">Career pages that Sudo Hire reads directly. Most good jobs are here, not on boards.</p>
+          <div class="tablewrap"><table class="src">
+            <thead><tr><th>Company</th><th>Career page</th><th>Last read</th><th></th></tr></thead>
+            <tbody id="companies"></tbody>
+          </table></div>
+          <form class="inline" id="add-co"><select class="in" id="ats" aria-label="Career page provider"><option>Greenhouse</option><option>Lever</option><option>Ashby</option><option>Personio</option></select><input class="in" id="slug" placeholder="Company name in the link, e.g. gitlab" aria-label="Company name in the link" style="flex:1;min-width:160px"><button class="btn" type="submit">Add</button></form>
+        </div>
+
+        <div class="pane" data-panel="privacy" hidden>
+          <h3>Privacy</h3><p class="sub">Everything stays on your Mac. No account, no telemetry.</p>
+          <div class="form">
+            <span class="lbl">Sudo Hire contacts</span>
+            <div class="ctl"><ul class="plain"><li>The job boards that you keep on, at most once an hour.</li><li>The career pages of the companies that you add, at most every 6 hours.</li><li>The European Central Bank, once a day, for exchange rates.</li></ul><span class="hint">Search words are fixed (php, laravel). Your keywords never leave your Mac.</span></div>
+            <span class="lbl">Stored on your Mac</span>
+            <div class="ctl"><ul class="plain"><li>Jobs, for 30 days. Saved jobs stay until you remove them.</li><li>Your settings and the companies that you add.</li><li>Exchange rates and a log file with warnings and errors.</li></ul></div>
+            <span class="lbl"></span>
+            <div class="ctl btnrow"><button class="btn" type="button">Show data folder in Finder</button><a class="btn" href="https://github.com/albertoarena/sudo-hire/blob/main/PRIVACY.md" target="_blank" rel="noopener">Read the privacy policy <svg aria-hidden="true"><use href="#i-ext"/></svg></a></div>
+          </div>
+        </div>
+
+        <div class="pane" data-panel="help" hidden>
+          <h3>Troubleshooting</h3><p class="sub">Most problems come from one source, or from a filter that is too strict.</p>
+          <div class="note" style="display:flex;gap:8px;align-items:center"><span class="status err"><i></i></span><span>We Work Remotely: certificate error at 12:05. Other sources are fine.</span><button class="act" type="button" data-pane-go="sources" style="margin-left:auto">Show sources</button></div>
+          <div>
+            <details class="faq"><summary>No new jobs for days</summary><p>Check Posted within and your keywords in Jobs. In Where you work, a short time difference or "Hide" for Location not stated also removes many jobs.</p></details>
+            <details class="faq"><summary>A source shows "Certificate error"</summary><p>The secure connection to the source failed. A network filter or an old certificate list can cause it. Update Sudo Hire. If it continues, report the problem.</p></details>
+            <details class="faq"><summary>No notifications</summary><p>Open System Settings, Notifications, Sudo Hire, and allow notifications. Sudo Hire only notifies when new jobs match.</p></details>
+            <details class="faq"><summary>"Stopped in the background"</summary><p>The part of the app that reads sources stopped. Choose Restart in the menu bar list. Your jobs and settings are safe.</p></details>
+          </div>
+          <div class="btnrow"><button class="btn" type="button">Open log folder</button><button class="btn" type="button" id="diag">Copy diagnostic report</button><a class="btn primary" href="https://github.com/albertoarena/sudo-hire/issues/new" target="_blank" rel="noopener">Report a problem <svg aria-hidden="true"><use href="#i-ext"/></svg></a></div>
+          <span style="color:var(--ink-3);font-size:12px">The report has the app version, the macOS version and the status of each source. It has no settings, keywords or jobs.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" aria-labelledby="h-fr">
+    <h2 id="h-fr">First run</h2>
+    <p class="lead">Three short steps, then the first scan. Everything can change later in Settings.</p>
+    <div class="win fr">
+      <div class="titlebar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span class="tt">Welcome to Sudo Hire</span></div>
+      <div class="body" id="fr-body"></div>
+      <div class="nav"><div class="steps" id="fr-steps" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="sp"></span><button class="btn" type="button" id="fr-back">Back</button><button class="btn primary" type="button" id="fr-next">Next</button></div>
+    </div>
+  </section>
+
+
+  <section class="s" aria-labelledby="h-icon">
+    <h2 id="h-icon">Icon</h2>
+    <p class="lead">The stamp in light ink on the burgundy cover: the same picture as the header strip and the job stamps. The app icon is shown at 128, 64 and 32 pixels; the menu bar mark is a one-color template icon, as macOS needs. The final drawing for every macOS size comes with the release work.</p>
+    <div class="icons">
+      <div class="iconcard"><h3>Stamp on cover</h3>
+        <div class="sizes"><svg width="128" height="128" role="img" aria-label="C. Stamp on cover app icon"><use href="#ic-c"/></svg><svg width="64" height="64" aria-hidden="true"><use href="#ic-c"/></svg><svg width="32" height="32" aria-hidden="true"><use href="#ic-c"/></svg></div>
+        <div class="bars"><div class="mbar l"><span>Sun 1 Nov 16:12</span><span class="m"><svg><use href="#mb-c"/></svg><b>3</b></span></div><div class="mbar d"><span>Sun 1 Nov 16:12</span><span class="m"><svg><use href="#mb-c"/></svg><b>3</b></span></div></div>
+        <p>The mark is a solid stamp with the check cut out, tilted by 8 degrees so it never reads as a plain checkbox.</p></div>
+    </div>
+  </section>
+
+  <section class="s" aria-labelledby="h-open">
+    <h2 id="h-open">Open for later</h2>
+    <ul class="open">
+            <li>Clicking the notification opens this list (M7).</li>
+      <li>Saved, Not for me and Applied need storage that the app does not have yet (M8).</li>
+      <li>Keyboard: arrow keys move between jobs, Return opens Apply, S saves.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(() => {
+  const icon = id => `<svg aria-hidden="true"><use href="#${id}"/></svg>`;
+  const jobs = [
+    { id: 1, t: 'Senior Full Stack PHP Developer, Product Catalogue and Quoting', co: 'RestaurantSupply.com', src: 'Himalayas', age: '2 days ago', st: ['IT', 'Admitted'], pay: null, terms: 'Full time, Senior', state: 'new', unseen: true, r: '-1.5deg' },
+    { id: 2, t: 'SR. PHP DEVELOPER (LARAVEL OR SYMFONY)', co: 'REIZ TECH UAB', src: 'Himalayas', age: '3 days ago', st: ['Europe', 'Admitted'], pay: ['€5,500 - €7,000 / month', '≈ €66k - €84k / year'], terms: 'Full time, Senior', state: 'new', unseen: true, r: '1deg' },
+    { id: 3, t: 'Senior PHP/Symfony Engineer, Integrations & Automation', co: 'RestaurantSupply.com', src: 'Himalayas', age: '3 days ago', st: ['IT', 'Admitted'], pay: null, terms: 'Full time, Senior', state: 'new', unseen: true, r: '-.6deg' },
+    { id: 4, t: 'Software Engineer (PHP)', co: 'SDF Systems', src: 'Himalayas', also: 'We Work Remotely', age: '3 days ago', st: ['Europe', 'Admitted'], pay: null, terms: 'Full time', state: 'new', unseen: false, r: '1.8deg' },
+  ];
+  const notStated = [
+    { t: 'Backend Product Software Engineer', co: 'Dropbox', src: 'We Work Remotely', age: '1 day ago' },
+    { t: 'Backend / Platform Developer Consultant (Temporal & Kubernetes)', co: 'Bitovi', src: 'We Work Remotely', age: '3 days ago' },
+  ];
+  let tab = 'new', groupOpen = false, lastUndo = null;
+  const $ = s => document.querySelector(s);
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+  const COUNTRIES = [["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],["AS","American Samoa"],["AD","Andorra"],["AO","Angola"],["AI","Anguilla"],["AQ","Antarctica"],["AG","Antigua and Barbuda"],["AR","Argentina"],["AM","Armenia"],["AW","Aruba"],["AU","Australia"],["AT","Austria"],["AZ","Azerbaijan"],["BS","Bahamas"],["BH","Bahrain"],["BD","Bangladesh"],["BB","Barbados"],["BY","Belarus"],["BE","Belgium"],["BZ","Belize"],["BJ","Benin"],["BM","Bermuda"],["BT","Bhutan"],["BO","Bolivia"],["BQ","Bonaire, Sint Eustatius and Saba"],["BA","Bosnia and Herzegovina"],["BW","Botswana"],["BV","Bouvet Island"],["BR","Brazil"],["IO","British Indian Ocean Territory"],["VG","British Virgin Islands"],["BN","Brunei"],["BG","Bulgaria"],["BF","Burkina Faso"],["BI","Burundi"],["CV","Cabo Verde"],["KH","Cambodia"],["CM","Cameroon"],["CA","Canada"],["KY","Cayman Islands"],["CF","Central African Republic"],["TD","Chad"],["CL","Chile"],["CN","China"],["CX","Christmas Island"],["CC","Cocos (Keeling) Islands"],["CO","Colombia"],["KM","Comoros"],["CG","Congo"],["CK","Cook Islands"],["CR","Costa Rica"],["HR","Croatia"],["CU","Cuba"],["CW","Curaçao"],["CY","Cyprus"],["CZ","Czechia"],["CI","Côte d'Ivoire"],["CD","Democratic Republic of the Congo"],["DK","Denmark"],["DJ","Djibouti"],["DM","Dominica"],["DO","Dominican Republic"],["EC","Ecuador"],["EG","Egypt"],["SV","El Salvador"],["GQ","Equatorial Guinea"],["ER","Eritrea"],["EE","Estonia"],["SZ","Eswatini"],["ET","Ethiopia"],["FK","Falkland Islands"],["FO","Faroe Islands"],["FJ","Fiji"],["FI","Finland"],["FR","France"],["GF","French Guiana"],["PF","French Polynesia"],["TF","French Southern Territories"],["GA","Gabon"],["GM","Gambia"],["GE","Georgia"],["DE","Germany"],["GH","Ghana"],["GI","Gibraltar"],["GR","Greece"],["GL","Greenland"],["GD","Grenada"],["GP","Guadeloupe"],["GU","Guam"],["GT","Guatemala"],["GG","Guernsey"],["GN","Guinea"],["GW","Guinea-Bissau"],["GY","Guyana"],["HT","Haiti"],["HM","Heard Island and McDonald Islands"],["VA","Holy See"],["HN","Honduras"],["HK","Hong Kong"],["HU","Hungary"],["IS","Iceland"],["IN","India"],["ID","Indonesia"],["IR","Iran"],["IQ","Iraq"],["IE","Ireland"],["IM","Isle of Man"],["IL","Israel"],["IT","Italy"],["JM","Jamaica"],["JP","Japan"],["JE","Jersey"],["JO","Jordan"],["KZ","Kazakhstan"],["KE","Kenya"],["KI","Kiribati"],["KW","Kuwait"],["KG","Kyrgyzstan"],["LA","Laos"],["LV","Latvia"],["LB","Lebanon"],["LS","Lesotho"],["LR","Liberia"],["LY","Libya"],["LI","Liechtenstein"],["LT","Lithuania"],["LU","Luxembourg"],["MO","Macao"],["MG","Madagascar"],["MW","Malawi"],["MY","Malaysia"],["MV","Maldives"],["ML","Mali"],["MT","Malta"],["MH","Marshall Islands"],["MQ","Martinique"],["MR","Mauritania"],["MU","Mauritius"],["YT","Mayotte"],["MX","Mexico"],["FM","Micronesia"],["MD","Moldova"],["MC","Monaco"],["MN","Mongolia"],["ME","Montenegro"],["MS","Montserrat"],["MA","Morocco"],["MZ","Mozambique"],["MM","Myanmar"],["NA","Namibia"],["NR","Nauru"],["NP","Nepal"],["NL","Netherlands"],["NC","New Caledonia"],["NZ","New Zealand"],["NI","Nicaragua"],["NE","Niger"],["NG","Nigeria"],["NU","Niue"],["NF","Norfolk Island"],["KP","North Korea"],["MK","North Macedonia"],["MP","Northern Mariana Islands"],["NO","Norway"],["OM","Oman"],["PK","Pakistan"],["PW","Palau"],["PS","Palestine"],["PA","Panama"],["PG","Papua New Guinea"],["PY","Paraguay"],["PE","Peru"],["PH","Philippines"],["PN","Pitcairn"],["PL","Poland"],["PT","Portugal"],["PR","Puerto Rico"],["QA","Qatar"],["RO","Romania"],["RU","Russia"],["RW","Rwanda"],["RE","Réunion"],["BL","Saint Barthélemy"],["SH","Saint Helena"],["KN","Saint Kitts and Nevis"],["LC","Saint Lucia"],["MF","Saint Martin"],["PM","Saint Pierre and Miquelon"],["VC","Saint Vincent and the Grenadines"],["WS","Samoa"],["SM","San Marino"],["ST","Sao Tome and Principe"],["SA","Saudi Arabia"],["SN","Senegal"],["RS","Serbia"],["SC","Seychelles"],["SL","Sierra Leone"],["SG","Singapore"],["SX","Sint Maarten"],["SK","Slovakia"],["SI","Slovenia"],["SB","Solomon Islands"],["SO","Somalia"],["ZA","South Africa"],["GS","South Georgia and the South Sandwich Islands"],["KR","South Korea"],["SS","South Sudan"],["ES","Spain"],["LK","Sri Lanka"],["SD","Sudan"],["SR","Suriname"],["SJ","Svalbard and Jan Mayen"],["SE","Sweden"],["CH","Switzerland"],["SY","Syria"],["TW","Taiwan"],["TJ","Tajikistan"],["TZ","Tanzania"],["TH","Thailand"],["TL","Timor-Leste"],["TG","Togo"],["TK","Tokelau"],["TO","Tonga"],["TT","Trinidad and Tobago"],["TN","Tunisia"],["TM","Turkmenistan"],["TC","Turks and Caicos Islands"],["TV","Tuvalu"],["TR","Türkiye"],["VI","U.S. Virgin Islands"],["UG","Uganda"],["UA","Ukraine"],["AE","United Arab Emirates"],["GB","United Kingdom"],["US","United States"],["UM","United States Minor Outlying Islands"],["UY","Uruguay"],["UZ","Uzbekistan"],["VU","Vanuatu"],["VE","Venezuela"],["VN","Vietnam"],["WF","Wallis and Futuna"],["EH","Western Sahara"],["YE","Yemen"],["ZM","Zambia"],["ZW","Zimbabwe"],["AX","Åland Islands"]];
+  const nameOf = c => (COUNTRIES.find(x => x[0] === c) || [c, c])[1];
+  let userCountry = 'IT';
+  // The stamp. kind: ok | no | unk; code: a country code or a region name; r: its tilt.
+  const mark = (kind, code, r = '-1.5deg', only = false) => {
+    const st = kind === 'unk' ? ['Location', 'Not stated'] : only ? [code, 'Only'] : kind === 'no' ? ['Not', 'Admitted'] : [code, 'Admitted'];
+    return `<span class="stamp ${kind === 'ok' ? '' : kind}" style="--r:${r}"><span class="c">${st[0]}</span><span class="w">${st[1]}</span></span>`;
+  };
+  const tilt = id => `${(((id * 37) % 41) - 20) / 10}deg`;  // fixed per job, -2.0 to +2.0
+  const stamp = (st, r, cls = '') => cls === 'unk' ? mark('unk', '', r) : mark('ok', st[0], r);
+  function legend() {
+    const items = [
+      [mark('ok', 'IT'), "Your country is on the job's list."], [mark('ok', 'Europe', '1deg'), "Your region is on the job's list."],
+      [mark('unk', '', '-.8deg'), 'The job does not say. Shown apart, never notified.'], [mark('no', 'US', '1.6deg', true), 'Refused. Only seen in previews: these jobs are filtered out.'],
+      [mark('ok', 'IT').replace('style="', 'style="opacity:.92;'), 'Faded ink: a job you have already seen.']];
+    $('#legend').innerHTML = items.map(([m, t]) => `<div class="it">${m}${t}</div>`).join('');
+    $('#sig-lead').textContent = 'Each job carries an entry stamp that answers "can I apply from here?" before the title is read. Fresh ink means you have not seen the job yet; seen jobs keep a faded stamp.';
+  }
+  const jobHtml = j => `
+    <article class="job ${j.unseen ? 'unseen' : ''}" data-id="${j.id}">
+      ${j.unseen ? '<span class="dot" aria-label="Unseen"></span>' : ''}
+      <div class="top"><div class="t">${esc(j.t)}</div>${stamp(j.st, tilt(j.id))}</div>
+      <div class="meta"><span>${esc(j.co)}</span><span class="sep">·</span><span>via ${j.src}</span>${j.also ? `<span class="also">also on ${j.also}</span>` : ''}<span class="sep">·</span><span>${j.age}</span></div>
+      ${j.pay ? `<div class="pay"><span>${j.pay[0]}</span><span class="conv">${j.pay[1]}</span></div><div class="pay"><span class="terms">${j.terms}</span></div>` : `<div class="pay"><span class="q" title="Salary not stated">?</span><span class="conv">Salary not stated</span><span class="sep" style="color:var(--ink-3)">·</span><span class="terms">${j.terms}</span></div>`}
+      <div class="acts">
+        <button class="act" data-do="saved" aria-pressed="${j.state === 'saved'}">${icon(j.state === 'saved' ? 'i-saved' : 'i-save')}${j.state === 'saved' ? 'Saved' : 'Save'}</button>
+        ${j.state === 'new' ? `<button class="act" data-do="hidden">${icon('i-hide')}Not for me</button>` : ''}
+        <button class="act" data-do="applied" aria-pressed="${j.state === 'applied'}">${icon('i-check')}Applied</button>
+        <span class="sp"></span>
+        <a class="btn" href="#" data-apply>Apply ${icon('i-ext')}</a>
+      </div>
+    </article>`;
+
+  function render() {
+    const list = $('#list');
+    const shown = jobs.filter(j => j.state === tab);
+    let html = shown.map(jobHtml).join('');
+    if (!shown.length) {
+      const msg = { new: ['Nothing new since 16:05', 'Next scan at 18:05.'], saved: ['No saved jobs', 'Save a job to keep it here after 30 days.'], applied: ['No applications yet', 'Mark a job as Applied to track it here.'] }[tab];
+      html = `<div class="empty"><span class="big">${msg[0]}</span><span>${msg[1]}</span></div>`;
+    }
+    if (tab === 'new') {
+      html += `<button class="group" type="button" aria-expanded="${groupOpen}" id="grp">Location not stated: ${notStated.length} jobs${icon('i-chev')}</button>`;
+      if (groupOpen) html += `<p class="group-note">These jobs do not say where you can work from. Check before you apply. They are never in a notification.</p>` + notStated.map((j, i) => `
+        <article class="job"><div class="top"><div class="t">${esc(j.t)}</div>${stamp(['Location', 'Not stated'], tilt(101 + i), 'unk')}</div>
+        <div class="meta"><span>${esc(j.co)}</span><span class="sep">·</span><span>via ${j.src}</span><span class="sep">·</span><span>${j.age}</span></div>
+        <div class="pay"><span class="q">?</span><span class="conv">Salary not stated</span></div>
+        <div class="acts"><button class="act">${icon('i-save')}Save</button><button class="act">${icon('i-hide')}Not for me</button><span class="sp"></span><a class="btn" href="#" data-apply>Apply ${icon('i-ext')}</a></div></article>`).join('');
+    }
+    list.innerHTML = html;
+    const c = s => jobs.filter(j => j.state === s).length;
+    $('#n-new').textContent = c('new'); $('#n-saved').textContent = c('saved'); $('#n-applied').textContent = c('applied');
+    const u = jobs.filter(j => j.unseen && j.state === 'new').length;
+    $('#unseen-label').textContent = `${u} unseen`; $('#mb-count').textContent = u;
+    document.querySelectorAll('.seg [data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
+  }
+  function toast(text, undo) {
+    const t = $('#toast'); lastUndo = undo;
+    t.innerHTML = esc(text) + (undo ? '<button type="button" id="undo">Undo</button>' : '');
+    t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 3200);
+  }
+  $('#pop').addEventListener('click', e => {
+    const tabBtn = e.target.closest('[data-tab]');
+    if (tabBtn) { tab = tabBtn.dataset.tab; render(); return; }
+    if (e.target.closest('#grp')) { groupOpen = !groupOpen; render(); return; }
+    if (e.target.closest('#undo')) { if (lastUndo) lastUndo(); $('#toast').classList.remove('on'); return; }
+    const apply = e.target.closest('[data-apply]');
+    if (apply) { e.preventDefault(); toast('Opens the job on the source site, in your browser'); return; }
+    const act = e.target.closest('[data-do]');
+    if (act) {
+      const j = jobs.find(x => x.id === +act.closest('.job').dataset.id);
+      const prev = { state: j.state, unseen: j.unseen };
+      const to = j.state === act.dataset.do ? 'new' : act.dataset.do;
+      j.state = to; j.unseen = false; render();
+      const words = { saved: 'Saved', applied: 'Marked as applied', hidden: 'Hidden. You will not see this job again', new: 'Moved back to New' }[to];
+      toast(words, () => { Object.assign(j, prev); render(); });
+    }
+  });
+  // Opening the list marks jobs as seen after a moment: the ink fades.
+  setTimeout(() => { jobs.forEach(j => { if (j.id === 3) j.unseen = false; }); render(); }, 6000);
+  render();
+
+  // Theme
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.addEventListener('click', () => {
+    const v = b.dataset.themeSet;
+    if (v) document.documentElement.setAttribute('data-theme', v); else document.documentElement.removeAttribute('data-theme');
+    document.querySelectorAll('[data-theme-set]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  }));
+
+  // Settings panes
+  const titles = { where: 'Where you work', jobs: 'Jobs', pay: 'Pay', notify: 'Notifications', sources: 'Sources', companies: 'Companies', privacy: 'Privacy', help: 'Troubleshooting' };
+  function pane(p) {
+    document.querySelectorAll('[data-pane]').forEach(b => b.setAttribute('aria-selected', b.dataset.pane === p));
+    document.querySelectorAll('[data-panel]').forEach(x => x.hidden = x.dataset.panel !== p);
+    $('#win-title').textContent = titles[p];
+  }
+  document.querySelectorAll('[data-pane]').forEach(b => b.addEventListener('click', () => pane(b.dataset.pane)));
+  document.querySelectorAll('[data-pane-go]').forEach(b => b.addEventListener('click', () => pane(b.dataset.paneGo)));
+  document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => { pane(b.dataset.goto); $('#settings-section').scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
+
+  // Stamp preview follows the country
+  const eu = ['FR', 'DE', 'IT', 'ES', 'GB'];
+  function preview() {
+    const c = userCountry;
+    const a = eu.includes(c) ? mark('ok', c) : mark('no', c);
+    const b = c === 'US' ? mark('ok', 'US', '1.2deg') : mark('no', 'US', '1.2deg', true);
+    $('#stamp-preview').innerHTML = `<span class="pair">${a}<span class="lab">Open to FR, DE, IT, ES, GB</span></span><span class="pair">${b}<span class="lab">US only</span></span>`;
+  }
+  function combo(root, onPick) {
+    const input = root.querySelector('input'), list = root.querySelector('ul'); let act = 0, items = [];
+    const draw = () => { list.innerHTML = items.map((c, i) => `<li role="option" aria-selected="${i === act}" data-c="${c[0]}">${esc(c[1])}<span>${c[0]}</span></li>`).join(''); };
+    const open = () => { const q = input.value.trim().toLowerCase(); items = COUNTRIES.filter(c => !q || c[1].toLowerCase().includes(q) || c[0].toLowerCase() === q).slice(0, 40); act = 0; draw(); list.hidden = !items.length; input.setAttribute('aria-expanded', !list.hidden); };
+    const pick = c => { input.value = nameOf(c); list.hidden = true; input.setAttribute('aria-expanded', 'false'); onPick(c); };
+    input.addEventListener('input', open); input.addEventListener('focus', () => { input.select(); open(); });
+    input.addEventListener('keydown', e => { if (list.hidden) return; if (e.key === 'ArrowDown') { act = Math.min(act + 1, items.length - 1); draw(); e.preventDefault(); } if (e.key === 'ArrowUp') { act = Math.max(act - 1, 0); draw(); e.preventDefault(); } if (e.key === 'Enter' && items[act]) { pick(items[act][0]); e.preventDefault(); } if (e.key === 'Escape') { list.hidden = true; } });
+    list.addEventListener('mousedown', e => { const li = e.target.closest('li'); if (li) { e.preventDefault(); pick(li.dataset.c); } });
+    input.addEventListener('blur', () => { list.hidden = true; input.value = nameOf(userCountry); });
+  }
+  combo(document.querySelector('[data-combo="country"]'), c => { userCountry = c; preview(); });
+  preview(); legend();
+  $('#ovl').addEventListener('change', e => { $('#ovl-custom').hidden = e.target.value !== 'custom'; $('#ovl-hint').textContent = e.target.value === 'custom' ? 'From 0 to 12 hours. Example: Vancouver is 9 hours behind Rome.' : 'Keeps jobs whose timezone is at most this far from yours. Jobs that do not state a timezone always show.'; });
+  $('#diag').addEventListener('click', e => { e.target.textContent = 'Copied'; setTimeout(() => e.target.textContent = 'Copy diagnostic report', 1600); });
+
+  $('#every').addEventListener('input', e => { const v = +e.target.value; $('#every-v').textContent = `${v} hour${v === 1 ? '' : 's'}`; });
+
+  document.querySelectorAll('[data-chips]').forEach(box => {
+    box.addEventListener('click', e => { if (e.target.closest('.chip button')) e.target.closest('.chip').remove(); });
+    const input = box.querySelector('input');
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && input.value.trim()) {
+        e.preventDefault();
+        const v = esc(input.value.trim().toLowerCase());
+        input.insertAdjacentHTML('beforebegin', `<span class="chip">${v}<button aria-label="Remove ${v}"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span>`);
+        input.value = '';
+      }
+    });
+  });
+
+  // Companies
+  const companies = [['GitLab', 'Greenhouse', 'gitlab', '16:05'], ['Spotify', 'Lever', 'spotify', '16:05'], ['Ashby', 'Ashby', 'ashby', '16:05'], ['Ottonova', 'Personio', 'ottonova', '16:05']];
+  function renderCo() {
+    $('#companies').innerHTML = companies.map((c, i) => `<tr><td>${esc(c[0])}</td><td>${c[1]} <span class="mono" style="color:var(--ink-3)">${esc(c[2])}</span></td><td>${c[3] ? `<span class="status"><i></i>${c[3]}</span>` : '<span style="color:var(--ink-3)">Next scan</span>'}</td><td style="text-align:right"><button class="act" data-rm="${i}">Remove</button></td></tr>`).join('');
+  }
+  $('#companies').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { companies.splice(+b.dataset.rm, 1); renderCo(); } });
+  $('#add-co').addEventListener('submit', e => {
+    e.preventDefault(); const s = $('#slug').value.trim().toLowerCase(); if (!s) return;
+    companies.push([s.charAt(0).toUpperCase() + s.slice(1), $('#ats').value, s, '']); $('#slug').value = ''; renderCo();
+  });
+  renderCo();
+
+  // First run
+  let step = 0;
+  const steps = [
+    () => `<h3>Jobs you can take, from where you live</h3><p>Sudo Hire reads company career pages and job boards, keeps the jobs that accept people in your country, and sends one summary every few hours. Everything stays on your Mac.</p><div class="cmdline">$ sudo hire --remote-from here</div>`,
+    () => `<h3>Where do you work from?</h3><p>Each job shows if it accepts people in this country. It comes from your Mac; change it if it is wrong.</p><div class="combo" data-combo="fr"><input class="in" id="fr-country" role="combobox" aria-expanded="false" aria-autocomplete="list" value="${esc(nameOf(userCountry))}" autocomplete="off"><ul role="listbox" hidden></ul></div><div class="preview" id="fr-prev"></div>`,
+    () => `<h3>What do you look for?</h3><p>Keywords match job titles. The first ones also name the groups in the notification.</p><div class="chips" data-chips><span class="chip">laravel<button aria-label="Remove laravel"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span><span class="chip">php<button aria-label="Remove php"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span><input aria-label="Add a keyword" placeholder="Add a keyword"></div><div class="inline"><label class="check"><input type="checkbox" checked>Remote</label><label class="check"><input type="checkbox">Hybrid</label><label class="check"><input type="checkbox">On-site</label></div>`,
+    () => `<h3>First scan</h3><p>Sudo Hire is reading the sources. This takes about a minute the first time.</p><div class="scanlist">${['Company career pages', 'LaraJobs', 'Jobicy', 'Remotive', 'Himalayas', 'We Work Remotely'].map((s, i) => `<div class="${i < 4 ? 'ok' : ''}">${i < 4 ? icon('i-check') : '<svg aria-hidden="true"></svg>'}<span>${s}</span><span style="margin-left:auto;color:var(--ink-3)">${i < 4 ? 'done' : i === 4 ? 'reading' : 'waiting'}</span></div>`).join('')}</div>`,
+  ];
+  function frRender() {
+    $('#fr-body').innerHTML = steps[step]();
+    document.querySelectorAll('#fr-steps i').forEach((x, i) => x.classList.toggle('on', i <= step));
+    $('#fr-back').hidden = step === 0;
+    $('#fr-next').textContent = step === 0 ? 'Start' : step === 2 ? 'Run first scan' : step === 3 ? 'Open the list' : 'Next';
+    const fr = document.querySelector('[data-combo="fr"]');
+    if (fr) { const f = () => { $('#fr-prev').innerHTML = `<span class="pair">${eu.includes(userCountry) ? mark('ok', userCountry) : mark('no', userCountry)}<span class="lab">A job open to FR, DE, IT, ES, GB</span></span>`; }; combo(fr, c => { userCountry = c; f(); preview(); }); f(); }
+    const chips = $('#fr-body [data-chips]');
+    if (chips) { chips.addEventListener('click', e => { if (e.target.closest('.chip button')) e.target.closest('.chip').remove(); }); const inp = chips.querySelector('input'); inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) { e.preventDefault(); const v = esc(inp.value.trim().toLowerCase()); inp.insertAdjacentHTML('beforebegin', `<span class="chip">${v}<button aria-label="Remove ${v}"><svg aria-hidden="true" style="width:10px;height:10px"><use href="#i-x"/></svg></button></span>`); inp.value = ''; } }); }
+  }
+  $('#fr-next').addEventListener('click', () => { if (step < 3) { step++; frRender(); } else { document.getElementById('h-pop').scrollIntoView({ behavior: 'smooth' }); step = 0; frRender(); } });
+  $('#fr-back').addEventListener('click', () => { if (step > 0) { step--; frRender(); } });
+  frRender();
+})();
+</script>
