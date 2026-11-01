@@ -106,6 +106,22 @@ it('refreshes the rates, runs the sources, prunes, then filters', function () {
     expect($match->salary)->toBe('$100k (EUR 89,823 a year)');
 });
 
+it('prunes after the runner, so a job that the runner fetches again stays', function () {
+    useSources([new FakeSource]);
+    // FakeSource item 1, last seen 31 days ago: older than the retention period.
+    $seenAgain = storeJob([
+        'sourceJobId' => '1',
+        'title' => 'Senior Laravel Developer',
+        'fetchedAt' => CarbonImmutable::now()->subDays(JobStore::RETENTION_DAYS + 1),
+    ]);
+
+    scan();
+
+    // A prune before the runner deletes the job, and the runner stores it again with a new id.
+    expect(Job::query()->whereKey($seenAgain->id)->exists())->toBeTrue()
+        ->and($seenAgain->fresh()?->fetched_at->toIso8601ZuluString())->toBe('2026-10-29T10:00:00Z');
+});
+
 it('goes on when the rates fetch fails and when a source fails', function () {
     Http::fake([
         'www.ecb.europa.eu/*' => Http::response('Server error', 500),
