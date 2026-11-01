@@ -218,8 +218,10 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   1. Run `php artisan native:run` once, wait until the menu bar icon shows, then quit the app. This creates `database/nativephp.sqlite`.
   2. Store a country, and make the jobs new: run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='$s = app(App\Settings\SettingsStore::class); $s->save(App\Settings\Settings::fromArray(array_merge($s->load()->toArray(), ["country" => "IT"]))); App\Models\Job::query()->update(["notified_at" => null]); App\Models\SentNotification::query()->delete();'`
   3. Run `php artisan native:run` and wait up to 6 minutes.
-  4. Run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='dump(App\Models\SourceRun::query()->latest("id")->take(6)->get(["source", "started_at", "error_kind"])->toArray(), App\Models\SentNotification::query()->get(["sent_at", "text"])->toArray());'`
-- Expected: in step 3 a native notification appears, with the title "Sudo Hire" and a text like "6 new jobs: 4 Laravel, 2 PHP". Step 4 shows source runs from the last minutes and one sent notification with the same text. macOS can first ask to allow notifications for the app: allow them. If there are 0 new matches, no notification appears and step 4 shows no sent notification: set fewer filters and do steps 2 and 3 again.
+  4. Run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='dump(App\Models\SourceRun::query()->latest("id")->take(6)->get(["source", "started_at", "finished_at", "error_kind"])->toArray(), App\Models\SentNotification::query()->get(["sent_at", "text"])->toArray());'`
+  5. Quit the app. Make all sources due: run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='App\Models\SourceRun::query()->each(fn ($r) => $r->update(["started_at" => $r->started_at->subDay()]));'`. Run `php artisan native:run`, wait up to 8 minutes, then run step 4 again.
+- Expected: in step 3 a native notification appears, with the title "Sudo Hire" and a text like "6 new jobs: 4 Laravel, 2 PHP". Step 4 shows source runs from the last minutes and one sent notification with the same text. macOS can first ask to allow notifications for the app: allow them. If there are 0 new matches, no notification appears and step 4 shows no sent notification: set fewer filters and do steps 2 and 3 again. In step 5 the full fetch runs while the app starts the next `schedule:run`. Each new source run has a `finished_at` value, also when the scan took more than 60 seconds.
+- Result: not run
 
 ## M7: A click on the notification opens the menu bar list
 
@@ -230,6 +232,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   1. Do steps 2 and 3 of "M7: The app scans on its own and shows a native notification", so that a notification appears.
   2. Click the notification.
 - Expected: the menu bar list opens under the menu bar icon. Before M8 the list can be empty or show the placeholder page.
+- Result: not run
 
 ## M7: No notification with no settings stored
 
@@ -241,6 +244,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `php artisan native:run` and wait up to 6 minutes.
   3. Run step 4 of "M7: The app scans on its own and shows a native notification".
 - Expected: no notification appears. Step 3 shows new source runs from the last minutes and no sent notification.
+- Result: not run
 
 ## M7: hire:scan in a terminal still uses osascript
 
@@ -250,3 +254,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Steps:
   1. Do steps 1 and 2 of "M6c: Scan shows a macOS notification".
 - Expected: the same result as in that check: "Notification sent: ..." and a macOS notification from Script Editor, not from the app. With no country in the settings, the command prints "No notification: set your country first." and no notification appears.
+- Result: not run

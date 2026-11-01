@@ -804,6 +804,7 @@ Not used: `state` (company headquarters), `media:content`.
 - Milestone: M7
 - Decision: `routes/console.php` schedules `hire:scan` every 5 minutes. NativePHP starts `schedule:run` every minute while the app runs, so the schedule runs only while the app runs.
 - Decision: the schedule has no `withoutOverlapping()`. The command is isolated already.
+- Decision: the schedule uses `runInBackground()`, so `schedule:run` returns at once and the scan runs as its own process. Reason: before each run, NativePHP stops the previous `schedule:run` process. A foreground scan that runs for more than 60 seconds then continues only as an orphan process.
 - Decision: a scan fetches only the sources that are due, so a scan with no due source ends in under a second. After the Mac wakes, the next scan starts within 5 minutes.
 - Reason: approved in the M7 brief (REQUIREMENTS section 10).
 - Replaces: none
