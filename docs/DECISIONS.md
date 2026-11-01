@@ -732,3 +732,17 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: `SystemTimezone` reads the target of the `/etc/localtime` link and takes the part after `/zoneinfo/`, e.g. "Europe/Rome". A missing link, another path or a name that PHP does not list gives `UTC`.
 - Reason: the "Settings value object" entry says the default timezone comes from the Mac at first run.
 - Replaces: none
+
+## 2026-11-01: One synthetic OTE test string
+
+- Milestone: M6b
+- Decision: `OteTest` keeps the string "$90k on-target earnings", which is in no fixture. It is the only exception to the rule that tests use real strings, and its test name says "not from a fixture".
+- Reason: the helper reads "on-target" with a hyphen on purpose, and no fixture has that spelling. Without this string no test checks it.
+- Replaces: none
+
+## 2026-11-01: MIT license
+
+- Milestone: none (open question in REQUIREMENTS section 17)
+- Decision: the app is released under the MIT license.
+- Reason: the paid Premium part is a separate server and a curated company list (data, not code), so nothing paid lives in this repository. The name and the icon need their own trademark notice, because MIT does not cover them.
+- Replaces: none

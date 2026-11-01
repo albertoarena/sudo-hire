@@ -34,7 +34,7 @@ The main problem it solves: "remote" often does not mean "remote from anywhere".
 - Laravel, NativePHP `nativephp/desktop` 2.x, PHP 8.4, SQLite.
 - Vue 3 with TypeScript, Tailwind CSS.
 - Pest, Vitest, PHPStan.
-- License: MIT (to confirm).
+- License: MIT.
 
 ## 4. Sources
 
@@ -285,6 +285,5 @@ M6a and M6b run in parallel, after a local prep pull request that adds the share
 
 ## 17. Open questions
 
-- License: MIT?
 - UI design for the menu bar list and settings.
 - Spatie Event Sourcing is not planned for v1 (local app, simple state). Reconsider for the Premium server.
