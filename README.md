@@ -43,3 +43,10 @@ To fix it for good, set `curl.cainfo` and `openssl.cafile` in your `php.ini` (`p
 - [Requirements](docs/REQUIREMENTS.md)
 - [Decisions](docs/DECISIONS.md)
 - [Manual QA](docs/QA.md)
+- [Contributing](CONTRIBUTING.md)
+- [Privacy](PRIVACY.md)
+- [Security](SECURITY.md)
+
+## License
+
+Sudo Hire is released under the [MIT license](LICENSE). The name, the tagline and the art are not covered by the license: see the [trademark and brand policy](TRADEMARK.md).
