@@ -11,7 +11,6 @@ use App\Sources\Ats\Ats;
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\AtsReader;
 use App\Sources\Ats\CompanyEntry;
-use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
@@ -42,7 +41,7 @@ final class PersonioReader implements AtsReader
         libxml_use_internal_errors($previous);
 
         if ($xml === false || $xml->getName() !== 'workzag-jobs') {
-            throw ReadFailed::because('The response is not Personio XML.');
+            throw self::unreadable('The response is not Personio XML.');
         }
 
         $items = [];

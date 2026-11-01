@@ -8,6 +8,7 @@ use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\AtsSource;
 use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
+use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -27,11 +28,11 @@ trait ReadsRawJobs
         try {
             $response = Http::timeout(AtsSource::TIMEOUT_SECONDS)->get($url);
         } catch (ConnectionException $failed) {
-            throw ReadFailed::because("Connection failed: {$failed->getMessage()}");
+            throw ReadFailed::because("Connection failed: {$failed->getMessage()}", $failed);
         }
 
         if ($response->failed()) {
-            throw ReadFailed::because("HTTP {$response->status()}");
+            throw ReadFailed::because("HTTP {$response->status()}", $response->toException());
         }
 
         return $response->body();
@@ -46,12 +47,12 @@ trait ReadsRawJobs
     {
         try {
             $data = json_decode($this->get($url), true, flags: JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            throw ReadFailed::because('The response is not valid JSON.');
+        } catch (JsonException $invalid) {
+            throw ReadFailed::because('The response is not valid JSON.', $invalid);
         }
 
         if (! is_array($data)) {
-            throw ReadFailed::because('The response is not a JSON object or list.');
+            throw self::unreadable('The response is not a JSON object or list.');
         }
 
         return $data;
@@ -65,10 +66,18 @@ trait ReadsRawJobs
     private function jobList(mixed $data): array
     {
         if (! is_array($data) || ! array_is_list($data)) {
-            throw ReadFailed::because('The response has no job list.');
+            throw self::unreadable('The response has no job list.');
         }
 
         return array_values(array_filter($data, 'is_array'));
+    }
+
+    /**
+     * The response came, but it cannot be read: the error kind is "parse".
+     */
+    private static function unreadable(string $reason): ReadFailed
+    {
+        return ReadFailed::because($reason, new UnreadableResponse($reason));
     }
 
     /**

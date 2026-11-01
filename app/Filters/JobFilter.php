@@ -13,7 +13,10 @@ use Carbon\CarbonImmutable;
  */
 final class JobFilter
 {
-    public static function evaluate(NormalisedJob $job, Settings $settings, CurrencyConverter $converter, CarbonImmutable $now): FilterResult
+    /**
+     * @param  list<string>  $alsoOn  the keys of the job's "also on" sources, for the source filter
+     */
+    public static function evaluate(NormalisedJob $job, Settings $settings, CurrencyConverter $converter, CarbonImmutable $now, array $alsoOn = []): FilterResult
     {
         $eligibility = EligibilityFilter::outcome($job, $settings);
         $salary = SalaryFilter::check($job, $settings, $converter);
@@ -29,7 +32,7 @@ final class JobFilter
             FailReason::Seniority->value => SeniorityFilter::passes($job, $settings),
             FailReason::PostedWithin->value => PostedWithinFilter::passes($job, $settings, $now),
             FailReason::Company->value => CompanyBlocklistFilter::passes($job, $settings),
-            FailReason::Source->value => SourceFilter::passes($job, $settings),
+            FailReason::Source->value => SourceFilter::passes($job, $settings, $alsoOn),
             FailReason::Expired->value => ExpiryFilter::passes($job, $now),
         ];
 

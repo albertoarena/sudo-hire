@@ -90,3 +90,19 @@ it('lets unknown work mode, contract type and seniority pass a subset setting', 
 
     expect($result->passes)->toBeTrue();
 });
+
+it('passes the source filter with an enabled "also on" source', function (array $alsoOn, bool $passes) {
+    $result = JobFilter::evaluate(
+        Make::job(['eligibility' => Eligibility::worldwide()]),
+        Make::settings(['country' => 'IT', 'disabledSources' => ['fake', 'remotive']]),
+        new CurrencyConverter([]),
+        CarbonImmutable::parse('2026-10-28T09:00:00Z'),
+        $alsoOn,
+    );
+
+    expect($result->passes)->toBe($passes);
+})->with([
+    'no "also on" source' => [[], false],
+    'one "also on" source enabled' => [['remotive', 'himalayas'], true],
+    'every "also on" source disabled' => [['remotive'], false],
+]);

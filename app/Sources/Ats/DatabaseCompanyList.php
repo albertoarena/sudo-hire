@@ -3,6 +3,7 @@
 namespace App\Sources\Ats;
 
 use App\Models\AtsCompany;
+use App\Sources\RunErrorKind;
 use Carbon\CarbonImmutable;
 
 /**
@@ -31,15 +32,17 @@ final class DatabaseCompanyList implements CompanyList
             'last_checked_at' => $checkedAt,
             'last_job_count' => $jobCount,
             'last_error' => null,
+            'last_error_kind' => null,
         ]);
     }
 
-    public function recordError(CompanyEntry $company, string $error, CarbonImmutable $checkedAt): void
+    public function recordError(CompanyEntry $company, string $error, RunErrorKind $kind, CarbonImmutable $checkedAt): void
     {
         AtsCompany::query()->forEntry($company)->update([
             'last_checked_at' => $checkedAt,
             'last_job_count' => null,
             'last_error' => $error,
+            'last_error_kind' => $kind,
         ]);
     }
 }

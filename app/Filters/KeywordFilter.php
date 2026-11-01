@@ -28,9 +28,27 @@ final class KeywordFilter
     }
 
     /**
+     * The first include keyword, in the order of the settings, that the job matches.
+     * Null when no include keyword matches or the list is empty. The summary
+     * notification groups the jobs by it.
+     */
+    public static function firstInclude(NormalisedJob $job, Settings $settings): ?string
+    {
+        return self::firstMatch($job, $settings, $settings->keywordsInclude);
+    }
+
+    /**
      * @param  list<string>  $keywords
      */
     private static function matches(NormalisedJob $job, Settings $settings, array $keywords): bool
+    {
+        return self::firstMatch($job, $settings, $keywords) !== null;
+    }
+
+    /**
+     * @param  list<string>  $keywords
+     */
+    private static function firstMatch(NormalisedJob $job, Settings $settings, array $keywords): ?string
     {
         $texts = [$job->title, ...$job->tags];
 
@@ -43,11 +61,11 @@ final class KeywordFilter
 
             foreach ($texts as $text) {
                 if (preg_match($pattern, $text) === 1) {
-                    return true;
+                    return $keyword;
                 }
             }
         }
 
-        return false;
+        return null;
     }
 }

@@ -63,7 +63,7 @@ final class AtsSource implements JobSource
                 $items = $this->reader($company->ats)->read($company);
             } catch (ReadFailed $failed) {
                 Log::warning("ATS reader: {$company->key()} failed: {$failed->getMessage()}");
-                $this->companies->recordError($company, $failed->getMessage(), $now);
+                $this->companies->recordError($company, $failed->getMessage(), $failed->kind(), $now);
 
                 continue;
             }
