@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AppActionController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\DiagnosticsController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Api\StatusController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'app')->name('home');
+Route::view('/settings', 'settings')->name('settings');
 
 // The JSON API of the menu bar list and the settings window. Web middleware: session and CSRF.
 Route::prefix('api')->name('api.')->group(function () {
@@ -33,4 +35,8 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::get('rates', RateController::class)->name('rates');
     Route::get('status', StatusController::class)->name('status');
     Route::get('diagnostics', DiagnosticsController::class)->name('diagnostics');
+
+    Route::post('app/open-url', [AppActionController::class, 'openUrl'])->name('app.open-url');
+    Route::post('app/settings', [AppActionController::class, 'openSettings'])->name('app.settings');
+    Route::post('app/quit', [AppActionController::class, 'quit'])->name('app.quit');
 });

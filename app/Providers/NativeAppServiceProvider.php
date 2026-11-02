@@ -17,7 +17,7 @@ class NativeAppServiceProvider implements ProvidesPhpIni
             ->tooltip('Sudo Hire')
             ->showDockIcon(false)
             ->width(400)
-            ->height(600);
+            ->height(640);
     }
 
     /**
