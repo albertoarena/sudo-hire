@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ListController;
 use App\Http\Controllers\Api\RateController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\SourceController;
+use App\Http\Controllers\Api\StampPreviewController;
 use App\Http\Controllers\Api\StatusController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,7 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
 
     Route::get('countries', CountryController::class)->name('countries');
+    Route::get('stamp-preview', StampPreviewController::class)->name('stamp-preview');
     Route::get('sources', SourceController::class)->name('sources');
 
     Route::get('companies', [CompanyController::class, 'index'])->name('companies.index');
