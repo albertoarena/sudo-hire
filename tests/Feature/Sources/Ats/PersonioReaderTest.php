@@ -186,3 +186,9 @@ it('skips a position that cannot be normalised', function (array $changes) {
     'an id that is not a number' => [['id' => '../evil']],
     'no date' => [['createdAt' => null]],
 ]);
+
+it('reads the place in the title of a remote position', function () {
+    $item = array_merge(personioItems($this->company)[0], ['name' => 'Backend Engineer (Remote Eligible in Germany)']);
+
+    expect(JobFields::of((new PersonioReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt)))['eligibility'])->toBe(JobFields::restricted(['DE']));
+});

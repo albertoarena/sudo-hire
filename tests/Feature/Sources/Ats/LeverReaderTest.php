@@ -208,3 +208,15 @@ it('skips a job that cannot be normalised', function (array $changes) {
     'no id' => [['id' => null]],
     'no date' => [['createdAt' => null]],
 ]);
+
+it('does not read a place from the title of a hybrid job', function () {
+    $item = leverItem(0, ['text' => 'Backend Engineer (Remote, Europe)', 'workplaceType' => 'hybrid']);
+
+    expect((new LeverReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->eligibility->type->value)->toBe('unknown');
+});
+
+it('gives unknown when the title and the country have no place in common', function () {
+    $item = leverItem(0, ['text' => 'Backend Engineer (Remote, Europe)']);
+
+    expect((new LeverReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->eligibility->type->value)->toBe('unknown');
+});

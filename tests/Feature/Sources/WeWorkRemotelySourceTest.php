@@ -156,3 +156,9 @@ it('skips an item that cannot be normalised', function (mixed $item) {
     'a bad date' => [fn () => wwrItem(0, ['pubDate' => '2026-09-17'])],
     'a bad expiry date' => [fn () => wwrItem(0, ['expires_at' => 'next month'])],
 ]);
+
+it('narrows a worldwide region to the place in the title', function () {
+    $item = wwrItem(0, ['title' => 'Acme: Principal Software Engineer (Remote Eligible in Bulgaria)', 'country' => '', 'region' => 'Anywhere in the World']);
+
+    expect(JobFields::of((new WeWorkRemotelySource)->normalise($item))['eligibility'])->toBe(JobFields::restricted(['BG']));
+});

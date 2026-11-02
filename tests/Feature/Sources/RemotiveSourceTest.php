@@ -167,3 +167,9 @@ it('skips a job that cannot be normalised', function (mixed $item) {
     'no date' => [fn () => remotiveItem(0, ['publication_date' => null])],
     'a bad date' => [fn () => remotiveItem(0, ['publication_date' => 'yesterday at noon-ish'])],
 ]);
+
+it('narrows a worldwide location to the country in the title', function () {
+    $job = (new RemotiveSource)->normalise(remotiveItem(0, ['title' => 'Laravel Engineer (US only)', 'candidate_required_location' => 'Worldwide']));
+
+    expect(JobFields::of($job)['eligibility'])->toBe(JobFields::restricted(['US']));
+});

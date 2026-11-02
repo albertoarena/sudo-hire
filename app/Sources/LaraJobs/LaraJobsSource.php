@@ -12,6 +12,7 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\Support\TitleLimits;
 use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -83,7 +84,7 @@ final class LaraJobsSource implements JobSource
                 description: HtmlToText::convert($this->text($raw, 'content') ?? $this->text($raw, 'description')),
                 tags: explode(',', $this->text($raw, 'tags') ?? ''),
                 workMode: $location->workMode,
-                eligibility: $location->eligibility,
+                eligibility: TitleLimits::eligibility($location->eligibility, $location->workMode, $title),
                 officeLocation: $location->officeLocation,
                 timezoneMin: $location->timezoneMin,
                 timezoneMax: $location->timezoneMax,

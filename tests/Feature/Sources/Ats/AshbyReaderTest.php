@@ -42,7 +42,7 @@ it('normalises a job field by field', function () {
         'company' => 'Ashby',
         'tags' => ['engineering', 'emea engineering'],
         'workMode' => 'remote',
-        'eligibility' => ['type' => 'restricted', 'regions' => ['eu'], 'countries' => ['ES', 'IT', 'CH', 'HR', 'IE', 'SE', 'RO', 'PT', 'DE', 'EE']],
+        'eligibility' => ['type' => 'restricted', 'regions' => ['eu'], 'countries' => []],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
@@ -108,7 +108,8 @@ it('reads the countries of the job and its secondary locations', function (int $
     expect(JobFields::of($job)['eligibility'])->toBe($eligibility)
         ->and($job->seniority->value)->toBe($seniority);
 })->with([
-    'European Union and countries' => [0, JobFields::restricted(['ES', 'IT', 'CH', 'HR', 'IE', 'SE', 'RO', 'PT', 'DE', 'EE'], ['eu']), 'senior'],
+    // The title says "EU", so Switzerland (CH) is not kept.
+    'European Union and countries, narrowed by the title' => [0, JobFields::restricted([], ['eu']), 'senior'],
     'Australia' => [1, JobFields::restricted(['AU']), 'unknown'],
     'Australia and APAC countries' => [2, JobFields::restricted(['AU', 'NZ', 'SG', 'KR', 'JP']), 'unknown'],
 ]);
@@ -162,3 +163,9 @@ it('skips a job that cannot be normalised', function (array $changes) {
     'no id' => [['id' => null]],
     'no date' => [['publishedAt' => null]],
 ]);
+
+it('narrows the countries to the region in the title', function () {
+    $item = ashbyItem(1, ['title' => 'Product Support Engineer (Remote, Europe)']);
+
+    expect(JobFields::of((new AshbyReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt)))['eligibility'])->toBe(['type' => 'unknown', 'regions' => [], 'countries' => []]);
+});
