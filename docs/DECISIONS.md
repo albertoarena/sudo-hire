@@ -1017,3 +1017,15 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the SVG has the `rsvg-convert` commands that render the two images. A test checks the path and the sizes.
 - Reason: chosen by the project owner on 2026-11-02, before M8d, so that the Mac checks show the real mark. The app icon stays in M9.
 - Replaces: the menu bar mark part of the DESIGN.md open item "Final icon drawing"
+
+## 2026-11-02: Identical copies on the same board
+
+- Milestone: fix (same-board copies)
+- Decision: `JobStore::save()` stores a new job as a `job_sources` row of a stored job from the same source when the two are identical copies. Identical means: the same fingerprint, the stored job was first stored in the last `JobStore::DUPLICATE_DAYS` (14 days, `created_at`), the same eligibility (type, regions and countries, compared as sets) and the same salary (minimum, maximum, currency and period; no salary on both is the same). The row goes to the first such job (lowest id).
+- Decision: the copy row keeps its own source job ID, source link, apply link, attribution and fetch time. The job keeps the links of its first copy (AGENTS.md rule 11). A fetch of the copy moves the job's `fetched_at`, as for another source.
+- Decision: a copy with another eligibility or another salary is stored as its own job. The store does not merge them and does not widen the eligibility of a stored job.
+- Decision: a job from another source is checked first, as before. So a same-board copy goes to the job of another source with the same fingerprint when there is one.
+- Decision: "also on" names each other source once and never names the shown source. A job with only same-board copies shows no "also on". A copy row adds no new source key, so the source filter does not change. Hiding a job stores a tombstone for each copy key, as for each "also on" key.
+- Decision: rows stored before this change are not migrated. Separate copies already stored stay until retention deletes them.
+- Reason: a board can list one job under more than one URL (one job on We Work Remotely under two slugs, one role on Himalayas once for each country). The user saw the same job more than once, and a notification counted it more than once.
+- Replaces: the part of "Job storage, deduplication and retention" (2026-10-30) that merges only a job from another source.
