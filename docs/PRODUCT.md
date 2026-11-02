@@ -36,7 +36,7 @@ Success: the user trusts the list. Every job in it accepts people from where the
 - **List of matches** (REQUIREMENTS section 11): title, company, salary (original and converted, with "≈"), eligibility, source attribution, posted date. Apply opens the original apply link.
 - **Job states** (confirmed 2026-11-01):
   - Seen or unseen. Closing the list marks the jobs shown as seen. The menu bar badge counts the unseen ones.
-  - Hidden ("Not for me"): never shown again.
+  - Hidden ("Not for me"): never shown again in the list. Settings, Jobs, lists the hidden jobs and can show one again.
   - Saved: kept past the 30-day retention.
   - Applied: moves out of the new list.
   - Hidden, saved and applied need storage that M6a does not have yet.

@@ -384,8 +384,9 @@ Window title follows the selected pane. Sidebar items: 13px, 15px icon in `ink-2
 Eight panes, in order:
 1. **Where you work** (pin): country (the country combobox), a live stamp preview with two real jobs, timezone, work mode, "Location not stated" mode, time difference.
    - **Time difference:** a select with Off, Up to 1 hour, through Up to 6 hours, and Custom. Custom shows a number field (0 to 12) followed by "hours". The filter keeps jobs whose timezone is within plus or minus N hours of the user's. Jobs with no timezone always pass. The hint says so; with Custom it gives an example instead ("Vancouver is 9 hours behind Rome").
-2. **Jobs** (search): include and exclude keyword chips, "also match the description", contract, seniority, posted within, hidden companies.
+2. **Jobs** (search): include and exclude keyword chips, "also match the description", contract, seniority, posted within, hidden companies, hidden jobs.
    - **Posted within:** 24 hours, 3 days, 7 days, 14 days, 30 days. The default is 3 days. Hint: "Jobs are kept for 30 days."
+   - **Hidden jobs:** the jobs hidden with "Not for me": title, company and the date hidden, newest first, each with a "Show again" action. "Show again" moves the job back to New. With no hidden jobs: "No hidden jobs."
 3. **Pay** (coin): display currency, minimum per year, payments per year (12, 13, 14), minimum per day, salary not stated. A note with the ECB rate date.
 4. **Notifications** (bell): interval slider (1 to 24 hours) and a sample notification.
 5. **Sources** (feed): a table with On (switch), Source, Last read, Status. Status is a 7px dot plus text. A green dot shows the job count. A red dot shows the error name, with one plain sentence in `ink-2` below it.

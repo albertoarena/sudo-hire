@@ -936,3 +936,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: Apply opens the apply link in the default browser and does not change the job. Applied is a separate action that moves the job to the Applied tab.
 - Reason: opening a link is not applying. A job marked by mistake would leave New, and the user would not see it again there. Some job sites mark a job as applied on Apply, so the difference is noted in DESIGN.md "Job row", and a prompt after Apply is an open item.
 - Replaces: none
+
+## 2026-11-02: Hidden jobs come back from Settings
+
+- Milestone: M8c
+- Decision: the Jobs pane of the settings window lists the hidden jobs, each with "Show again". "Show again" works like Undo: it clears the state and deletes the tombstones of the job, so the job goes back to New.
+- Decision: the menu bar list keeps three tabs. Hidden jobs have no tab.
+- Reason: chosen by the project owner on 2026-11-02 during the M8b checks. After the Undo toast closes, a hidden job could not come back.
+- Replaces: none
