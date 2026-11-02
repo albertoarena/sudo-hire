@@ -2,7 +2,614 @@
 
 @source '../../storage/framework/views/*.php';
 
-@theme {
-    --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+/*
+ * Design tokens from docs/DESIGN.md and the approved prototype (docs/design/sudo-hire-ui.html).
+ * Every color has a dark value. The app follows the system appearance.
+ */
+:root {
+    --burgundy: #5e1b2b; /* passport cover: header strip, selection, primary */
+    --burgundy-ink: #f4e8ea; /* text on the cover */
+    --page: #f7f5f2; /* visa page */
+    --panel: #ffffff; /* controls, rows on hover */
+    --sunk: #eeebe6; /* footer, track, wells */
+    --ink: #1e2230;
+    --ink-2: #4f5361; /* 7.4:1 on page */
+    --ink-3: #62666f; /* 5.6:1 on page */
+    --rule: #dcd7d0;
+    --ok: #2b6648; /* stamp: admitted */
+    --no: #a63f2a; /* stamp: refused, errors */
+    --unk: #5f636c; /* stamp: not stated */
+    --warn-bg: #fbeee9;
+    --focus: #8a2e44;
+    --dot: var(--burgundy);
+    --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --burgundy: #6a2133;
+        --burgundy-ink: #f6e9ec;
+        --page: #1d1b1f;
+        --panel: #29262b;
+        --sunk: #242126;
+        --ink: #ece8ea;
+        --ink-2: #b7b1b6;
+        --ink-3: #a49ea4;
+        --rule: #3a363c;
+        --ok: #7cc29e;
+        --no: #ee8b74;
+        --unk: #a9a4aa;
+        --warn-bg: #3a2522;
+        --focus: #e59aae;
+        --dot: var(--focus);
+        color-scheme: dark;
+    }
+}
+
+@theme inline {
+    --font-sans: var(--font);
+    --font-mono: var(--mono);
+    --color-burgundy: var(--burgundy);
+    --color-burgundy-ink: var(--burgundy-ink);
+    --color-page: var(--page);
+    --color-panel: var(--panel);
+    --color-sunk: var(--sunk);
+    --color-ink: var(--ink);
+    --color-ink-2: var(--ink-2);
+    --color-ink-3: var(--ink-3);
+    --color-rule: var(--rule);
+    --color-ok: var(--ok);
+    --color-no: var(--no);
+    --color-unk: var(--unk);
+    --color-warn-bg: var(--warn-bg);
+    --color-focus: var(--focus);
+}
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    /* Tailwind's preflight gives buttons the default cursor; the prototype uses the pointer. */
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        background: var(--page);
+        color: var(--ink);
+        font: 13px/1.45 var(--font);
+        -webkit-font-smoothing: antialiased;
+        font-variant-numeric: tabular-nums;
+        overflow: hidden;
+        user-select: none;
+        cursor: default;
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--burgundy) 30%, transparent);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    button {
+        font: inherit;
+        color: inherit;
+        cursor: default;
+    }
+}
+
+@layer components {
+    /* The popover: strip, tabs, list, footer. */
+    .pop {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        background: var(--page);
+    }
+
+    .strip {
+        flex: none;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px;
+        background-color: var(--burgundy);
+        color: var(--burgundy-ink);
+        /* The guilloche: two sets of thin sine waves, interlaced (DESIGN.md "Header strip"). */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='42' viewBox='0 0 96 42'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='.55'%3E%3Cpath stroke-opacity='.10' d='M0 6 C12 -1 36 -1 48 6 S84 13 96 6'/%3E%3Cpath stroke-opacity='.10' d='M0 12 C12 5 36 5 48 12 S84 19 96 12'/%3E%3Cpath stroke-opacity='.10' d='M0 18 C12 11 36 11 48 18 S84 25 96 18'/%3E%3Cpath stroke-opacity='.10' d='M0 24 C12 17 36 17 48 24 S84 31 96 24'/%3E%3Cpath stroke-opacity='.10' d='M0 30 C12 23 36 23 48 30 S84 37 96 30'/%3E%3Cpath stroke-opacity='.10' d='M0 36 C12 29 36 29 48 36 S84 43 96 36'/%3E%3Cpath stroke-opacity='.07' d='M0 3 C12 10 36 10 48 3 S84 -4 96 3'/%3E%3Cpath stroke-opacity='.07' d='M0 9 C12 16 36 16 48 9 S84 2 96 9'/%3E%3Cpath stroke-opacity='.07' d='M0 15 C12 22 36 22 48 15 S84 8 96 15'/%3E%3Cpath stroke-opacity='.07' d='M0 21 C12 28 36 28 48 21 S84 14 96 21'/%3E%3Cpath stroke-opacity='.07' d='M0 27 C12 34 36 34 48 27 S84 20 96 27'/%3E%3Cpath stroke-opacity='.07' d='M0 33 C12 40 36 40 48 33 S84 26 96 33'/%3E%3Cpath stroke-opacity='.07' d='M0 39 C12 46 36 46 48 39 S84 32 96 39'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .strip .name {
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.01em;
+    }
+
+    .strip .count {
+        margin-left: auto;
+        font-size: 12px;
+        opacity: 0.92;
+    }
+
+    .seg-wrap {
+        flex: none;
+        padding: 10px 14px;
+        border-bottom: 0.5px solid var(--rule);
+    }
+
+    .seg {
+        display: flex;
+        background: var(--sunk);
+        border-radius: 7px;
+        padding: 2px;
+    }
+
+    .seg button {
+        flex: 1;
+        border: 0;
+        background: none;
+        padding: 4px 0;
+        border-radius: 5px;
+        font-size: 12px;
+        color: var(--ink-2);
+    }
+
+    .seg button[aria-selected='true'] {
+        background: var(--panel);
+        color: var(--ink);
+        font-weight: 500;
+        box-shadow:
+            0 0 0 0.5px var(--rule),
+            0 1px 2px rgb(0 0 0 / 0.06);
+    }
+
+    .seg .n {
+        margin-left: 4px;
+        color: var(--ink-3);
+    }
+
+    .list {
+        flex: 1;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .list::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .list::-webkit-scrollbar-thumb {
+        background: var(--rule);
+        border-radius: 4px;
+    }
+
+    /* Job row (DESIGN.md "Job row"). */
+    .job {
+        display: flow-root;
+        padding: 9px 14px 7px 24px;
+        border-bottom: 0.5px solid var(--rule);
+        position: relative;
+    }
+
+    .job:hover {
+        background: color-mix(in srgb, var(--panel) 60%, transparent);
+    }
+
+    .job .dot {
+        position: absolute;
+        left: 10px;
+        top: 15px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--dot);
+    }
+
+    /* The stamp floats right: a short title leaves no gap under it. */
+    .job > .stamp {
+        float: right;
+        margin: 1px 0 4px 10px;
+    }
+
+    .job > * + :not(.t, .stamp) {
+        margin-top: 3px;
+    }
+
+    .job .t {
+        font-size: 13px;
+        line-height: 1.35;
+        font-weight: 500;
+        text-wrap: pretty;
+        overflow-wrap: anywhere;
+    }
+
+    .job.unseen .t {
+        font-weight: 600;
+    }
+
+    .job .meta {
+        font-size: 12px;
+    }
+
+    .job .meta .sep {
+        margin-left: 5px;
+    }
+
+    .job .meta .nw {
+        white-space: nowrap;
+    }
+
+    .job .pay {
+        clear: right;
+        font-size: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 6px;
+        align-items: baseline;
+    }
+
+    .job .meta {
+        color: var(--ink-2);
+    }
+
+    .sep {
+        color: var(--ink-3);
+    }
+
+    .conv,
+    .terms {
+        color: var(--ink-2);
+    }
+
+    .badge {
+        font-size: 11px;
+        color: var(--ink-2);
+        border: 0.5px solid var(--rule);
+        border-radius: 4px;
+        padding: 0 5px;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .q {
+        display: inline-grid;
+        place-items: center;
+        width: 16px;
+        height: 16px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid var(--ink-3);
+        color: var(--ink-2);
+        border-radius: 4px;
+        align-self: center;
+    }
+
+    /* The entry stamp (DESIGN.md "The entry stamp"). */
+    .stamp {
+        flex: none;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2px 7px 3px;
+        border: 1.5px solid currentColor;
+        border-radius: 4px;
+        color: var(--ok);
+        text-transform: uppercase;
+        line-height: 1.15;
+        transform: rotate(var(--r, -1.5deg));
+    }
+
+    .stamp .c {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+    }
+
+    .stamp .w {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+    }
+
+    .stamp.no {
+        color: var(--no);
+    }
+
+    .stamp.unk {
+        color: var(--unk);
+        border-style: dashed;
+    }
+
+    .stamp.seen {
+        opacity: 0.92;
+    }
+
+    .acts {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin: 1px 0 0 -6px;
+    }
+
+    .act {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 0;
+        background: none;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-size: 12px;
+        color: var(--ink-2);
+        white-space: nowrap;
+    }
+
+    .act:hover {
+        background: var(--sunk);
+        color: var(--ink);
+    }
+
+    .act[aria-pressed='true'] {
+        color: var(--ink);
+        font-weight: 500;
+    }
+
+    .act svg,
+    .btn svg,
+    .warn svg,
+    .group svg {
+        width: 14px;
+        height: 14px;
+        flex: none;
+    }
+
+    .sp {
+        flex: 1;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 0.5px solid color-mix(in srgb, var(--ink) 22%, transparent);
+        background: var(--panel);
+        border-radius: 6px;
+        padding: 3px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink);
+    }
+
+    .btn:hover {
+        border-color: color-mix(in srgb, var(--ink) 40%, transparent);
+    }
+
+    .btn.primary {
+        background: var(--burgundy);
+        border-color: var(--burgundy);
+        color: var(--burgundy-ink);
+    }
+
+    .btn.primary:hover {
+        filter: brightness(1.12);
+    }
+
+    /* Pinned "Location not stated" row. */
+    .group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        border: 0;
+        text-align: left;
+        padding: 10px 14px;
+        font-size: 12px;
+        color: var(--ink-2);
+        border-bottom: 0.5px solid var(--rule);
+        border-top: 0.5px solid var(--rule);
+        position: sticky;
+        bottom: 0;
+        background: var(--page);
+        z-index: 1;
+        margin-top: -0.5px;
+        box-shadow: 0 -10px 12px -6px color-mix(in srgb, var(--page) 90%, transparent);
+    }
+
+    /* Open, the row sticks to the top, above its jobs. */
+    .group[aria-expanded='true'] {
+        top: 0;
+        bottom: auto;
+        box-shadow: none;
+    }
+
+    .group:hover {
+        color: var(--ink);
+    }
+
+    .group svg {
+        margin-left: auto;
+        transition: transform 0.2s;
+    }
+
+    .group[aria-expanded='true'] svg {
+        transform: rotate(90deg);
+    }
+
+    .group-note {
+        margin: 0;
+        padding: 8px 14px 6px 24px;
+        font-size: 12px;
+        color: var(--ink-2);
+    }
+
+    .empty {
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+        text-align: center;
+        padding: 44px 28px;
+        color: var(--ink-2);
+    }
+
+    .empty .big {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+    }
+
+    .foot {
+        flex: none;
+        border-top: 0.5px solid var(--rule);
+        background: var(--sunk);
+    }
+
+    .warn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 14px;
+        font-size: 12px;
+        color: var(--no);
+        background: var(--warn-bg);
+        border: 0;
+        border-bottom: 0.5px solid var(--rule);
+        width: 100%;
+        text-align: left;
+    }
+
+    .warn .more {
+        margin-left: auto;
+        color: var(--ink-2);
+    }
+
+    .bar {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 8px 7px 14px;
+        font-size: 12px;
+        color: var(--ink-2);
+    }
+
+    .bar .act {
+        color: var(--ink);
+    }
+
+    .toast {
+        position: absolute;
+        left: 50%;
+        bottom: 74px;
+        transform: translate(-50%, 8px);
+        opacity: 0;
+        pointer-events: none;
+        background: var(--ink);
+        color: var(--page);
+        font-size: 12px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 2;
+        transition:
+            opacity 0.2s,
+            transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .toast.on {
+        opacity: 1;
+        transform: translate(-50%, 0);
+        pointer-events: auto;
+    }
+
+    .toast button {
+        border: 0;
+        background: none;
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        margin-left: 8px;
+        font-size: 12px;
+        padding: 0;
+    }
+
+    /* Stopped state. */
+    .stopped {
+        flex: 1;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 10px;
+        text-align: center;
+        padding: 28px;
+    }
+
+    .stopped svg.big {
+        width: 30px;
+        height: 30px;
+        color: var(--no);
+    }
+
+    .stopped h1 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .stopped p {
+        margin: 0;
+        color: var(--ink-2);
+        max-width: 30ch;
+    }
+
+    /* The settings placeholder page until M8c. */
+    .placeholder main {
+        padding: 22px;
+        display: grid;
+        gap: 8px;
+    }
+
+    .placeholder h1 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .placeholder p {
+        margin: 0;
+        color: var(--ink-2);
+        max-width: 60ch;
+    }
+
+    .placeholder code {
+        font-family: var(--mono);
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+    }
 }

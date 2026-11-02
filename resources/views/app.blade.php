@@ -7,7 +7,7 @@
         <title>{{ config('app.name') }}</title>
         @vite(['resources/css/app.css', 'resources/js/app.ts'])
     </head>
-    <body class="bg-white text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-100">
+    <body>
         <div id="app"></div>
     </body>
 </html>

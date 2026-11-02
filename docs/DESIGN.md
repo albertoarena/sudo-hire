@@ -333,13 +333,13 @@ New / Saved / Applied, each with its count in `ink-3` after a 4px gap. Track on 
 ### Job row
 A grid with 3px gap, padding 9px 14px 7px 24px, a hairline at the bottom. Hover: `panel` at 60% over the page. Lines from top to bottom:
 
-1. **Title and stamp:** title on the left (flex 1, wraps), stamp on the right, 10px gap, top-aligned.
+1. **Title and stamp:** the stamp floats on the right, top-aligned, with a 10px gap. The title and the meta line wrap around it, so a short title leaves no gap under it. The meta line breaks only between its parts, and each "·" stays with the part before it.
 2. **Meta:** company · via Source · age, 12px `ink-2`, separators "·" in `ink-3`, 6px gap. A job on more than one source adds an "also on <source>" badge (11px, hairline border, radius 4px, padding 0 5px).
-3. **Pay:** the original amount, then the converted amount in `ink-2` with "≈". For example "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Terms ("Full time, Senior") in `ink-2`. With no salary: a "?" badge (16px square, 1px `ink-3` border, radius 4px, 11px 600), then "Salary not stated", "·", terms, on one line.
-4. **Actions:** quiet text actions with a 14px icon (Save, Not for me, Applied), then a spacer, then the Apply button with the external-link icon. Actions start 6px left of the text edge so the icons line up with the text.
+3. **Pay:** the original amount, then the converted amount in `ink-2` with "≈", then the "OTE" badge for on-target earnings (styled like "also on"). For example "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Terms ("Full time, Senior") in `ink-2`. With no salary: a "?" badge (16px square, 1px `ink-3` border, radius 4px, 11px 600), then "Salary not stated", "·", terms, on one line.
+4. **Actions:** quiet text actions with a 14px icon (Save, Not for me, Applied), then a spacer, then the Apply button with the external-link icon. Actions start 6px left of the text edge so the icons line up with the text. Apply only opens the apply link in the default browser. It does not move the job to Applied, unlike some job sites: opening a link is not applying. The user presses Applied after applying.
 
 **Row states:**
-- **Unseen:** a 7px dot at left 10px, top 15px (`burgundy`, `focus` in dark mode), title weight 600, fresh stamp. Opening the list marks rows as seen.
+- **Unseen:** a 7px dot at left 10px, top 15px (`burgundy`, `focus` in dark mode), title weight 600, fresh stamp. Closing the list marks the rows shown as seen; a job that arrives while the list is open stays unseen.
 - **Seen:** no dot, title weight 500, faded stamp.
 - **Saved:** the Save action shows a filled bookmark and reads "Saved" (`aria-pressed="true"`, `ink`, weight 500). The row moves to the Saved tab. "Not for me" is not offered outside New.
 - **Applied:** the Applied action is pressed. The row moves to the Applied tab.
@@ -350,7 +350,7 @@ A grid with 3px gap, padding 9px 14px 7px 24px, a hairline at the bottom. Hover:
 Centered near the bottom of the popover (74px above the bottom, above the footer). `ink` background, `page` text, 12px, radius 6px, padding 6px 12px, one line. It rises 8px and fades in (opacity 0.2s, transform 0.25s, `cubic-bezier(.2,.8,.2,1)`), stays 3.2 seconds. Undo is an underlined text button. Use `role="status"` and `aria-live="polite"`.
 
 ### Pinned "Location not stated" row
-Only on the New tab, after the matches. A full-width button, sticky to the bottom of the list, on `page`, with hairlines above and below and the upward fade. Text "Location not stated: 2 jobs", 12px `ink-2`, a chevron on the right. Expanded (`aria-expanded="true"`): the chevron turns 90 degrees (0.2s), a note follows ("These jobs do not say where you can work from. Check before you apply. They are never in a notification."), then the rows. These rows have the dashed grey stamp, no unseen dot, and only Save, Not for me and Apply.
+Only on the New tab, after the matches. A full-width button, sticky to the bottom of the list, on `page`, with hairlines above and below and the upward fade. Text "Location not stated: 2 jobs", 12px `ink-2`, a chevron on the right. Expanded (`aria-expanded="true"`): the chevron turns 90 degrees (0.2s), a note follows ("These jobs do not say where you can work from. Check before you apply. They are never in a notification."), then the rows. Opening it scrolls the row to the top of the list, where it sticks, so its jobs show without a scroll. Closing it puts it back at the bottom. These rows have the dashed grey stamp, no unseen dot, and only Save, Not for me and Apply.
 
 ### Footer
 On `sunk`, hairline on top.
@@ -359,11 +359,11 @@ On `sunk`, hairline on top.
 
 ### Empty and stopped states
 - **Empty:** centered in the list, padding 44px 28px, 8px gap. A state title ("Nothing new since 16:05") and one line in `ink-2` ("Next scan at 18:05. You get one notification when new jobs match."). Saved and Applied have their own lines ("No saved jobs", "No applications yet"). The strip still shows "0 unseen" and the tabs keep their counts.
-- **Stopped:** replaces the tabs, list and footer. Centered: a 30px warning icon in red and the state title "Sudo Hire stopped in the background". Below them: one line in `ink-2` (max 30ch) and a primary button "Restart Sudo Hire".
+- **Stopped:** replaces the tabs, list and footer. Centered: a 30px warning icon in red and the state title "Sudo Hire stopped in the background". Below them: one line in `ink-2` (max 30ch), "Quit Sudo Hire and open it again. Your saved jobs are safe.", and a primary button "Quit Sudo Hire". The web view cannot restart the app when PHP is gone; the button quits through Electron.
 
 ### Buttons
 - **Default:** `panel`, hairline border (`ink` at 22%), radius 6px, padding 3px 10px, 12px weight 500, optional 14px icon with 6px gap. Hover: border at 40%.
-- **Primary:** burgundy fill and border, `burgundy-ink` text. Hover: `brightness(1.12)`. One primary per view (Restart, Next in first run).
+- **Primary:** burgundy fill and border, `burgundy-ink` text. Hover: `brightness(1.12)`. One primary per view (Quit in the stopped state, Next in first run).
 - **Actions:** borderless text buttons, 12px `ink-2`, padding 3px 6px, radius 5px, 14px icon with 5px gap. Hover: `sunk` background, `ink` text. Pressed: `ink`, weight 500.
 
 ### Inputs and form controls
@@ -384,8 +384,9 @@ Window title follows the selected pane. Sidebar items: 13px, 15px icon in `ink-2
 Eight panes, in order:
 1. **Where you work** (pin): country (the country combobox), a live stamp preview with two real jobs, timezone, work mode, "Location not stated" mode, time difference.
    - **Time difference:** a select with Off, Up to 1 hour, through Up to 6 hours, and Custom. Custom shows a number field (0 to 12) followed by "hours". The filter keeps jobs whose timezone is within plus or minus N hours of the user's. Jobs with no timezone always pass. The hint says so; with Custom it gives an example instead ("Vancouver is 9 hours behind Rome").
-2. **Jobs** (search): include and exclude keyword chips, "also match the description", contract, seniority, posted within, hidden companies.
+2. **Jobs** (search): include and exclude keyword chips, "also match the description", contract, seniority, posted within, hidden companies, hidden jobs.
    - **Posted within:** 24 hours, 3 days, 7 days, 14 days, 30 days. The default is 3 days. Hint: "Jobs are kept for 30 days."
+   - **Hidden jobs:** the jobs hidden with "Not for me": title, company and the date hidden, newest first, each with a "Show again" action. "Show again" moves the job back to New. With no hidden jobs: "No hidden jobs."
 3. **Pay** (coin): display currency, minimum per year, payments per year (12, 13, 14), minimum per day, salary not stated. A note with the ECB rate date.
 4. **Notifications** (bell): interval slider (1 to 24 hours) and a sample notification.
 5. **Sources** (feed): a table with On (switch), Source, Last read, Status. Status is a 7px dot plus text. A green dot shows the job count. A red dot shows the error name, with one plain sentence in `ink-2` below it.
@@ -459,6 +460,5 @@ Short and functional: the toast (0.2s and 0.25s), the chevron (0.2s), the switch
 ## Open items
 
 - **Final icon drawing:** the app icon and the menu bar mark at every macOS size, 16 to 1024px (M9).
-- **When rows become seen:** the review page fades one stamp after 6 seconds as a demo. The real moment (on open, on scroll into view, or on close) is not set.
-- **OTE badge:** PRODUCT.md lists an "OTE" badge. The build does not show it. Style it like the "also on" badge until designed.
-- **Keyboard:** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed.
+- **Apply and Applied:** some job sites move a job to Applied when Apply is pressed, so users may expect the same here. A possible answer: after Apply, the toast says "Opened in your browser" with a "Mark as applied" button. Not decided.
+- **Keyboard (after v1):** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed. v1 has Tab order and focus rings.

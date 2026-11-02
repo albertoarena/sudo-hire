@@ -1,4 +1,4 @@
 import { createApp } from 'vue';
-import App from './components/App.vue';
+import MenuBarList from './list/MenuBarList.vue';
 
-createApp(App).mount('#app');
+createApp(MenuBarList).mount('#app');

@@ -903,6 +903,48 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: approved by the project owner on 2026-11-02. A notification about a job that the user already acted on is noise.
 - Replaces: the rule "when a notification is sent, `notified_at` is set on the jobs that it counts" of "Notification interval and notified_at" (2026-11-01), for jobs with a state or a seen time
 
+## 2026-11-02: The menu bar list in Vue
+
+- Milestone: M8b
+- Decision: the popover is one Vue component tree in `resources/js/list/`. The colors, sizes and texts come from `docs/DESIGN.md` and the prototype. The tokens are CSS variables in `resources/css/app.css`, with dark values through `prefers-color-scheme`, mapped into the Tailwind theme. The popover is 400 by 640.
+- Decision: the list loads when the page opens, when the popover gets the focus or becomes visible, and after each action. It does not poll while the popover is hidden.
+- Decision: the stamp tilt is computed in the browser from the job id, with the DESIGN.md formula. The stamp texts come from the API kind and place.
+- Reason: approved in the M8b brief. The business logic stays in PHP: the list only shows the API data.
+- Replaces: none
+
+## 2026-11-02: App actions from the web view
+
+- Milestone: M8b
+- Decision: the web view cannot open the browser, open a window or quit. It calls `POST /api/app/open-url`, `/api/app/settings` and `/api/app/quit`, and PHP uses the NativePHP `Shell`, `WindowManager` and `App` classes. `open-url` accepts only http and https links.
+- Decision: the settings window loads `/settings`, a placeholder page until M8c.
+- Decision: when the PHP server does not answer, the list shows the stopped state. Its button quits through `window.Native.contextMenu` with Electron's `quit` role, because the API is gone. The web view cannot restart the app: `app.relaunch()` is only behind the NativePHP internal API, and the preload script exposes no relaunch. The stopped state says "Quit Sudo Hire and open it again."
+- Reason: the project owner chose "quit, then reopen" on 2026-11-02, over a patch of the NativePHP preload script.
+- Replaces: the "Restart Sudo Hire" button of DESIGN.md "Empty and stopped states"
+
+## 2026-11-02: OTE badge, keyboard and monthly salaries in the list
+
+- Milestone: M8b
+- Decision: the OTE badge looks like the "also on" badge, after the salary.
+- Decision: keyboard movement in the list (arrow keys, Return, S) comes after v1. v1 has Tab order and focus rings.
+- Decision: the list shows a monthly salary as a year, with the monthly payments of the settings, also in the same currency: "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Other periods show the converted amount only when the currency is different. `hire:scan` keeps its own format.
+- Reason: the project owner decided the badge and the keyboard on 2026-11-02. The monthly example is in DESIGN.md "Job row".
+- Replaces: none
+
+## 2026-11-02: Apply does not mark a job as applied
+
+- Milestone: M8b
+- Decision: Apply opens the apply link in the default browser and does not change the job. Applied is a separate action that moves the job to the Applied tab.
+- Reason: opening a link is not applying. A job marked by mistake would leave New, and the user would not see it again there. Some job sites mark a job as applied on Apply, so the difference is noted in DESIGN.md "Job row", and a prompt after Apply is an open item.
+- Replaces: none
+
+## 2026-11-02: Hidden jobs come back from Settings
+
+- Milestone: M8c
+- Decision: the Jobs pane of the settings window lists the hidden jobs, each with "Show again". "Show again" works like Undo: it clears the state and deletes the tombstones of the job, so the job goes back to New.
+- Decision: the menu bar list keeps three tabs. Hidden jobs have no tab.
+- Reason: chosen by the project owner on 2026-11-02 during the M8b checks. After the Undo toast closes, a hidden job could not come back.
+- Replaces: none
+
 ## 2026-11-02: The docs site lives in a separate repository
 
 - Milestone: Site
