@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AppActionController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CountryController;
+use App\Http\Controllers\Api\CountryPresetController;
 use App\Http\Controllers\Api\DiagnosticsController;
 use App\Http\Controllers\Api\HiddenJobController;
 use App\Http\Controllers\Api\JobStateController;
@@ -30,6 +31,7 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
 
     Route::get('countries', CountryController::class)->name('countries');
+    Route::get('country-preset', CountryPresetController::class)->name('country-preset');
     Route::get('stamp-preview', StampPreviewController::class)->name('stamp-preview');
     Route::get('sources', SourceController::class)->name('sources');
 
