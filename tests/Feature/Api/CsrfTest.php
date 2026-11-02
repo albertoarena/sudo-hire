@@ -28,6 +28,7 @@ it('refuses a write with no CSRF token', function (string $method, string $uri, 
     'settings' => ['PUT', '/api/settings', ['country' => 'DE']],
     'add a company' => ['POST', '/api/companies', ['provider' => 'lever', 'slug' => 'globex']],
     'remove a company' => ['DELETE', '/api/companies/1', []],
+    'clear older hidden jobs' => ['DELETE', '/api/hidden-jobs/older', []],
 ]);
 
 it('puts the CSRF token of the session in the page', function () {

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AppActionController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\DiagnosticsController;
+use App\Http\Controllers\Api\HiddenJobController;
 use App\Http\Controllers\Api\JobStateController;
 use App\Http\Controllers\Api\ListController;
 use App\Http\Controllers\Api\RateController;
@@ -20,6 +21,9 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::get('list', ListController::class)->name('list');
     Route::put('jobs/{job}/state', JobStateController::class)->name('jobs.state')
         ->missing(fn () => response()->json(['message' => 'Job not found.'], 404));
+
+    Route::get('hidden-jobs', [HiddenJobController::class, 'index'])->name('hidden-jobs.index');
+    Route::delete('hidden-jobs/older', [HiddenJobController::class, 'destroyOlder'])->name('hidden-jobs.destroy-older');
 
     Route::get('settings', [SettingsController::class, 'show'])->name('settings.show');
     Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
