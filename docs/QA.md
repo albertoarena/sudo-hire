@@ -332,3 +332,55 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. Press "Quit Sudo Hire", then the menu item "Quit Sudo Hire".
 - Expected: step 1 opens the group at the top of the list, with its note and rows below it (dashed stamps, no dot), then closes it and the row goes back to the bottom. Step 2 opens the "Sudo Hire Settings" window with the placeholder page. Step 3 shows "Sudo Hire stopped in the background" with the Quit button, and no tabs or footer. Step 4 quits the app.
 - Result: passed 2026-11-02, on a Mac, on branch m8b/menu-bar-list. The first `pkill` pattern did not match the NativePHP server, which starts with `-d` options before `-S`. Step 3 now uses the corrected pattern.
+
+## M8c: The settings window matches the design in light and dark
+
+- Added: 2026-11-02, branch m8c/settings-window
+- Why manual: Vitest renders the components in jsdom, with no real fonts, colors or window.
+- Setup: run `php artisan migrate`, `php artisan native:migrate` and `npm run build` (README, "Two databases"). Run `php artisan native:run` and wait for a scan (up to 5 minutes).
+- Steps:
+  1. Open the list from the menu bar and press Settings. Compare the window with `docs/design/sudo-hire-ui.html`.
+  2. Select each item in the sidebar, from Where you work to Troubleshooting.
+  3. In Where you work, type "ma" in Country and press the Down arrow twice.
+  4. Switch macOS to the dark appearance (System Settings, Appearance) and repeat steps 2 and 3.
+- Expected: the window is 720 by 520, with a 170px sidebar on the sunk tone. The selected item is burgundy, and the window title is the name of the pane. Each pane has the texts of DESIGN.md. The preview shows the stamps of two real jobs. The country list floats over the pane, with the active country in burgundy. Chips, switches, tables and notes look like the prototype. In dark appearance, every part uses the dark colors.
+- Result: not run
+
+## M8c: Changes stay after the window closes, and the list follows them
+
+- Added: 2026-11-02, branch m8c/settings-window
+- Why manual: tests fake the API. Only the app has the window and the menu bar list.
+- Setup: as for "M8c: The settings window matches the design in light and dark".
+- Steps:
+  1. Change one control in each pane: Country to Germany, add an include keyword, set Minimum per year to 50000, move the notification slider, turn one source off, add the company `lever` `spotify`.
+  2. In Pay, type 0 in Minimum per day and press Enter.
+  3. Close the settings window and open it again.
+  4. Open the menu bar list.
+- Expected: step 2 shows the API message in red under the field. In step 3, every change of step 1 is still there. In step 4, the stamps show "DE" where they showed "IT", and the list follows the new keyword and minimum.
+- Result: not run
+
+## M8c: Hidden jobs come back, and older hidden jobs clear
+
+- Added: 2026-11-02, branch m8c/settings-window
+- Why manual: older hidden jobs need a job that retention deleted. Tests make one with a fake database.
+- Setup: as for "M8c: The settings window matches the design in light and dark". In the list, press Not for me on one job and let the toast close.
+- Steps:
+  1. Open Settings, Jobs. Press Show again on the job.
+  2. Open the menu bar list.
+  3. To make an older hidden job, hide a job, then run `php artisan tinker` with `App\Models\Job::query()->where('state', 'hidden')->delete();` on the app database.
+  4. Open Settings, Jobs again. Press "Clear older hidden jobs (1)", then Clear.
+- Expected: step 1 removes the job from Hidden jobs, and step 2 shows it in New. Step 4 asks for a confirmation in the page, not in a dialog, then removes the Clear line. With no hidden jobs the pane says "No hidden jobs."
+- Result: not run
+
+## M8c: Data folder, log folder, report and links
+
+- Added: 2026-11-02, branch m8c/settings-window
+- Why manual: tests fake the NativePHP internal API. Finder, the clipboard and the browser need the app.
+- Setup: as for "M8c: The settings window matches the design in light and dark".
+- Steps:
+  1. In Privacy, press "Show data folder in Finder", then "Read the privacy policy".
+  2. In Troubleshooting, press "Open log folder".
+  3. Press "Copy diagnostic report" and paste it in a text editor.
+  4. Press "Report a problem", then "More answers on the help page".
+- Expected: step 1 shows the app database file selected in Finder, then opens https://sudohire.dev/privacy/ in the default browser. Step 2 opens the folder of `laravel.log` in Finder. In step 3 the button reads "Copied" for about 1.6 seconds. The text has the app, macOS and PHP versions and one line for each source. It has no settings, keywords, companies, jobs or links. Step 4 opens a new issue on the sudo-hire repository on GitHub, then https://sudohire.dev/help/. Until the site is live, the sudohire.dev pages do not load: check only the address.
+- Result: not run
