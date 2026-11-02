@@ -2,12 +2,10 @@
 
 namespace App\Scan;
 
-use Illuminate\Container\Attributes\Bind;
-
 /**
- * Shows the summary notification. hire:scan uses osascript. M7 can bind a native notifier.
+ * Shows the summary notification. AppServiceProvider binds NativeNotifier inside
+ * the app and MacNotifier (osascript) outside it.
  */
-#[Bind(MacNotifier::class)]
 interface Notifier
 {
     /**

@@ -20,8 +20,8 @@ use Throwable;
 
 /**
  * One scan: refresh the rates, run the due sources, prune, filter the new jobs,
- * and send the summary notification when it is due. hire:scan runs it. M7 can
- * run it from the NativePHP scheduler.
+ * and send the summary notification when it is due. hire:scan runs it, from the
+ * terminal, from cron or launchd, and from the NativePHP scheduler.
  */
 final class Scan
 {
@@ -67,6 +67,11 @@ final class Scan
 
         if (! $notify) {
             return new ScanResult($runs, $matches, $locationNotStated, NotificationOutcome::Off, lastSentAt: $lastSentAt);
+        }
+
+        // Without a country the eligibility filter is off, so the matches cannot be trusted.
+        if ($settings->country === null) {
+            return new ScanResult($runs, $matches, $locationNotStated, NotificationOutcome::NoCountry, lastSentAt: $lastSentAt);
         }
 
         if ($matches === []) {

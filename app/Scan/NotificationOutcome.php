@@ -12,4 +12,5 @@ enum NotificationOutcome: string
     case NotDue = 'not_due';
     case Off = 'off';
     case Failed = 'failed';
+    case NoCountry = 'no_country';
 }

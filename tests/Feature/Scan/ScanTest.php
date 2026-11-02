@@ -5,6 +5,7 @@ use App\Models\Job;
 use App\Models\SentNotification;
 use App\Models\SourceRun;
 use App\Models\StoredSettings;
+use App\Scan\NotificationOutcome;
 use App\Scan\Notifier;
 use App\Scan\Scan;
 use App\Scan\ScanMatch;
@@ -32,6 +33,7 @@ beforeEach(function () {
     $this->notifier = new FakeNotifier;
     app()->instance(Notifier::class, $this->notifier);
     useSources([]);
+    scanSettings();
     Http::fake(['www.ecb.europa.eu/*' => Http::response(JobFields::fixture('ecb/eurofxref-daily.xml'))]);
 });
 
@@ -45,20 +47,22 @@ function useSources(array $sources): void
 }
 
 /**
- * Stores the settings as they are, with no check of the source keys.
+ * Stores the settings as they are, with no check of the source keys. The country
+ * is IT unless the test changes it: with no country, the scan sends no notification.
  */
 function scanSettings(array $overrides = []): void
 {
     StoredSettings::query()->delete();
-    StoredSettings::query()->create(['data' => Make::settings($overrides)->toArray()]);
+    StoredSettings::query()->create(['data' => Make::settings(array_merge(['country' => 'IT'], $overrides))->toArray()]);
 }
 
 /**
- * Stores one job, posted and fetched now. Null when it is stored as "also on".
+ * Stores one job, open worldwide, posted and fetched now. Null when it is stored as "also on".
  */
 function storeJob(array $overrides = []): ?Job
 {
     $job = new NormalisedJob(...jobAttributes(array_merge([
+        'eligibility' => Eligibility::worldwide(),
         'postedAt' => CarbonImmutable::now(),
         'fetchedAt' => CarbonImmutable::now(),
     ], $overrides)));
@@ -225,8 +229,8 @@ it('sets notified_at on the counted jobs only', function () {
 it('does not count the "Location not stated" jobs and does not list them', function () {
     scanSettings(['country' => 'IT']);
     storeJob(['sourceJobId' => '1', 'title' => 'PHP Developer', 'eligibility' => Eligibility::worldwide()]);
-    storeJob(['sourceJobId' => '2', 'title' => 'Laravel Developer']);
-    storeJob(['sourceJobId' => '3', 'title' => 'Symfony Developer']);
+    storeJob(['sourceJobId' => '2', 'title' => 'Laravel Developer', 'eligibility' => Eligibility::unknown()]);
+    storeJob(['sourceJobId' => '3', 'title' => 'Symfony Developer', 'eligibility' => Eligibility::unknown()]);
 
     $result = scan();
 
@@ -237,7 +241,7 @@ it('does not count the "Location not stated" jobs and does not list them', funct
 
 it('sends no notification when every match is in the "Location not stated" group', function () {
     scanSettings(['country' => 'IT']);
-    storeJob();
+    storeJob(['eligibility' => Eligibility::unknown()]);
 
     $result = scan();
 
@@ -333,6 +337,40 @@ it('fails a job when its main source and every "also on" source are disabled', f
 
     expect($result->matches)->toBe([])
         ->and($this->notifier->sent)->toBe([]);
+});
+
+it('stores the fetched jobs but sends nothing and sets no notified_at with no country', function () {
+    scanSettings(['country' => null, 'postedWithinHours' => 168]);
+    useSources([new FakeSource]);
+
+    $result = scan();
+
+    // FakeSource skips the item with no title.
+    expect(array_map(fn (SourceRun $run) => $run->source, $result->runs))->toBe(['fake'])
+        ->and(Job::query()->count())->toBe(2)
+        ->and(matchedTitles($result))->toBe(['Senior Laravel Developer', 'PHP Engineer'])
+        ->and($result->notification)->toBe(NotificationOutcome::NoCountry)
+        ->and($result->sent)->toBeNull()
+        ->and($this->notifier->sent)->toBe([])
+        ->and(SentNotification::query()->count())->toBe(0)
+        ->and(Job::query()->whereNotNull('notified_at')->count())->toBe(0);
+});
+
+it('uses the settings defaults, with no country, before the first save', function () {
+    StoredSettings::query()->delete();
+    storeJob();
+
+    $result = scan();
+
+    expect($result->notification)->toBe(NotificationOutcome::NoCountry)
+        ->and($this->notifier->sent)->toBe([]);
+});
+
+it('keeps --no-notify as the outcome with no country', function () {
+    scanSettings(['country' => null]);
+    storeJob();
+
+    expect(scan(notify: false)->notification)->toBe(NotificationOutcome::Off);
 });
 
 it('makes no live request', function () {

@@ -22,6 +22,12 @@ Every job keeps its source name, its original link and its original apply link.
 
 Laravel, NativePHP, PHP 8.4, SQLite, Vue 3 with TypeScript, Tailwind CSS.
 
+## Scans in the app
+
+While the app runs, it starts a scan every 5 minutes on its own. It shows a native notification when there are new matches, and a click on it opens the menu bar list. You do not need launchd or cron for the app. They are for scans without the app.
+
+With no country in the settings, a scan stores the jobs but sends no notification.
+
 ## Run a scan from the terminal
 
 One scan fetches the sources that are due, filters the new jobs, prints the matches and sends one summary notification when it is due. It does not need the app.
@@ -87,6 +93,15 @@ With cron, run `crontab -e` and add one line. Change the two paths:
 If the log shows `cURL error 60`, the `php` of launchd or cron uses an old CA bundle. See "cURL error 60 in artisan commands" below. Set the bundle in the `php.ini` of that `php`, because launchd and cron cannot use the `-d` options of your terminal.
 
 ## Local development
+
+### Two databases
+
+`php artisan` commands use `database/database.sqlite`. The app in `php artisan native:run` uses `database/nativephp.sqlite`. In development, NativePHP migrates that file only when it creates it. After a pull with new migrations, run both:
+
+```bash
+php artisan migrate
+php artisan native:migrate
+```
 
 ### cURL error 60 in artisan commands
 
