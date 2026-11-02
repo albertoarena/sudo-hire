@@ -304,7 +304,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Click the menu bar icon. Compare the list with `docs/design/sudo-hire-ui.html`.
   3. Switch macOS to the dark appearance (System Settings, Appearance) and open the list again.
 - Expected: the popover is 400 by 640: the burgundy strip with the unseen count, the New, Saved and Applied tabs with counts, the rows, the "Location not stated" row at the bottom of the list, the footer with the scan times, Settings and Quit. Each stamp has its own small tilt. Unseen rows have the dot and a bold title. In dark appearance, every part uses the dark colors.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch m8b/menu-bar-list. The check found a gap under short titles and a group that opened out of view: both fixed in 7095224.
 
 ## M8b: Actions move jobs and update the counts
 
@@ -318,7 +318,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. Press Apply on a job.
   5. Close the list and open it again.
 - Expected: step 1 moves the job to Saved with the toast "Saved", then back to New with "Moved back to New". The counts follow. Step 2 shows "Marked as applied", and Undo moves the job back. Step 3 shows "Hidden. You will not see this job again", and Undo brings the job back. Step 4 opens the apply link in the default browser, not in the app. In step 5 the stamps of the jobs that were shown are faded, the dots are gone and the menu bar count drops.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch m8b/menu-bar-list. Buttons had no pointer cursor: fixed in 56db5ed. Apply opens only the link and does not mark the job as applied (DECISIONS, "Apply does not mark a job as applied"). A hidden job can come back only with Undo until M8c.
 
 ## M8b: Group row, settings, quit and the stopped state
 
@@ -328,7 +328,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Steps:
   1. Press "Location not stated" at the bottom of the New tab, then press it again.
   2. Press Settings in the footer.
-  3. Stop the PHP server of the app: run `pkill -f 'php -S 127.0.0.1'`. Open the list.
+  3. Stop the PHP server of the app: run `pkill -f 'sudo-hire/vendor/nativephp/desktop/resources/build/php/php .*-S 127\.0\.0\.1'`. Open the list.
   4. Press "Quit Sudo Hire", then the menu item "Quit Sudo Hire".
 - Expected: step 1 opens the group at the top of the list, with its note and rows below it (dashed stamps, no dot), then closes it and the row goes back to the bottom. Step 2 opens the "Sudo Hire Settings" window with the placeholder page. Step 3 shows "Sudo Hire stopped in the background" with the Quit button, and no tabs or footer. Step 4 quits the app.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch m8b/menu-bar-list. The first `pkill` pattern did not match the NativePHP server, which starts with `-d` options before `-S`. Step 3 now uses the corrected pattern.
