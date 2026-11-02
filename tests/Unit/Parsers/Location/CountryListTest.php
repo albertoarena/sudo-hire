@@ -47,8 +47,50 @@ it('reads the We Work Remotely country list with flag emoji', function () {
         ]);
 });
 
-it('gives unknown when one name of the list is not a country (not from a fixture)', function () {
-    expect((new LocationParser)->countryList(['Spain', 'Barcelona'])->type)->toBe(EligibilityType::Unknown);
+it('skips a name that is not a country and keeps the rest of the list (not from a fixture)', function () {
+    $result = (new LocationParser)->countryList(['Spain', 'Atlantis', 'Italy']);
+
+    expect($result->type)->toBe(EligibilityType::Restricted)
+        ->and($result->countries)->toBe(['ES', 'IT']);
+});
+
+it('skips a name that is not a country in a country text (not from a fixture)', function () {
+    $result = (new LocationParser)->countryText('🇪🇸 Spain, Atlantis, and 🇮🇹 Italy');
+
+    expect($result->type)->toBe(EligibilityType::Restricted)
+        ->and($result->countries)->toBe(['ES', 'IT']);
+});
+
+it('gives unknown when no name of the list is a country (not from a fixture)', function () {
+    expect((new LocationParser)->countryList(['Atlantis', 'Barcelona'])->type)->toBe(EligibilityType::Unknown)
+        ->and((new LocationParser)->countryText('Atlantis, Barcelona')->type)->toBe(EligibilityType::Unknown);
+});
+
+it('reads the Himalayas Latin America list with its ISO style names (live item, 2026-11-02)', function () {
+    $names = [
+        'Anguilla', 'Antigua and Barbuda', 'Argentina', 'Aruba', 'Bahamas', 'Barbados', 'Belize', 'Bermuda', 'Bolivia',
+        'Bonaire, Sint Eustatius and Saba', 'Brazil', 'Cayman Islands', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Dominica',
+        'Dominican Republic', 'Ecuador', 'El Salvador', 'Falkland Islands (Malvinas)', 'Grenada', 'Guatemala', 'Guyana', 'Haiti',
+        'Honduras', 'Jamaica', 'Mexico', 'Montserrat', 'Nicaragua', 'Panama', 'Paraguay', 'Peru', 'Puerto Rico',
+        'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'South Georgia and the South Sandwich Islands',
+        'Suriname', 'Trinidad and Tobago', 'Turks and Caicos Islands', 'Uruguay', 'Venezuela', 'Virgin Islands, British',
+        'Virgin Islands, U.S.',
+    ];
+
+    $result = (new LocationParser)->countryList($names);
+
+    expect($result->type)->toBe(EligibilityType::Restricted)
+        ->and($result->countries)->toHaveCount(45)
+        ->and($result->countries)->toContain('AR', 'BQ', 'FK', 'GS', 'MX', 'VG', 'VI');
+});
+
+it('reads the other ISO style names of Himalayas (live names, 2026-11-02)', function () {
+    expect((new LocationParser)->countryList(['Holy See (Vatican City State)', 'Congo, The Democratic Republic of the'])->countries)
+        ->toBe(['VA', 'CD']);
+});
+
+it('skips Kosovo, which has no ISO 3166-1 code (live name, 2026-11-02)', function () {
+    expect((new LocationParser)->countryList(['Kosovo', 'Serbia'])->countries)->toBe(['RS']);
 });
 
 it('gives unknown for an empty list, so the source decides (not from a fixture)', function () {
