@@ -28,7 +28,7 @@ Everything stays on your Mac, in a local SQLite database and in log files:
 - The daily exchange rates
 - A short record of each source run: the time, the number of jobs and the error, if there was one
 - Your settings: country, timezone, work modes, keywords, salary, contract types, seniority, blocked companies, disabled sources, display currency and notification interval
-- Internal cache, queue and session data that the app needs to run. It contains no data about you, other than the local address of your Mac
+- Internal cache, queue and session data that the app needs to run. It contains no data about you
 - A log file with warnings and errors, for example a source that could not be read
 
 The app reads the timezone of your Mac to set a default. It reads it on your Mac and does not send it.
