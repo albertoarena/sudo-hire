@@ -356,7 +356,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. In Where you work, type "ma" in Country and press the Down arrow twice.
   4. Switch macOS to the dark appearance (System Settings, Appearance) and repeat steps 2 and 3.
 - Expected: the window is 720 by 520, with a 170px sidebar on the sunk tone. The selected item is burgundy, and the window title is the name of the pane. Each pane has the texts of DESIGN.md. The preview shows the stamps of two real jobs. The country list floats over the pane, with the active country in burgundy. Chips, switches, tables and notes look like the prototype. In dark appearance, every part uses the dark colors.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch fix/settings-devtools. The first open showed the developer tools: fixed in cbda00f. With the focus, the country list shows only the current country, so it looks like a fixed list. M8d opens the full list on focus.
 
 ## M8c: Changes stay after the window closes, and the list follows them
 
@@ -369,7 +369,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Close the settings window and open it again.
   4. Open the menu bar list.
 - Expected: step 2 shows the API message in red under the field. In step 3, every change of step 1 is still there. In step 4, the stamps show "DE" where they showed "IT", and the list follows the new keyword and minimum.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch fix/settings-devtools.
 
 ## M8c: Hidden jobs come back, and older hidden jobs clear
 
@@ -379,10 +379,10 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Steps:
   1. Open Settings, Jobs. Press Show again on the job.
   2. Open the menu bar list.
-  3. To make an older hidden job, hide a job, then run `php artisan tinker` with `App\Models\Job::query()->where('state', 'hidden')->delete();` on the app database.
+  3. To make an older hidden job, hide a job, then delete it in the app database: `DB_DATABASE=database/nativephp.sqlite php artisan tinker --execute='App\Models\Job::query()->where("state", "hidden")->delete();'`.
   4. Open Settings, Jobs again. Press "Clear older hidden jobs (1)", then Clear.
 - Expected: step 1 removes the job from Hidden jobs, and step 2 shows it in New. Step 4 asks for a confirmation in the page, not in a dialog, then removes the Clear line. With no hidden jobs the pane says "No hidden jobs."
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch fix/settings-devtools. The list has no limit. M8d shows the 10 newest hidden jobs, then "Show all".
 
 ## M8c: Data folder, log folder, report and links
 
@@ -395,4 +395,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Press "Copy diagnostic report" and paste it in a text editor.
   4. Press "Report a problem", then "More answers on the help page".
 - Expected: step 1 shows the app database file selected in Finder, then opens https://sudohire.dev/privacy/ in the default browser. Step 2 opens the folder of `laravel.log` in Finder. In step 3 the button reads "Copied" for about 1.6 seconds. The text has the app, macOS and PHP versions and one line for each source. It has no settings, keywords, companies, jobs or links. Step 4 opens a new issue on the sudo-hire repository on GitHub, then https://sudohire.dev/help/. Until the site is live, the sudohire.dev pages do not load: check only the address.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch fix/settings-devtools. The report has only the versions and one line for each source. The sudohire.dev pages do not exist yet: the addresses are correct.
