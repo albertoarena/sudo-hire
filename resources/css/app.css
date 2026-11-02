@@ -78,6 +78,11 @@
         display: none !important;
     }
 
+    /* Tailwind's preflight gives buttons the default cursor; the prototype uses the pointer. */
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+
     html,
     body {
         height: 100%;
