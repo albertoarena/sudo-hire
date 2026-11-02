@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  * Stores normalised jobs with deduplication and retention (REQUIREMENTS section 9).
  * A job keeps its own links. Another source of the same job is stored as "also on",
  * with its own links: an apply link is never replaced (AGENTS.md rule 11).
- * A hidden job leaves tombstones, so it is never stored again.
+ * A hidden job leaves tombstones, so it does not come back.
  */
 final class JobStore
 {
@@ -121,12 +121,18 @@ final class JobStore
         ], $keys));
     }
 
+    /**
+     * A source key of a hidden job blocks forever. Its fingerprint blocks only for
+     * DUPLICATE_DAYS after the job was hidden, the same window as deduplication.
+     */
     private function isHidden(NormalisedJob $job): bool
     {
+        $since = CarbonImmutable::now()->subDays(self::DUPLICATE_DAYS);
+
         return HiddenJob::query()
             ->where(fn ($query) => $query
                 ->where(fn ($key) => $key->where('source', $job->source)->where('source_job_id', $job->sourceJobId))
-                ->orWhere('fingerprint', $job->fingerprint))
+                ->orWhere(fn ($fingerprint) => $fingerprint->where('fingerprint', $job->fingerprint)->where('created_at', '>=', $since)))
             ->exists();
     }
 

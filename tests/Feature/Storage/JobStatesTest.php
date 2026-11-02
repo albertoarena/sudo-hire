@@ -169,6 +169,35 @@ it('does not store a hidden job that is fetched again', function (NormalisedJob 
     'the same fingerprint from another source' => fn () => stateJob(['source' => 'third', 'sourceJobId' => '9', 'attribution' => 'via Third']),
 ]);
 
+it('blocks the same fingerprint from another source for 14 days only', function () {
+    $store = app(JobStore::class);
+    $store->setState(savedJob(), JobState::Hidden);
+    $third = fn () => stateJob(['source' => 'third', 'sourceJobId' => '9', 'attribution' => 'via Third']);
+
+    CarbonImmutable::setTestNow('2026-11-16T10:00:00Z');
+    $store->save([$third()]);
+
+    expect(Job::query()->where('source', 'third')->exists())->toBeFalse();
+
+    CarbonImmutable::setTestNow('2026-11-16T10:00:01Z');
+    $store->save([$third()]);
+
+    expect(Job::query()->where('source', 'third')->exists())->toBeTrue()
+        ->and(AlsoOnSource::query()->count())->toBe(0);
+});
+
+it('blocks the source keys of a hidden job forever', function () {
+    $store = app(JobStore::class);
+    $store->save([sameJobOnOtherBoard()]);
+    $store->setState(Job::query()->sole(), JobState::Hidden);
+    Job::query()->delete();
+
+    CarbonImmutable::setTestNow('2027-11-02T10:00:00Z');
+    $store->save([sameJobOnOtherBoard(['title' => 'Another title'])]);
+
+    expect(Job::query()->count())->toBe(0);
+});
+
 it('does not update a hidden job that its source lists again', function () {
     $store = app(JobStore::class);
     $store->setState(savedJob(), JobState::Hidden);

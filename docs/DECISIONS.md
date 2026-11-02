@@ -849,7 +849,7 @@ Not used: `state` (company headquarters), `media:content`.
 
 - Milestone: M8a
 - Decision: `JobStore::prune()` never deletes a saved or an applied job, or its "also on" rows. A hidden job is deleted after 30 days, as a job with no state.
-- Decision: when a job becomes hidden, the `hidden_jobs` table stores one row for each source key of the job (its own key and the key of each "also on" row), with the fingerprint of the job. `JobStore::save()` skips a job whose key or fingerprint is in `hidden_jobs`. So the hidden job is not updated, it gets no new "also on" row, and it is not stored again after retention.
+- Decision: when a job becomes hidden, the `hidden_jobs` table stores one row for each source key of the job (its own key and the key of each "also on" row), with the fingerprint of the job. `JobStore::save()` skips a job whose key is in `hidden_jobs`, with no time limit. It also skips a job with the same fingerprint while the tombstone is younger than `JobStore::DUPLICATE_DAYS` (14 days), the window of deduplication. So the hidden job is not updated, it gets no new "also on" row, and its source keys do not come back after retention. A later post with the same company and title from another source is stored again after 14 days (approved by the project owner on 2026-11-02).
 - Decision: undo (any change away from hidden) deletes the tombstones of that job. Tombstones have no retention in v1.
 - Reason: approved in the M8a brief. "Not for me" means "never shown again" (PRODUCT.md), also when the job comes back from another board.
 - Replaces: the retention rule of "Job storage, deduplication and retention" (2026-10-30), for saved and applied jobs
