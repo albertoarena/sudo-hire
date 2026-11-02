@@ -228,8 +228,15 @@ it('reads the location list and the seniority of each job', function (string $fi
     'worldwide' => ['himalayas/search-mid.json', 1, ['eligibility' => ['type' => 'worldwide', 'regions' => [], 'countries' => []], 'seniority' => 'mid']],
 ]);
 
-it('gives unknown eligibility for a location that is not in the tables', function () {
-    expect((new HimalayasSource)->normalise(himalayasItem(1, ['locationRestrictions' => ['Bulgaria', 'Atlantis']]))->eligibility->type->value)->toBe('unknown');
+it('skips a location that is not in the tables and keeps the others', function () {
+    $eligibility = (new HimalayasSource)->normalise(himalayasItem(1, ['locationRestrictions' => ['Bulgaria', 'Atlantis']]))->eligibility;
+
+    expect($eligibility->type->value)->toBe('restricted')
+        ->and($eligibility->countries)->toBe(['BG']);
+});
+
+it('gives unknown eligibility when no location is in the tables', function () {
+    expect((new HimalayasSource)->normalise(himalayasItem(1, ['locationRestrictions' => ['Atlantis']]))->eligibility->type->value)->toBe('unknown');
 });
 
 it('takes the seniority from the title when the list has no known level', function () {

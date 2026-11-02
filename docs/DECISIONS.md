@@ -1018,6 +1018,14 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: chosen by the project owner on 2026-11-02, before M8d, so that the Mac checks show the real mark. The app icon stays in M9.
 - Replaces: the menu bar mark part of the DESIGN.md open item "Final icon drawing"
 
+## 2026-11-02: A country list keeps its known names
+
+- Milestone: fix (Himalayas country names)
+- Decision: `countryList()` and `countryText()` skip a name that is not in the country or region tables, and keep the other names. A list with no known name gives `unknown`. An empty list still gives `unknown`, so the source applies its own rule.
+- Decision: the country table has four more spellings that Himalayas sends: "Virgin Islands, British" (VG), "Virgin Islands, U.S." (VI), "Holy See (Vatican City State)" (VA) and "Congo, The Democratic Republic of the" (CD). Kosovo has no ISO 3166-1 code, so it is not in the table and is skipped.
+- Reason: two Latin America jobs on Himalayas listed 45 countries. Two spellings were not in the table, so the old rule gave `unknown` and the jobs showed "Location not stated" for every user. A name that is skipped can only make the list smaller, never admit a country that the job did not name. Decided by the project owner on 2026-11-02.
+- Replaces: the `countryList()` rule "One name that is not in the tables gives `unknown`" of "Location parser rules" (2026-10-29)
+
 ## 2026-11-02: Identical copies on the same board
 
 - Milestone: fix (same-board copies)

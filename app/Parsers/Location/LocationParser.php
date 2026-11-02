@@ -59,8 +59,9 @@ final class LocationParser
     }
 
     /**
-     * Country or region names, e.g. Himalayas `locationRestrictions`. One name
-     * that is not in the tables gives unknown. An empty list gives unknown: the source decides.
+     * Country or region names, e.g. Himalayas `locationRestrictions`. A name that is not
+     * in the tables is skipped, so one unknown spelling does not lose the rest of the list.
+     * A list with no known name gives unknown. An empty list gives unknown: the source decides.
      *
      * @param  list<string>  $names
      */
@@ -76,8 +77,6 @@ final class LocationParser
                 $regions[] = $region;
             } elseif (($country = Countries::code($name)) !== null) {
                 $countries[] = $country;
-            } else {
-                return Eligibility::unknown();
             }
         }
 
