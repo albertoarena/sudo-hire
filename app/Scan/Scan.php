@@ -4,8 +4,6 @@ namespace App\Scan;
 
 use App\Currency\CurrencyConverter;
 use App\Currency\ExchangeRates;
-use App\Filters\JobFilter;
-use App\Models\AlsoOnSource;
 use App\Models\Job;
 use App\Models\SentNotification;
 use App\Settings\Settings;
@@ -15,7 +13,6 @@ use App\Storage\JobStore;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use LogicException;
 use Throwable;
 
 /**
@@ -37,6 +34,16 @@ final class Scan
      * @param  bool  $notify  false: find the matches, but send nothing and set no notified_at
      */
     public function run(bool $notify = true): ScanResult
+    {
+        $startedAt = CarbonImmutable::now();
+        $result = $this->scan($notify);
+
+        ScanFinished::dispatch($result, $startedAt, CarbonImmutable::now());
+
+        return $result;
+    }
+
+    private function scan(bool $notify): ScanResult
     {
         $this->refreshRates();
 
@@ -115,27 +122,8 @@ final class Scan
 
     private function match(Job $job, Settings $settings, CurrencyConverter $converter, CarbonImmutable $now): ?ScanMatch
     {
-        $alsoOn = array_values($job->alsoOn->sortBy('id')->all());
-        $normalised = $job->toNormalised();
-        $result = JobFilter::evaluate($normalised, $settings, $converter, $now, array_map(fn (AlsoOnSource $other) => $other->source, $alsoOn));
+        $match = JobMatcher::evaluate($job, $settings, $converter, $now);
 
-        if (! $result->passes) {
-            return null;
-        }
-
-        $salary = SalaryText::of($normalised->salary, $result, $converter, $settings->displayCurrency);
-
-        // The links of the first enabled source: the main source, else the first "also on" source.
-        if (! in_array($job->source, $settings->disabledSources, true)) {
-            return new ScanMatch($job, $result, $job->source, $job->source_url, $job->apply_url, $job->attribution, $salary);
-        }
-
-        foreach ($alsoOn as $other) {
-            if (! in_array($other->source, $settings->disabledSources, true)) {
-                return new ScanMatch($job, $result, $other->source, $other->source_url, $other->apply_url, $other->attribution, $salary);
-            }
-        }
-
-        throw new LogicException("Job {$job->id} passed the source filter with no enabled source.");
+        return $match->result->passes ? $match : null;
     }
 }

@@ -10,13 +10,15 @@ use App\Schema\SalaryPeriod;
 
 /**
  * The salary of a match for the terminal: the original text, the amount in the
- * display currency, and the "OTE" and "?" flags. Pure: no I/O.
+ * display currency, and the "OTE" and "?" flags. The list takes the converted
+ * amount alone. Pure: no I/O.
  */
 final class SalaryText
 {
     public static function of(?Salary $salary, FilterResult $result, CurrencyConverter $converter, DisplayCurrency $currency): string
     {
-        $text = $salary === null ? 'not stated' : $salary->raw.self::converted($salary, $converter, $currency);
+        $converted = self::amount($salary, $converter, $currency);
+        $text = $salary === null ? 'not stated' : $salary->raw.($converted === null ? '' : " ({$converted})");
 
         if ($result->ote) {
             $text .= ' [OTE]';
@@ -30,12 +32,23 @@ final class SalaryText
     }
 
     /**
-     * " (EUR 81,000-99,000 a year)", or "" when the currency is the same or has no rate.
+     * The converted salary for the list, e.g. "≈ EUR 81,000-99,000 a year". Null when the
+     * currency is the same, the currency has no rate, or there is no salary.
      */
-    private static function converted(Salary $salary, CurrencyConverter $converter, DisplayCurrency $currency): string
+    public static function converted(?Salary $salary, CurrencyConverter $converter, DisplayCurrency $currency): ?string
     {
-        if ($salary->currency === $currency->value) {
-            return '';
+        $amount = self::amount($salary, $converter, $currency);
+
+        return $amount === null ? null : "≈ {$amount}";
+    }
+
+    /**
+     * "EUR 81,000-99,000 a year", or null when the currency is the same or has no rate.
+     */
+    private static function amount(?Salary $salary, CurrencyConverter $converter, DisplayCurrency $currency): ?string
+    {
+        if ($salary === null || $salary->currency === $currency->value) {
+            return null;
         }
 
         $amounts = [];
@@ -48,7 +61,7 @@ final class SalaryText
             $converted = $converter->convert($amount, $salary->currency, $currency->value);
 
             if ($converted === null) {
-                return '';
+                return null;
             }
 
             $amounts[] = number_format($converted);
@@ -62,6 +75,6 @@ final class SalaryText
             default => '',
         };
 
-        return $amounts === [] ? '' : " ({$currency->value} ".implode('-', $amounts)."{$period})";
+        return $amounts === [] ? null : "{$currency->value} ".implode('-', $amounts).$period;
     }
 }

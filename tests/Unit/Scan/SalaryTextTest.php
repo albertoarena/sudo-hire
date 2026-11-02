@@ -34,3 +34,13 @@ it('shows the "?" and "OTE" flags', function () {
         ->and(salaryText(new Salary(90000, null, 'EUR', SalaryPeriod::Year, '€90k OTE'), ote: true))->toBe('€90k OTE [OTE]')
         ->and(salaryText(new Salary(50, null, 'EUR', SalaryPeriod::Hour, '€50/h'), unknown: true))->toBe('€50/h [?]');
 });
+
+it('gives the converted salary alone, with "≈", for the list', function (?Salary $salary, ?string $text) {
+    expect(SalaryText::converted($salary, new CurrencyConverter(['USD' => 1.25, 'GBP' => 0.8]), DisplayCurrency::Eur))->toBe($text);
+})->with([
+    'a range a month' => [new Salary(5000, 6250, 'USD', SalaryPeriod::Month, '$5,000 - $6,250 per month'), '≈ EUR 4,000-5,000 a month'],
+    'no period' => [new Salary(100000, null, 'USD', SalaryPeriod::Unknown, '$100k'), '≈ EUR 80,000'],
+    'same currency' => [new Salary(60000, 70000, 'EUR', SalaryPeriod::Year, '€60k-70k'), null],
+    'no rate for the currency' => [new Salary(60000, null, 'CHF', SalaryPeriod::Year, 'CHF 60k'), null],
+    'no salary' => [null, null],
+]);
