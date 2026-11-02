@@ -2,18 +2,36 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\List\DiagnosticReport;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 use Native\Desktop\App;
+use Native\Desktop\Client\Client;
+use Native\Desktop\Clipboard;
 use Native\Desktop\Shell;
+use Native\Desktop\Windows\Window;
 use Native\Desktop\Windows\WindowManager;
 
 /**
- * POST /api/app/*: the app actions of the menu bar list. The web view cannot open the
- * browser, open a window or quit by itself, so it asks PHP, and PHP asks NativePHP.
+ * POST /api/app/*: the app actions of the menu bar list and the settings window. The web view
+ * cannot open the browser, Finder or a window, use the clipboard or quit by itself, so it asks
+ * PHP, and PHP asks NativePHP. Paths come from PHP, never from the request.
  */
 final class AppActionController
 {
+    /** The settings window title for each pane (DESIGN.md "Settings window"). */
+    public const array PANE_TITLES = [
+        'where' => 'Where you work',
+        'jobs' => 'Jobs',
+        'pay' => 'Pay',
+        'notifications' => 'Notifications',
+        'sources' => 'Sources',
+        'companies' => 'Companies',
+        'privacy' => 'Privacy',
+        'troubleshooting' => 'Troubleshooting',
+    ];
+
     /**
      * Opens a job link in the default browser. Only http and https: a link comes from a source.
      */
@@ -45,6 +63,42 @@ final class AppActionController
     public function quit(App $app): Response
     {
         $app->quit();
+
+        return response()->noContent();
+    }
+
+    /**
+     * Shows the database file in Finder, in its data folder.
+     */
+    public function showDataFolder(Shell $shell): Response
+    {
+        $shell->showInFolder((string) config('database.connections.'.config('database.default').'.database'));
+
+        return response()->noContent();
+    }
+
+    public function openLogFolder(Shell $shell): Response
+    {
+        $shell->openFile(storage_path('logs'));
+
+        return response()->noContent();
+    }
+
+    public function copyDiagnostics(DiagnosticReport $report, Clipboard $clipboard): Response
+    {
+        $clipboard->text($report->text());
+
+        return response()->noContent();
+    }
+
+    /**
+     * The window title follows the selected pane. Electron ignores the title of the page.
+     */
+    public function settingsTitle(Request $request, Client $client): Response
+    {
+        $pane = $request->validate(['pane' => ['required', 'string', Rule::in(array_keys(self::PANE_TITLES))]])['pane'];
+
+        (new Window('settings'))->setClient($client)->title(self::PANE_TITLES[$pane]);
 
         return response()->noContent();
     }

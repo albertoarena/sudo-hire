@@ -45,4 +45,8 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::post('app/open-url', [AppActionController::class, 'openUrl'])->name('app.open-url');
     Route::post('app/settings', [AppActionController::class, 'openSettings'])->name('app.settings');
     Route::post('app/quit', [AppActionController::class, 'quit'])->name('app.quit');
+    Route::post('app/show-data-folder', [AppActionController::class, 'showDataFolder'])->name('app.show-data-folder');
+    Route::post('app/open-log-folder', [AppActionController::class, 'openLogFolder'])->name('app.open-log-folder');
+    Route::post('app/copy-diagnostics', [AppActionController::class, 'copyDiagnostics'])->name('app.copy-diagnostics');
+    Route::post('app/settings-title', [AppActionController::class, 'settingsTitle'])->name('app.settings-title');
 });
