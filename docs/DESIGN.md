@@ -336,7 +336,7 @@ A grid with 3px gap, padding 9px 14px 7px 24px, a hairline at the bottom. Hover:
 1. **Title and stamp:** the stamp floats on the right, top-aligned, with a 10px gap. The title and the meta line wrap around it, so a short title leaves no gap under it. The meta line breaks only between its parts, and each "·" stays with the part before it.
 2. **Meta:** company · via Source · age, 12px `ink-2`, separators "·" in `ink-3`, 6px gap. A job on more than one source adds an "also on <source>" badge (11px, hairline border, radius 4px, padding 0 5px).
 3. **Pay:** the original amount, then the converted amount in `ink-2` with "≈", then the "OTE" badge for on-target earnings (styled like "also on"). For example "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Terms ("Full time, Senior") in `ink-2`. With no salary: a "?" badge (16px square, 1px `ink-3` border, radius 4px, 11px 600), then "Salary not stated", "·", terms, on one line.
-4. **Actions:** quiet text actions with a 14px icon (Save, Not for me, Applied), then a spacer, then the Apply button with the external-link icon. Actions start 6px left of the text edge so the icons line up with the text.
+4. **Actions:** quiet text actions with a 14px icon (Save, Not for me, Applied), then a spacer, then the Apply button with the external-link icon. Actions start 6px left of the text edge so the icons line up with the text. Apply only opens the apply link in the default browser. It does not move the job to Applied, unlike some job sites: opening a link is not applying. The user presses Applied after applying.
 
 **Row states:**
 - **Unseen:** a 7px dot at left 10px, top 15px (`burgundy`, `focus` in dark mode), title weight 600, fresh stamp. Closing the list marks the rows shown as seen; a job that arrives while the list is open stays unseen.
@@ -459,4 +459,5 @@ Short and functional: the toast (0.2s and 0.25s), the chevron (0.2s), the switch
 ## Open items
 
 - **Final icon drawing:** the app icon and the menu bar mark at every macOS size, 16 to 1024px (M9).
+- **Apply and Applied:** some job sites move a job to Applied when Apply is pressed, so users may expect the same here. A possible answer: after Apply, the toast says "Opened in your browser" with a "Mark as applied" button. Not decided.
 - **Keyboard (after v1):** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed. v1 has Tab order and focus rings.

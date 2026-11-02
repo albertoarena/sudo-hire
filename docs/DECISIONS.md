@@ -929,3 +929,10 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the list shows a monthly salary as a year, with the monthly payments of the settings, also in the same currency: "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Other periods show the converted amount only when the currency is different. `hire:scan` keeps its own format.
 - Reason: the project owner decided the badge and the keyboard on 2026-11-02. The monthly example is in DESIGN.md "Job row".
 - Replaces: none
+
+## 2026-11-02: Apply does not mark a job as applied
+
+- Milestone: M8b
+- Decision: Apply opens the apply link in the default browser and does not change the job. Applied is a separate action that moves the job to the Applied tab.
+- Reason: opening a link is not applying. A job marked by mistake would leave New, and the user would not see it again there. Some job sites mark a job as applied on Apply, so the difference is noted in DESIGN.md "Job row", and a prompt after Apply is an open item.
+- Replaces: none
