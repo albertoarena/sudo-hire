@@ -335,11 +335,11 @@ A grid with 3px gap, padding 9px 14px 7px 24px, a hairline at the bottom. Hover:
 
 1. **Title and stamp:** title on the left (flex 1, wraps), stamp on the right, 10px gap, top-aligned.
 2. **Meta:** company · via Source · age, 12px `ink-2`, separators "·" in `ink-3`, 6px gap. A job on more than one source adds an "also on <source>" badge (11px, hairline border, radius 4px, padding 0 5px).
-3. **Pay:** the original amount, then the converted amount in `ink-2` with "≈". For example "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Terms ("Full time, Senior") in `ink-2`. With no salary: a "?" badge (16px square, 1px `ink-3` border, radius 4px, 11px 600), then "Salary not stated", "·", terms, on one line.
+3. **Pay:** the original amount, then the converted amount in `ink-2` with "≈", then the "OTE" badge for on-target earnings (styled like "also on"). For example "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Terms ("Full time, Senior") in `ink-2`. With no salary: a "?" badge (16px square, 1px `ink-3` border, radius 4px, 11px 600), then "Salary not stated", "·", terms, on one line.
 4. **Actions:** quiet text actions with a 14px icon (Save, Not for me, Applied), then a spacer, then the Apply button with the external-link icon. Actions start 6px left of the text edge so the icons line up with the text.
 
 **Row states:**
-- **Unseen:** a 7px dot at left 10px, top 15px (`burgundy`, `focus` in dark mode), title weight 600, fresh stamp. Opening the list marks rows as seen.
+- **Unseen:** a 7px dot at left 10px, top 15px (`burgundy`, `focus` in dark mode), title weight 600, fresh stamp. Closing the list marks the rows shown as seen; a job that arrives while the list is open stays unseen.
 - **Seen:** no dot, title weight 500, faded stamp.
 - **Saved:** the Save action shows a filled bookmark and reads "Saved" (`aria-pressed="true"`, `ink`, weight 500). The row moves to the Saved tab. "Not for me" is not offered outside New.
 - **Applied:** the Applied action is pressed. The row moves to the Applied tab.
@@ -359,11 +359,11 @@ On `sunk`, hairline on top.
 
 ### Empty and stopped states
 - **Empty:** centered in the list, padding 44px 28px, 8px gap. A state title ("Nothing new since 16:05") and one line in `ink-2` ("Next scan at 18:05. You get one notification when new jobs match."). Saved and Applied have their own lines ("No saved jobs", "No applications yet"). The strip still shows "0 unseen" and the tabs keep their counts.
-- **Stopped:** replaces the tabs, list and footer. Centered: a 30px warning icon in red and the state title "Sudo Hire stopped in the background". Below them: one line in `ink-2` (max 30ch) and a primary button "Restart Sudo Hire".
+- **Stopped:** replaces the tabs, list and footer. Centered: a 30px warning icon in red and the state title "Sudo Hire stopped in the background". Below them: one line in `ink-2` (max 30ch), "Quit Sudo Hire and open it again. Your saved jobs are safe.", and a primary button "Quit Sudo Hire". The web view cannot restart the app when PHP is gone; the button quits through Electron.
 
 ### Buttons
 - **Default:** `panel`, hairline border (`ink` at 22%), radius 6px, padding 3px 10px, 12px weight 500, optional 14px icon with 6px gap. Hover: border at 40%.
-- **Primary:** burgundy fill and border, `burgundy-ink` text. Hover: `brightness(1.12)`. One primary per view (Restart, Next in first run).
+- **Primary:** burgundy fill and border, `burgundy-ink` text. Hover: `brightness(1.12)`. One primary per view (Quit in the stopped state, Next in first run).
 - **Actions:** borderless text buttons, 12px `ink-2`, padding 3px 6px, radius 5px, 14px icon with 5px gap. Hover: `sunk` background, `ink` text. Pressed: `ink`, weight 500.
 
 ### Inputs and form controls
@@ -459,6 +459,4 @@ Short and functional: the toast (0.2s and 0.25s), the chevron (0.2s), the switch
 ## Open items
 
 - **Final icon drawing:** the app icon and the menu bar mark at every macOS size, 16 to 1024px (M9).
-- **When rows become seen:** the review page fades one stamp after 6 seconds as a demo. The real moment (on open, on scroll into view, or on close) is not set.
-- **OTE badge:** PRODUCT.md lists an "OTE" badge. The build does not show it. Style it like the "also on" badge until designed.
-- **Keyboard:** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed.
+- **Keyboard (after v1):** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed. v1 has Tab order and focus rings.

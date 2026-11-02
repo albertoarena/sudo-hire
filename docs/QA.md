@@ -293,3 +293,42 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. Run `curl -s -o /dev/null -w '%{http_code}\n' -X PUT -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"state":"saved"}' http://127.0.0.1:8000/api/jobs/1/state`
 - Expected: step 1 gives JSON with `counts`, `new`, `locationNotStated`, `saved` and `applied`. Step 2 gives one entry for each of the six sources, with `lastRunAt` and `lastError`. Step 3 gives `appVersion`, `macosVersion` (your macOS version), `phpVersion` and `sources`, and none of your keywords, companies or jobs. Step 4 prints 419: a write with no CSRF token is refused.
 - Result: passed 2026-11-02, on a Mac, on branch m8a/states-api. The list and the sources had the expected fields. The diagnostics had the app, macOS and PHP versions and the six sources, with no settings, keywords, companies or jobs. The write with no CSRF token gave 419.
+
+## M8b: The menu bar list matches the design in light and dark
+
+- Added: 2026-11-02, branch m8b/menu-bar-list
+- Why manual: Vitest renders the components in jsdom, with no real fonts, colors or popover window.
+- Setup: run `php artisan migrate`, `php artisan native:migrate` and `npm run build` (README, "Two databases"). The settings in `database/nativephp.sqlite` have a country.
+- Steps:
+  1. Run `php artisan native:run` and wait for a scan (up to 5 minutes).
+  2. Click the menu bar icon. Compare the list with `docs/design/sudo-hire-ui.html`.
+  3. Switch macOS to the dark appearance (System Settings, Appearance) and open the list again.
+- Expected: the popover is 400 by 640: the burgundy strip with the unseen count, the New, Saved and Applied tabs with counts, the rows, the "Location not stated" row at the bottom of the list, the footer with the scan times, Settings and Quit. Each stamp has its own small tilt. Unseen rows have the dot and a bold title. In dark appearance, every part uses the dark colors.
+- Result: not run
+
+## M8b: Actions move jobs and update the counts
+
+- Added: 2026-11-02, branch m8b/menu-bar-list
+- Why manual: tests fake the API and the NativePHP internal API.
+- Setup: as for "M8b: The menu bar list matches the design in light and dark", with the list open.
+- Steps:
+  1. Press Save on a job. Open the Saved tab, then press Saved on the job.
+  2. Press Applied on a job, then Undo in the toast.
+  3. Press Not for me on a job, then Undo in the toast.
+  4. Press Apply on a job.
+  5. Close the list and open it again.
+- Expected: step 1 moves the job to Saved with the toast "Saved", then back to New with "Moved back to New". The counts follow. Step 2 shows "Marked as applied", and Undo moves the job back. Step 3 shows "Hidden. You will not see this job again", and Undo brings the job back. Step 4 opens the apply link in the default browser, not in the app. In step 5 the stamps of the jobs that were shown are faded, the dots are gone and the menu bar count drops.
+- Result: not run
+
+## M8b: Group row, settings, quit and the stopped state
+
+- Added: 2026-11-02, branch m8b/menu-bar-list
+- Why manual: tests cannot open a NativePHP window or stop the PHP server of the app.
+- Setup: as for "M8b: The menu bar list matches the design in light and dark".
+- Steps:
+  1. Press "Location not stated" at the bottom of the New tab, then press it again.
+  2. Press Settings in the footer.
+  3. Stop the PHP server of the app: run `pkill -f 'php -S 127.0.0.1'`. Open the list.
+  4. Press "Quit Sudo Hire", then the menu item "Quit Sudo Hire".
+- Expected: step 1 opens the group with its note and rows (dashed stamps, no dot), then closes it. Step 2 opens the "Sudo Hire Settings" window with the placeholder page. Step 3 shows "Sudo Hire stopped in the background" with the Quit button, and no tabs or footer. Step 4 quits the app.
+- Result: not run
