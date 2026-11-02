@@ -31,7 +31,7 @@ final class ListRow
             'postedAt' => $job->posted_at->utc()->toIso8601ZuluString(),
             'salary' => [
                 'original' => $normalised->salary?->raw,
-                'converted' => SalaryText::forList($normalised->salary, $converter, $settings->displayCurrency),
+                'converted' => SalaryText::forList($normalised->salary, $converter, $settings->displayCurrency, $settings->monthlyPayments),
                 'unknown' => $match->result->salaryUnknown,
                 'ote' => $match->result->ote,
             ],

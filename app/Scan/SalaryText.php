@@ -35,11 +35,15 @@ final class SalaryText
 
     /**
      * The converted salary for the list, as DESIGN.md "Job row" shows it, e.g. "≈ €66k - €84k / year".
-     * Null when there is no salary, the currency is the same, or the currency has no rate.
+     * A monthly salary shows as a year, with the monthly payments of the settings, also in the
+     * same currency. Null when there is no salary, the currency has no rate, or there is nothing
+     * to add: the same currency and not monthly.
      */
-    public static function forList(?Salary $salary, CurrencyConverter $converter, DisplayCurrency $currency): ?string
+    public static function forList(?Salary $salary, CurrencyConverter $converter, DisplayCurrency $currency, int $monthlyPayments = 12): ?string
     {
-        if ($salary === null || $salary->currency === $currency->value) {
+        $monthly = $salary?->period === SalaryPeriod::Month;
+
+        if ($salary === null || ($salary->currency === $currency->value && ! $monthly)) {
             return null;
         }
 
@@ -56,12 +60,11 @@ final class SalaryText
                 return null;
             }
 
-            $amounts[] = self::SYMBOLS[$currency->value].self::short($converted);
+            $amounts[] = self::SYMBOLS[$currency->value].self::short($monthly ? $converted * $monthlyPayments : $converted);
         }
 
         $period = match ($salary->period) {
-            SalaryPeriod::Year => ' / year',
-            SalaryPeriod::Month => ' / month',
+            SalaryPeriod::Year, SalaryPeriod::Month => ' / year',
             SalaryPeriod::Day => ' / day',
             SalaryPeriod::Hour => ' / hour',
             default => '',
