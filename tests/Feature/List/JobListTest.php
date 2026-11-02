@@ -154,7 +154,7 @@ it('gives every field of a row', function () {
         'postedAt' => '2026-11-01T06:30:00Z',
         'salary' => [
             'original' => '$100k - $125k',
-            'converted' => '≈ EUR 80,000-100,000 a year',
+            'converted' => '≈ €80k - €100k / year',
             'unknown' => false,
             'ote' => false,
         ],
