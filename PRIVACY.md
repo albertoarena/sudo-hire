@@ -22,8 +22,10 @@ When you open a job or an apply link, it opens in your default browser. That is 
 
 Everything stays on your Mac, in a local SQLite database and in log files:
 
-- The jobs that the app found, with their source, links, location, salary and dates. Jobs are deleted after 30 days
+- The jobs that the app found, with their source, links, location, salary and dates. A job is deleted 30 days after a source last listed it. Saved and applied jobs stay until you remove them
 - For each job, the time it was in a notification, so the app does not notify you about it again
+- For each job, the time you saw it, and if you saved it, applied to it or hid it
+- For each hidden job, a small record with its source keys and a short key made from the company and the title, so the job does not come back
 - The list of companies that you added, with the time and the error of their last read
 - The daily exchange rates
 - A short record of each source run: the time, the number of jobs and the error, if there was one
