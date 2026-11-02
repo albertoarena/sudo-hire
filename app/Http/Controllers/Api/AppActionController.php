@@ -45,7 +45,7 @@ final class AppActionController
     }
 
     /**
-     * Opens the settings window. M8c builds its panes.
+     * Opens the settings window. NativePHP opens the developer tools in debug mode, so turn them off.
      */
     public function openSettings(WindowManager $windows): Response
     {
@@ -55,7 +55,8 @@ final class AppActionController
             ->width(720)
             ->height(520)
             ->minWidth(560)
-            ->minHeight(420);
+            ->minHeight(420)
+            ->showDevTools(false);
 
         return response()->noContent();
     }
