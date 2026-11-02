@@ -277,11 +277,14 @@ Tag, CI builds, signs and notarises a **draft** GitHub release. A human installs
 | M7 | NativePHP scheduler wiring and native notifications, reusing the M6c scan (`App\Scan\Scan`) and the `sent_notifications` table. Clicking the notification opens the menu bar list | Mac or cloud + Mac check |
 | UI design | Screens, states and design tokens for the menu bar list and settings, with Impeccable. Updates section 11 | Local |
 | M8 | Menu bar UI and settings | Mac or cloud + Mac check |
+| Site | Docs site at sudohire.dev: download, install and first run, settings, sources and their attribution, privacy policy, troubleshooting, reporting a problem. In the separate repository `sudo-hire-docs` | Local |
 | M9 | Signing, notarisation, release flow | Mac |
 
 M4, M4b and M5 can run in parallel with M2 and M3. A local prep pull request comes first.
 
 M6a and M6b run in parallel, after a local prep pull request that adds the shared `Settings` value object. UI design runs locally in parallel with M6 and must be merged before the M8 brief.
+
+The docs site runs locally in parallel with M8c, with the colors and type of `docs/DESIGN.md`. M9 needs it: Sudo Hire is not released without the site.
 
 ## 17. Open questions
 
