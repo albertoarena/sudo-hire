@@ -893,3 +893,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: `.env.example` sets `SESSION_DRIVER=file`. `PRIVACY.md` no longer says that the session data has the local address of the Mac.
 - Reason: approved in the M8a brief. The database driver stores the IP address and the user agent in the `sessions` table. The file driver stores only the session data.
 - Replaces: none
+
+## 2026-11-02: Notifications count only new jobs
+
+- Milestone: M8a (review follow-up)
+- Decision: `JobStore::notNotified()` gives only the jobs with no `notified_at`, no state and no `seen_at`. So a job that the user saved, applied, hid or saw in the list before its first summary is not in the notification. Its `notified_at` stays null.
+- Decision: the other rules of the M6c entry do not change.
+- Reason: approved by the project owner on 2026-11-02. A notification about a job that the user already acted on is noise.
+- Replaces: the rule "when a notification is sent, `notified_at` is set on the jobs that it counts" of "Notification interval and notified_at" (2026-11-01), for jobs with a state or a seen time

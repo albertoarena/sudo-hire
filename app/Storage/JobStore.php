@@ -38,13 +38,19 @@ final class JobStore
     }
 
     /**
-     * The jobs that were never in a notification. M6c and M7 set notified_at.
+     * The new jobs that were never in a notification. M6c and M7 set notified_at.
+     * A job that the user saved, applied, hid or saw in the list is not new.
      *
      * @return Collection<int, Job>
      */
     public function notNotified(): Collection
     {
-        return Job::query()->whereNull('notified_at')->orderBy('id')->get();
+        return Job::query()
+            ->whereNull('notified_at')
+            ->whereNull('state')
+            ->whereNull('seen_at')
+            ->orderBy('id')
+            ->get();
     }
 
     /**

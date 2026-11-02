@@ -144,6 +144,19 @@ it('gives the jobs that are not notified yet', function () {
     expect($store->notNotified()->pluck('source_job_id')->all())->toBe(['43']);
 });
 
+it('leaves out the jobs with a state or a seen time', function (array $columns) {
+    $store = new JobStore;
+    $store->save([storedJob(), storedJob(['sourceJobId' => '43', 'title' => 'PHP Engineer'])]);
+    Job::query()->where('source_job_id', '42')->update($columns);
+
+    expect($store->notNotified()->pluck('source_job_id')->all())->toBe(['43']);
+})->with([
+    'saved' => [['state' => 'saved', 'state_at' => '2026-10-29 10:00:00']],
+    'applied' => [['state' => 'applied', 'state_at' => '2026-10-29 10:00:00']],
+    'hidden' => [['state' => 'hidden', 'state_at' => '2026-10-29 10:00:00']],
+    'seen' => [['seen_at' => '2026-10-29 10:00:00']],
+]);
+
 it('deletes the jobs not seen for 30 days, with their "also on" rows', function () {
     $store = new JobStore;
     $store->save([storedJob(), sameJobElsewhere()]);
