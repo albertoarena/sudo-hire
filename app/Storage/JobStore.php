@@ -2,7 +2,9 @@
 
 namespace App\Storage;
 
+use App\List\JobState;
 use App\Models\AlsoOnSource;
+use App\Models\HiddenJob;
 use App\Models\Job;
 use App\Schema\NormalisedJob;
 use Carbon\CarbonImmutable;
@@ -13,13 +15,14 @@ use Illuminate\Support\Facades\DB;
  * Stores normalised jobs with deduplication and retention (REQUIREMENTS section 9).
  * A job keeps its own links. Another source of the same job is stored as "also on",
  * with its own links: an apply link is never replaced (AGENTS.md rule 11).
+ * A hidden job leaves tombstones, so it does not come back.
  */
 final class JobStore
 {
     /** A job from another source with the same fingerprint, stored this recently, is the same job. */
     public const int DUPLICATE_DAYS = 14;
 
-    /** A job not seen for this long is deleted. */
+    /** A job not seen for this long is deleted, unless it is saved or applied. */
     public const int RETENTION_DAYS = 30;
 
     /**
@@ -35,23 +38,32 @@ final class JobStore
     }
 
     /**
-     * The jobs that were never in a notification. M6c and M7 set notified_at.
+     * The new jobs that were never in a notification. M6c and M7 set notified_at.
+     * A job that the user saved, applied, hid or saw in the list is not new.
      *
      * @return Collection<int, Job>
      */
     public function notNotified(): Collection
     {
-        return Job::query()->whereNull('notified_at')->orderBy('id')->get();
+        return Job::query()
+            ->whereNull('notified_at')
+            ->whereNull('state')
+            ->whereNull('seen_at')
+            ->orderBy('id')
+            ->get();
     }
 
     /**
      * Deletes the jobs not seen for RETENTION_DAYS, with their "also on" rows.
+     * Saved and applied jobs stay. Hidden jobs are deleted, their tombstones stay.
      *
      * @return int the number of deleted jobs
      */
     public function prune(): int
     {
-        $old = Job::query()->where('fetched_at', '<', CarbonImmutable::now()->subDays(self::RETENTION_DAYS));
+        $old = Job::query()
+            ->where('fetched_at', '<', CarbonImmutable::now()->subDays(self::RETENTION_DAYS))
+            ->where(fn ($query) => $query->whereNull('state')->orWhere('state', JobState::Hidden));
 
         return DB::transaction(function () use ($old) {
             AlsoOnSource::query()->whereIn('job_id', (clone $old)->select('id'))->delete();
@@ -60,8 +72,76 @@ final class JobStore
         });
     }
 
+    /**
+     * Sets the state of a job. The same state again clears it: the job moves back to New.
+     * Any change marks the job as seen. Hiding stores tombstones, and leaving hidden deletes them.
+     */
+    public function setState(Job $job, ?JobState $state): Job
+    {
+        $next = $state === $job->state ? null : $state;
+        $now = CarbonImmutable::now();
+
+        DB::transaction(function () use ($job, $next, $now) {
+            if ($job->state === JobState::Hidden && $next !== JobState::Hidden) {
+                HiddenJob::query()->where('job_id', $job->id)->delete();
+            }
+
+            if ($next === JobState::Hidden) {
+                $this->bury($job, $now);
+            }
+
+            $job->update([
+                'state' => $next,
+                'state_at' => $next === null ? null : $now,
+                'seen_at' => $job->seen_at ?? $now,
+            ]);
+        });
+
+        return $job;
+    }
+
+    /**
+     * Stores one tombstone for each source key of the job, with its fingerprint.
+     */
+    private function bury(Job $job, CarbonImmutable $now): void
+    {
+        $keys = [[$job->source, $job->source_job_id]];
+
+        foreach ($job->alsoOn()->orderBy('id')->get() as $other) {
+            $keys[] = [$other->source, $other->source_job_id];
+        }
+
+        HiddenJob::query()->insert(array_map(fn (array $key) => [
+            'job_id' => $job->id,
+            'source' => $key[0],
+            'source_job_id' => $key[1],
+            'fingerprint' => $job->fingerprint,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], $keys));
+    }
+
+    /**
+     * A source key of a hidden job blocks forever. Its fingerprint blocks only for
+     * DUPLICATE_DAYS after the job was hidden, the same window as deduplication.
+     */
+    private function isHidden(NormalisedJob $job): bool
+    {
+        $since = CarbonImmutable::now()->subDays(self::DUPLICATE_DAYS);
+
+        return HiddenJob::query()
+            ->where(fn ($query) => $query
+                ->where(fn ($key) => $key->where('source', $job->source)->where('source_job_id', $job->sourceJobId))
+                ->orWhere(fn ($fingerprint) => $fingerprint->where('fingerprint', $job->fingerprint)->where('created_at', '>=', $since)))
+            ->exists();
+    }
+
     private function saveOne(NormalisedJob $job): void
     {
+        if ($this->isHidden($job)) {
+            return;
+        }
+
         $stored = Job::query()->where('source', $job->source)->where('source_job_id', $job->sourceJobId)->first();
 
         if ($stored !== null) {

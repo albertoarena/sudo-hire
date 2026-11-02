@@ -825,3 +825,80 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the listener `App\Listeners\OpenListOnSummaryClick` opens the menu bar list with `MenuBar::show()` when the reference of `NotificationClicked` is `sudo-hire-summary`. It ignores other references. Laravel finds the listener in `app/Listeners`, so no provider registers it.
 - Reason: approved in the M7 brief (REQUIREMENTS section 10). The fixed reference is the only link between the notification and the click event.
 - Replaces: none
+
+## 2026-11-02: Job states
+
+- Milestone: M8a
+- Decision: `jobs` has `seen_at`, `state` and `state_at`. The state is `saved`, `applied`, `hidden` or null (New). A job has one state at a time. A new state replaces the old one.
+- Decision: setting the same state again clears it, so the job moves back to New. A null state also clears it. `JobStore::setState()` applies these rules.
+- Decision: any state change sets `seen_at`, if it is not set yet.
+- Decision: a source that lists the job again does not change its state or `seen_at`.
+- Reason: approved in the M8a brief (PRODUCT.md "Job states", DESIGN.md "Row states").
+- Replaces: none
+
+## 2026-11-02: Seen on close
+
+- Milestone: M8a
+- Decision: on `MenuBarShown`, the app stores the time the list opened in the cache. On `MenuBarHidden`, it sets `seen_at` on the New matches with no `seen_at` that were stored at or before that time. Then it clears the stored time.
+- Decision: a job stored while the list is open stays unseen. Jobs in the "Location not stated" group and jobs that fail the filters do not change.
+- Decision: any action on a row also marks it as seen (see "Job states").
+- Reason: approved in the M8a brief. It replaces the open item "When rows become seen" of DESIGN.md. The user sees the new jobs before they lose their unseen dot.
+- Replaces: none
+
+## 2026-11-02: Retention of saved, applied and hidden jobs
+
+- Milestone: M8a
+- Decision: `JobStore::prune()` never deletes a saved or an applied job, or its "also on" rows. A hidden job is deleted after 30 days, as a job with no state.
+- Decision: when a job becomes hidden, the `hidden_jobs` table stores one row for each source key of the job (its own key and the key of each "also on" row), with the fingerprint of the job. `JobStore::save()` skips a job whose key is in `hidden_jobs`, with no time limit. It also skips a job with the same fingerprint while the tombstone is younger than `JobStore::DUPLICATE_DAYS` (14 days), the window of deduplication. So the hidden job is not updated, it gets no new "also on" row, and its source keys do not come back after retention. A later post with the same company and title from another source is stored again after 14 days (approved by the project owner on 2026-11-02).
+- Decision: undo (any change away from hidden) deletes the tombstones of that job. Tombstones have no retention in v1.
+- Reason: approved in the M8a brief. "Not for me" means "never shown again" (PRODUCT.md), also when the job comes back from another board.
+- Replaces: the retention rule of "Job storage, deduplication and retention" (2026-10-30), for saved and applied jobs
+
+## 2026-11-02: The list service and the stamp
+
+- Milestone: M8a
+- Decision: `App\List\JobList` builds the list from all stored jobs and the stored settings. New has the matches with no state, newest post first. The "Location not stated" group is apart. Saved and Applied have the jobs in that state, newest state first, also when they fail the filters now. Hidden jobs are not in the list.
+- Decision: the New count does not include the group. The group has its own count.
+- Decision: `App\Scan\JobMatcher` runs the filters and picks the links of the first enabled source. The scan and the list use it. When no source of a job is enabled, a saved or applied job shows the links of its main source.
+- Decision: the stamp kind is `admitted` or `not_stated`. A job with unknown eligibility is `not_stated`, also in lenient mode. A saved or applied job that the eligibility filter refuses now is `refused`, with no place.
+- Decision: the place of an admitted stamp is the user's country code when the job lists it, else the name of the first region of the job that admits the user. A worldwide job, or a job with no matching region name, gives the user's country code, for example "IT". With no country in the settings, the place is "Anywhere". "Location" is only for the `not_stated` kind (approved by the project owner on 2026-11-02).
+- Decision: the salary of a row has the original text as the source gives it, and the converted amount from `SalaryText::forList()`, as DESIGN.md "Job row" shows it: "≈", the symbol of the display currency, "k" for thousands and the period, for example "≈ €66k - €84k / year". From 10,000 the amount is in whole thousands, from 1,000 in thousands with one decimal ("€5.5k"), and below 1,000 a whole number ("€625 / day"). The period is the period of the source. The app does not convert a monthly amount to a yearly one. With the same currency, or with no rate, there is no converted text. The terminal output of `hire:scan` keeps its format (approved by the project owner on 2026-11-02).
+- Decision: the source name is the attribution without "via". The ATS reader is "Company careers" in the source list. A job row keeps the attribution of the company, e.g. "via Acme careers".
+- Reason: approved in the M8a brief. The UI does not filter or parse (AGENTS.md), so the API gives the rows ready to show.
+- Replaces: none
+
+## 2026-11-02: The JSON API and CSRF
+
+- Milestone: M8a
+- Decision: the API is in `routes/web.php` under `/api`, with the web middleware. Every write needs the CSRF token. The page has the token in the `csrf-token` meta tag, and the UI sends it in the `X-CSRF-TOKEN` header. The API has no token login: only the app page calls it.
+- Decision: the keys are in camelCase, as in `Settings::toArray()`. Times are ISO 8601 in UTC.
+- Decision: errors are JSON with a plain `message`. Validation errors are 422. An unknown job or company is 404 with "Job not found." or "Company not found.".
+- Decision: `PUT /api/settings` merges the request with the stored settings, then validates with `Settings::fromArray()`. An `InvalidSettings` or `UnknownSource` message gives 422. A setting that the request does not send keeps its stored value.
+- Decision: `PUT /api/jobs/{job}/state` gives the new state and the counts. `POST /api/companies` uses the `ats:add` rules and messages.
+- Decision: `GET /api/sources` gives the job count of a source as the stored jobs and "also on" rows of that source. `GET /api/status` gives the last scan from the cache. The new `ScanFinished` event at the end of `Scan::run()` stores it. The next scan is 5 minutes after the last start.
+- Decision: `GET /api/diagnostics` gives the app version, the macOS version (`sw_vers`), the PHP version and, for each source, its key, enabled, last run, last success and error kind. It gives no error message, because a message can have a URL.
+- Reason: approved in the M8a brief. The web middleware gives the session and CSRF with no extra setup.
+- Replaces: none
+
+## 2026-11-02: Unseen badge
+
+- Milestone: M8a
+- Decision: the menu bar label shows the number of unseen New matches, without the "Location not stated" group. At 0 the label is empty.
+- Decision: `App\List\UnseenBadge` sets the label only inside the app (`nativephp-internal.running`). It runs after each scan (`ScanFinished`), after `MenuBarHidden`, after each state change and after a change of the settings. A failed label is logged and does not stop the action.
+- Reason: approved in the M8a brief (REQUIREMENTS section 11). The group is never notified, so it does not count as new either. The settings change the matches, so the badge follows them.
+- Replaces: none
+
+## 2026-11-02: File session driver
+
+- Milestone: M8a
+- Decision: `.env.example` sets `SESSION_DRIVER=file`. `PRIVACY.md` no longer says that the session data has the local address of the Mac.
+- Reason: approved in the M8a brief. The database driver stores the IP address and the user agent in the `sessions` table. The file driver stores only the session data.
+- Replaces: none
+
+## 2026-11-02: Notifications count only new jobs
+
+- Milestone: M8a (review follow-up)
+- Decision: `JobStore::notNotified()` gives only the jobs with no `notified_at`, no state and no `seen_at`. So a job that the user saved, applied, hid or saw in the list before its first summary is not in the notification. Its `notified_at` stays null.
+- Decision: the other rules of the M6c entry do not change.
+- Reason: approved by the project owner on 2026-11-02. A notification about a job that the user already acted on is noise.
+- Replaces: the rule "when a notification is sent, `notified_at` is set on the jobs that it counts" of "Notification interval and notified_at" (2026-11-01), for jobs with a state or a seen time

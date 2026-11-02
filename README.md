@@ -92,6 +92,24 @@ With cron, run `crontab -e` and add one line. Change the two paths:
 
 If the log shows `cURL error 60`, the `php` of launchd or cron uses an old CA bundle. See "cURL error 60 in artisan commands" below. Set the bundle in the `php.ini` of that `php`, because launchd and cron cannot use the `-d` options of your terminal.
 
+## JSON API
+
+The menu bar list and the settings window read and change data through a small JSON API under `/api`. It uses the web middleware, so every write needs the CSRF token from the `csrf-token` meta tag of the page, in the `X-CSRF-TOKEN` header. Errors are JSON with a `message`. Validation errors have the status 422.
+
+| Method and path | What it does |
+|---|---|
+| `GET /api/list` | The New matches, the "Location not stated" group, Saved, Applied and the counts |
+| `PUT /api/jobs/{job}/state` | Sets `state` to `saved`, `applied`, `hidden` or null. The same state again moves the job back to New |
+| `GET /api/settings`, `PUT /api/settings` | The settings. A PUT keeps the values that it does not send |
+| `GET /api/countries` | The country table, for the country field |
+| `GET /api/sources` | Each source with its status and its last error |
+| `GET /api/companies`, `POST /api/companies`, `DELETE /api/companies/{company}` | The company list of the ATS reader |
+| `GET /api/rates` | The date of the exchange rates and their source |
+| `GET /api/status` | The last scan, the next scan and the last notification |
+| `GET /api/diagnostics` | The versions and the status of each source, with no personal data |
+
+With `php artisan serve` you can read it with `curl`, e.g. `curl -H 'Accept: application/json' http://127.0.0.1:8000/api/list`.
+
 ## Local development
 
 ### Two databases

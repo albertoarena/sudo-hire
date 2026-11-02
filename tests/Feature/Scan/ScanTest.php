@@ -1,5 +1,6 @@
 <?php
 
+use App\List\JobState;
 use App\Models\AlsoOnSource;
 use App\Models\Job;
 use App\Models\SentNotification;
@@ -260,6 +261,23 @@ it('never counts a notified job again', function () {
     expect($this->notifier->sent)->toBe(['1 new job'])
         ->and($result->matches)->toBe([]);
 });
+
+it('does not count a job that the user saved, applied, hid or saw before the first summary', function (Closure $act) {
+    $acted = storeJob(['sourceJobId' => 'acted', 'title' => 'Laravel Developer']);
+    storeJob(['sourceJobId' => 'new', 'title' => 'PHP Developer']);
+    $act($acted);
+
+    $result = scan();
+
+    expect($this->notifier->sent)->toBe(['1 new job'])
+        ->and(array_map(fn (ScanMatch $match) => $match->job->source_job_id, $result->matches))->toBe(['new'])
+        ->and($acted->fresh()?->notified_at)->toBeNull();
+})->with([
+    'saved' => fn (Job $job) => app(JobStore::class)->setState($job, JobState::Saved),
+    'applied' => fn (Job $job) => app(JobStore::class)->setState($job, JobState::Applied),
+    'hidden' => fn (Job $job) => app(JobStore::class)->setState($job, JobState::Hidden),
+    'seen in the list' => fn (Job $job) => $job->update(['seen_at' => CarbonImmutable::now()]),
+]);
 
 it('prints the matches but sends nothing and sets no notified_at with notify off', function () {
     storeJob();

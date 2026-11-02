@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\List\JobState;
 use App\Schema\ContractType;
 use App\Schema\Eligibility;
 use App\Schema\NormalisedJob;
@@ -46,18 +47,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $attribution
  * @property string $fingerprint
  * @property CarbonImmutable|null $notified_at
+ * @property CarbonImmutable|null $seen_at
+ * @property JobState|null $state
+ * @property CarbonImmutable|null $state_at
  * @property CarbonImmutable $created_at
  */
 #[Fillable([
     'source', 'source_job_id', 'source_url', 'apply_url', 'title', 'company', 'description', 'tags', 'work_mode',
     'eligibility_type', 'eligibility_regions', 'eligibility_countries', 'office_location', 'timezone_min', 'timezone_max',
     'salary_min', 'salary_max', 'salary_currency', 'salary_period', 'salary_raw', 'contract_type', 'seniority',
-    'posted_at', 'fetched_at', 'expires_at', 'attribution', 'fingerprint', 'notified_at',
+    'posted_at', 'fetched_at', 'expires_at', 'attribution', 'fingerprint', 'notified_at', 'seen_at', 'state', 'state_at',
 ])]
 class Job extends Model
 {
     /**
-     * The columns of one normalised job. Leaves out notified_at, so an update keeps it.
+     * The columns of one normalised job. Leaves out notified_at and the state columns, so an update keeps them.
      *
      * @return array<string, mixed>
      */
@@ -159,6 +163,9 @@ class Job extends Model
             'fetched_at' => 'immutable_datetime',
             'expires_at' => 'immutable_datetime',
             'notified_at' => 'immutable_datetime',
+            'seen_at' => 'immutable_datetime',
+            'state' => JobState::class,
+            'state_at' => 'immutable_datetime',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
         ];
