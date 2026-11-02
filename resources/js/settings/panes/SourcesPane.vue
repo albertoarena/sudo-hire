@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import { clock, errorDetails } from '../../shared/text';
+import { clock, errorDetails, nextTry } from '../../shared/text';
 import type { Source } from '../../shared/types';
 import FieldError from '../FieldError.vue';
 import { useStore } from '../store';
@@ -56,7 +56,7 @@ onMounted(store.loadSources);
                     <td>
                         <template v-if="source.lastError">
                             <span class="status err"><i></i>{{ errorDetails(source.lastError.kind)[0] }}</span><br />
-                            <span class="why">{{ errorDetails(source.lastError.kind)[1] }}</span>
+                            <span class="why">{{ errorDetails(source.lastError.kind, nextTry(source))[1] }}</span>
                         </template>
                         <span v-else-if="source.lastRunAt" class="status"><i></i>{{ source.jobCount }} {{ source.jobCount === 1 ? 'job' : 'jobs' }}</span>
                         <span v-else class="hint">Next scan</span>

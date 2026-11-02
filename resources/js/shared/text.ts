@@ -35,16 +35,33 @@ export function errorText(kind: string): string {
     return ERRORS[kind] ?? ERRORS.other;
 }
 
+// "{when}" becomes "at 21:00", or "at the next scan" when the time is not known.
 const DETAILS: Record<string, [string, string]> = {
-    certificate: ['Certificate error', 'The secure connection failed. Sudo Hire tries again at the next scan. If it continues, update the app.'],
-    http: ['No answer', 'The site did not answer. Sudo Hire tries again at the next scan.'],
-    parse: ['Read error', 'The answer of the site could not be read. Sudo Hire tries again at the next scan.'],
-    other: ['Read error', 'Sudo Hire could not read this source. It tries again at the next scan.'],
+    certificate: ['Certificate error', 'The secure connection failed. Sudo Hire tries again {when}. If it continues, update the app.'],
+    http: ['No answer', 'The site did not answer. Sudo Hire tries again {when}.'],
+    parse: ['Read error', 'The answer of the site could not be read. Sudo Hire tries again {when}.'],
+    other: ['Read error', 'Sudo Hire could not read this source. It tries again {when}.'],
 };
 
-/** The error name and one plain sentence, for the Sources pane. */
-export function errorDetails(kind: string): [string, string] {
-    return DETAILS[kind] ?? DETAILS.other;
+/** The error name and one plain sentence, for the Sources pane. `retryAt` is the next try, from nextTry(). */
+export function errorDetails(kind: string, retryAt: string | null = null): [string, string] {
+    const [name, why] = DETAILS[kind] ?? DETAILS.other;
+
+    return [name, why.replace('{when}', retryAt === null ? 'at the next scan' : `at ${clock(retryAt)}`)];
+}
+
+/**
+ * When a failed source tries again: its last run plus its minimum interval, also after a
+ * failed run. Null when that time has passed or the source never ran: then the next scan tries.
+ */
+export function nextTry(source: Source, now: Date = new Date()): string | null {
+    if (source.lastRunAt === null) {
+        return null;
+    }
+
+    const at = new Date(Date.parse(source.lastRunAt) + source.minIntervalMinutes * 60_000);
+
+    return at > now ? at.toISOString() : null;
 }
 
 /** The enabled sources whose last read failed. */

@@ -113,3 +113,10 @@ it('shows a run that an earlier scan still runs as reading', function () {
 
     expect(firstScanStatus())->toBe(['ats' => 'reading', 'larajobs' => 'waiting']);
 });
+it('serves the page that mounts the first run', function () {
+    $this->withSession(['_token' => 'page-token'])
+        ->get('/first-run')
+        ->assertOk()
+        ->assertSee('id="first-run"', false)
+        ->assertSee('<meta name="csrf-token" content="page-token">', false);
+});

@@ -1,3 +1,4 @@
+import type { FirstScan } from '../first-run/types';
 import type { Company, HiddenJobs, Rates, Settings } from '../settings/types';
 import type { Counts, Country, JobState, ListView, PreviewJob, Source, Status } from './types';
 
@@ -54,7 +55,7 @@ export const api = {
     sources: () => call<Source[]>('GET', '/api/sources'),
     setState: (id: number, state: JobState | null) => call<{ counts: Counts }>('PUT', `/api/jobs/${id}/state`, { state }),
     openUrl: (url: string) => call<void>('POST', '/api/app/open-url', { url }),
-    openSettings: () => call<void>('POST', '/api/app/settings'),
+    openSettings: (pane?: string) => call<void>('POST', '/api/app/settings', pane === undefined ? undefined : { pane }),
     quit: () => call<void>('POST', '/api/app/quit'),
 
     settings: () => call<Settings>('GET', '/api/settings'),
@@ -71,4 +72,9 @@ export const api = {
     showDataFolder: () => call<void>('POST', '/api/app/show-data-folder'),
     openLogFolder: () => call<void>('POST', '/api/app/open-log-folder'),
     copyDiagnostics: () => call<void>('POST', '/api/app/copy-diagnostics'),
+
+    countryPreset: () => call<{ country: string | null }>('GET', '/api/country-preset'),
+    startFirstScan: () => call<FirstScan>('POST', '/api/first-scan'),
+    firstScan: () => call<FirstScan>('GET', '/api/first-scan'),
+    openList: () => call<void>('POST', '/api/app/open-list'),
 };
