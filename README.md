@@ -94,6 +94,15 @@ If the log shows `cURL error 60`, the `php` of launchd or cron uses an old CA bu
 
 ## Local development
 
+### Two databases
+
+`php artisan` commands use `database/database.sqlite`. The app in `php artisan native:run` uses `database/nativephp.sqlite`. In development, NativePHP migrates that file only when it creates it. After a pull with new migrations, run both:
+
+```bash
+php artisan migrate
+php artisan native:migrate
+```
+
 ### cURL error 60 in artisan commands
 
 `cURL error 60: unable to get local issuer certificate` means that your local PHP uses an old CA bundle. The installed app is not affected: it uses the CA bundle of NativePHP.
