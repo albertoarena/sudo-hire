@@ -1008,3 +1008,12 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: `GET /api/stamp-preview?country=XX` gives the stamps of two stored jobs for a country and does not save the country. It prefers one job that the country admits and one that it refuses, newest post first. With fewer jobs it gives what there is, and a job with no stated location comes last. Hidden jobs are left out.
 - Reason: approved in the M8c brief. The preview helps the user check the country before the first scan of new settings.
 - Replaces: none
+
+## 2026-11-02: The menu bar mark
+
+- Milestone: design (menu bar mark)
+- Decision: the menu bar shows the stamp mark of DESIGN.md, not the default NativePHP icon. The source is `resources/icons/menu-bar-mark.svg`, drawn from the approved prototype. The app uses two PNG images rendered from it: `public/menuBarIconTemplate.png` at 15 by 15 and `menuBarIconTemplate@2x.png` at 30 by 30.
+- Decision: the mark is black on transparent, and the file name ends in "Template". macOS then tints it for light and dark menu bars. Electron picks the 2x image by its name.
+- Decision: the SVG has the `rsvg-convert` commands that render the two images. A test checks the path and the sizes.
+- Reason: chosen by the project owner on 2026-11-02, before M8d, so that the Mac checks show the real mark. The app icon stays in M9.
+- Replaces: the menu bar mark part of the DESIGN.md open item "Final icon drawing"

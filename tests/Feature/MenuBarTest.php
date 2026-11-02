@@ -16,3 +16,22 @@ it('starts as a menu bar app without opening a window', function () {
         && $request['showDockIcon'] === false
         && $request['tooltip'] === 'Sudo Hire');
 });
+
+it('shows the stamp mark as a template image in the menu bar', function () {
+    Http::fake();
+
+    (new NativeAppServiceProvider)->boot();
+
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'menu-bar/create')
+        && $request['icon'] === public_path('menuBarIconTemplate.png'));
+});
+
+it('has the menu bar mark at 15 points, with a 2x image', function () {
+    // macOS tints an image whose name ends in "Template", so the mark follows light and dark menu bars.
+    $one = getimagesize(public_path('menuBarIconTemplate.png'));
+    $two = getimagesize(public_path('menuBarIconTemplate@2x.png'));
+
+    expect([$one[0] ?? null, $one[1] ?? null])->toBe([15, 15])
+        ->and([$two[0] ?? null, $two[1] ?? null])->toBe([30, 30])
+        ->and($one['mime'] ?? null)->toBe('image/png');
+});

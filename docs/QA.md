@@ -396,3 +396,15 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. Press "Report a problem", then "More answers on the help page".
 - Expected: step 1 shows the app database file selected in Finder, then opens https://sudohire.dev/privacy/ in the default browser. Step 2 opens the folder of `laravel.log` in Finder. In step 3 the button reads "Copied" for about 1.6 seconds. The text has the app, macOS and PHP versions and one line for each source. It has no settings, keywords, companies, jobs or links. Step 4 opens a new issue on the sudo-hire repository on GitHub, then https://sudohire.dev/help/. Until the site is live, the sudohire.dev pages do not load: check only the address.
 - Result: passed 2026-11-02, on a Mac, on branch fix/settings-devtools. The report has only the versions and one line for each source. The sudohire.dev pages do not exist yet: the addresses are correct.
+
+## Design: The menu bar shows the stamp mark
+
+- Added: 2026-11-02, branch design/menu-bar-mark
+- Why manual: tests check the image files and the request. Only macOS draws the menu bar.
+- Setup: run `npm run build`, then `php artisan native:run`.
+- Steps:
+  1. Look at the menu bar icon of Sudo Hire, with unseen jobs and with none.
+  2. Switch macOS to the dark appearance (System Settings, Appearance) and look again.
+  3. Click the icon.
+- Expected: the icon is the tilted stamp with the check cut out, as in `docs/design/sudo-hire-ui.html`, "Icon". It is sharp, about the height of the menu bar text, with the unseen count next to it. It is black in the light menu bar and white in the dark one. A click opens the list.
+- Result: not run
