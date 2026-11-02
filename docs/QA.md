@@ -266,7 +266,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `npm run build`, then `php artisan native:run`. Do not open the list. Wait up to 6 minutes.
   3. Run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='dump(app(App\List\JobList::class)->unseenCount());'`
 - Expected: after the first scan, a number shows next to the menu bar icon. It is the same as the number in step 3. With 0 new matches the label is empty: set fewer filters and do the steps again.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch m8a/states-api. The scan at 09:20 UTC set the label to 5, the same as `unseenCount()`.
 
 ## M8a: Closing the list marks the jobs as seen
 
@@ -275,21 +275,21 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Setup: as for "M8a: The menu bar shows the unseen count after a scan", with the app running and a number next to the icon.
 - Steps:
   1. Click the menu bar icon to open the list. Click outside the list to close it.
-  2. Open the list again. While it is open, store one new job: run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='app(App\Storage\JobStore::class)->save([new App\Schema\NormalisedJob(source: "larajobs", sourceJobId: "qa-m8a", sourceUrl: "https://larajobs.com/qa", applyUrl: "https://larajobs.com/qa", title: "QA Laravel Developer", company: "QA Company", description: null, tags: [], workMode: App\Schema\WorkMode::Remote, eligibility: App\Schema\Eligibility::worldwide(), officeLocation: null, timezoneMin: null, timezoneMax: null, salary: null, contractType: App\Schema\ContractType::FullTime, seniority: App\Schema\Seniority::Senior, postedAt: Carbon\CarbonImmutable::now(), fetchedAt: Carbon\CarbonImmutable::now(), expiresAt: null, attribution: "via LaraJobs")]);'`
+  2. Open the list again. While it is open, store one new job. The list closes when another window takes focus, so the command waits 10 seconds: press Enter, then open the list at once and keep it open until the command ends. Run `sleep 10; DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='app(App\Storage\JobStore::class)->save([new App\Schema\NormalisedJob(source: "larajobs", sourceJobId: "qa-m8a", sourceUrl: "https://larajobs.com/qa", applyUrl: "https://larajobs.com/qa", title: "QA Laravel Developer", company: "QA Company", description: null, tags: [], workMode: App\Schema\WorkMode::Remote, eligibility: App\Schema\Eligibility::worldwide(), officeLocation: null, timezoneMin: null, timezoneMax: null, salary: null, contractType: App\Schema\ContractType::FullTime, seniority: App\Schema\Seniority::Senior, postedAt: Carbon\CarbonImmutable::now(), fetchedAt: Carbon\CarbonImmutable::now(), expiresAt: null, attribution: "via LaraJobs")]);'`
   3. Close the list.
   4. Remove the test job: run `DB_DATABASE="$PWD/database/nativephp.sqlite" php artisan tinker --execute='App\Models\Job::query()->where("source_job_id", "qa-m8a")->delete();'`
 - Expected: after step 1 the label is empty (0 unseen). After step 3 the label shows 1: the job stored while the list was open stays unseen. The job must pass your filters: if the label stays empty, check your keywords and work modes.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch m8a/states-api. After step 1 the label was empty. After step 3 it showed 1. NativePHP sends both menu bar events.
 
 ## M8a: The JSON API answers with php artisan serve
 
 - Added: 2026-11-02, branch m8a/states-api
 - Why manual: tests call the routes inside PHP. This check uses a real server, a real session and the local database.
 - Setup: run `php artisan migrate` and `php artisan native:migrate` (README, "Two databases"). Run `php artisan serve` in a second terminal.
-- Steps:
-  1. Run `curl -s -H 'Accept: application/json' http://127.0.0.1:8000/api/list`
-  2. Run `curl -s -H 'Accept: application/json' http://127.0.0.1:8000/api/sources`
-  3. Run `curl -s -H 'Accept: application/json' http://127.0.0.1:8000/api/diagnostics`
+- Steps (put each URL in single quotes: zsh can escape a `;` after an unquoted URL):
+  1. Run `curl -s -H 'Accept: application/json' 'http://127.0.0.1:8000/api/list'`
+  2. Run `curl -s -H 'Accept: application/json' 'http://127.0.0.1:8000/api/sources'`
+  3. Run `curl -s -H 'Accept: application/json' 'http://127.0.0.1:8000/api/diagnostics'`
   4. Run `curl -s -o /dev/null -w '%{http_code}\n' -X PUT -H 'Accept: application/json' -H 'Content-Type: application/json' -d '{"state":"saved"}' http://127.0.0.1:8000/api/jobs/1/state`
 - Expected: step 1 gives JSON with `counts`, `new`, `locationNotStated`, `saved` and `applied`. Step 2 gives one entry for each of the six sources, with `lastRunAt` and `lastError`. Step 3 gives `appVersion`, `macosVersion` (your macOS version), `phpVersion` and `sources`, and none of your keywords, companies or jobs. Step 4 prints 419: a write with no CSRF token is refused.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch m8a/states-api. The list and the sources had the expected fields. The diagnostics had the app, macOS and PHP versions and the six sources, with no settings, keywords, companies or jobs. The write with no CSRF token gave 419.
