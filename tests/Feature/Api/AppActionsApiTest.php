@@ -47,6 +47,10 @@ it('quits the app', function () {
     Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'app/quit'));
 });
 
-it('shows the settings placeholder page', function () {
-    $this->get('/settings')->assertOk()->assertSee('Settings');
+it('serves the page that mounts the settings window', function () {
+    $this->withSession(['_token' => 'page-token'])
+        ->get('/settings')
+        ->assertOk()
+        ->assertSee('id="settings"', escape: false)
+        ->assertSee('<meta name="csrf-token" content="page-token">', escape: false);
 });

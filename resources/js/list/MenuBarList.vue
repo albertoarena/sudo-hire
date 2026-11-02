@@ -1,16 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { api, ServerStopped } from './api';
-import Icon from './Icon.vue';
+import { api, ServerStopped } from '../shared/api';
+import Icon from '../shared/Icon.vue';
+import StoppedState from '../shared/StoppedState.vue';
 import JobRow from './JobRow.vue';
-import { clock, sourceWarning } from './text';
-import type { JobState, ListView, Row, Source, Status, Tab } from './types';
-
-declare global {
-    interface Window {
-        Native?: { contextMenu: (template: { label?: string; role?: string }[]) => void };
-    }
-}
+import { clock, sourceWarning } from '../shared/text';
+import type { JobState, ListView, Row, Source, Status, Tab } from '../shared/types';
 
 const view = ref<ListView | null>(null);
 const status = ref<Status | null>(null);
@@ -141,11 +136,6 @@ function apply(row: Row): Promise<void> {
     return guard(() => api.openUrl(row.applyUrl));
 }
 
-function quitWhenStopped(): void {
-    // PHP is gone, so the API cannot quit. Electron's quit role still can.
-    window.Native?.contextMenu([{ label: 'Quit Sudo Hire', role: 'quit' }]);
-}
-
 function onVisible(): void {
     if (document.visibilityState === 'visible') {
         void load();
@@ -172,15 +162,7 @@ onBeforeUnmount(() => {
             <span v-if="view && !stopped" class="count">{{ view.counts.unseen }} unseen</span>
         </header>
 
-        <div v-if="stopped" class="stopped">
-            <svg class="big" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M8 2.2 14.5 13.5h-13z" stroke-width="1.4" />
-                <path d="M8 6.5v3.2M8 11.6v.1" stroke-width="1.6" />
-            </svg>
-            <h1>Sudo Hire stopped in the background</h1>
-            <p>Quit Sudo Hire and open it again. Your saved jobs are safe.</p>
-            <button type="button" class="btn primary" @click="quitWhenStopped">Quit Sudo Hire</button>
-        </div>
+        <StoppedState v-if="stopped" />
 
         <template v-else-if="view">
             <div class="seg-wrap">

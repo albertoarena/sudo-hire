@@ -3,14 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sudo Hire Settings</title>
-        @vite(['resources/css/app.css'])
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>Where you work</title>
+        @vite(['resources/css/app.css', 'resources/js/settings.ts'])
     </head>
-    <body class="placeholder">
-        {{-- M8c replaces this page with the eight settings panes. --}}
-        <main>
-            <h1>Settings</h1>
-            <p>The settings panes are not built yet. Until then, change the settings with <code>php artisan tinker</code>.</p>
-        </main>
+    <body>
+        <div id="settings"></div>
     </body>
 </html>
