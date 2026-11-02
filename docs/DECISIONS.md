@@ -953,3 +953,16 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: M9 needs the site. The release links to sudohire.dev for the download and the privacy policy. In M8c, "Read the privacy policy" and the troubleshooting help link to the site.
 - Reason: the project owner decided on 2026-11-02 that Sudo Hire is not released without a docs site. A separate repository keeps the site's content license, tests and deploys apart from the app.
 - Replaces: the link to PRIVACY.md in the Privacy pane (DESIGN.md "Settings window"), once the site is live
+
+## 2026-11-02: Location limits in the title
+
+- Milestone: fix (title location limits)
+- Decision: `TitleLocationParser` reads a location limit from the job title, with the country and region tables of M4. It reads only the text in brackets and the parts after the role name, split at a dash with spaces around it (hyphen, en dash or em dash), at " | " and at ", ". The role name before the first separator is never read, so "Global Payments Engineer" and "Germany Sales Lead" give nothing.
+- Decision: each part goes to the location parser after the word "eligible" is removed. A region ("EMEA", "LATAM", "APAC", "EU", "Europe") counts alone: "Senior PHP Developer (LATAM)". A country counts only when the title has "remote", "eligible", "only" or "based": "(Remote Eligible in Bulgaria)", "Remote - Germany", "(US only)". "Product Support Specialist - Australia" gives nothing.
+- Decision: a part must be a place as a whole. "Bank of Ireland" and "New Zealand Post" give nothing. A part that is hybrid or on-site, that excludes places ("not US"), or that says worldwide also gives nothing.
+- Decision: the title narrows, never widens. When the title names no place, the source eligibility stays. A worldwide or unknown source takes the title places. When both name places, the result is the places in both lists, compared country by country. When the result is the whole of one list, that list is kept as it is, with its region keys. Example: the Ashby job "Senior Software Engineer, Product Engineering - EU" also lists Switzerland, so it keeps `eu` only.
+- Decision: when the two lists have no place in common, the result is `unknown`, not a refusal. The job goes to the "Location not stated" group, so the user still sees it.
+- Decision: `TitleLimits::eligibility()` is the one shared place. Every source calls it with its eligibility, work mode and title. The ATS readers call it once, where the job is built. Hybrid and on-site jobs keep their eligibility: their places are offices (see "Location parser rules").
+- Decision: the title tests use short inline titles, as the brief of this fix asks. Fixture titles that name a limit are in `title-location-table.php`. A test checks that every other fixture title gives nothing.
+- Reason: a We Work Remotely job titled "Principal Software Engineer (Remote Eligible in Bulgaria)" had a worldwide region and showed as a match for a user in Italy. A wrong match is worse than `unknown`. The job schema and the `JobSource` interface do not change.
+- Replaces: none

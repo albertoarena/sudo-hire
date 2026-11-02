@@ -14,6 +14,7 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\Support\TitleLimits;
 use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -80,7 +81,7 @@ final class JobicySource implements JobSource
                 tags: $this->list($raw, 'jobIndustry'),
                 workMode: WorkMode::Remote,
                 // jobGeo is free text. The work mode stays remote: Jobicy lists remote jobs only.
-                eligibility: $location->eligibility,
+                eligibility: TitleLimits::eligibility($location->eligibility, WorkMode::Remote, $title),
                 officeLocation: null,
                 timezoneMin: $location->timezoneMin,
                 timezoneMax: $location->timezoneMax,

@@ -15,6 +15,7 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\Support\TitleLimits;
 use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -122,7 +123,7 @@ final class HimalayasSource implements JobSource
                     [...$this->list($raw, 'categories'), ...$this->list($raw, 'parentCategories')],
                 ),
                 workMode: WorkMode::Remote,
-                eligibility: $locations === [] ? Eligibility::worldwide() : (new LocationParser)->countryList($locations),
+                eligibility: TitleLimits::eligibility($locations === [] ? Eligibility::worldwide() : (new LocationParser)->countryList($locations), WorkMode::Remote, $title),
                 officeLocation: null,
                 timezoneMin: $timezones === [] ? null : min($timezones),
                 timezoneMax: $timezones === [] ? null : max($timezones),

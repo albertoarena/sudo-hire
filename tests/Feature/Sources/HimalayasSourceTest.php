@@ -325,3 +325,9 @@ it('skips a job that cannot be normalised', function (mixed $item) {
     'an expiry date before the posted date' => [fn () => himalayasItem(0, ['expiryDate' => 1690965172])],
     'a timezone out of range' => [fn () => himalayasItem(0, ['timezoneRestrictions' => [-13]])],
 ]);
+
+it('narrows an empty location list to the region in the title', function () {
+    $job = (new HimalayasSource)->normalise(himalayasItem(0, ['title' => 'Senior PHP Developer (LATAM)', 'locationRestrictions' => []]));
+
+    expect(JobFields::of($job)['eligibility'])->toBe(JobFields::restricted([], ['latam']));
+});

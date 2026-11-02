@@ -332,3 +332,15 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. Press "Quit Sudo Hire", then the menu item "Quit Sudo Hire".
 - Expected: step 1 opens the group at the top of the list, with its note and rows below it (dashed stamps, no dot), then closes it and the row goes back to the bottom. Step 2 opens the "Sudo Hire Settings" window with the placeholder page. Step 3 shows "Sudo Hire stopped in the background" with the Quit button, and no tabs or footer. Step 4 quits the app.
 - Result: passed 2026-11-02, on a Mac, on branch m8b/menu-bar-list. The first `pkill` pattern did not match the NativePHP server, which starts with `-d` options before `-S`. Step 3 now uses the corrected pattern.
+
+## Fix: Location limits in the title on live feeds
+
+- Added: 2026-11-02, branch fix/title-location-limits
+- Why manual: tests use fixtures. The cloud session cannot fetch the live job boards.
+- Setup: the country in Settings is Italy.
+- Steps:
+  1. Run `php artisan hire:scan`.
+  2. Run `php artisan tinker --execute='foreach (App\Models\Job::query()->latest("fetched_at")->limit(40)->get() as $j) { dump([$j->title, $j->eligibility_type, $j->eligibility_regions, $j->eligibility_countries]); }'`.
+  3. Open the menu bar list.
+- Expected: in step 2, a title with a clear limit, for example "(Remote Eligible in Bulgaria)", "(US only)" or "- EMEA", has only the places of that limit. A title with no limit keeps the eligibility of the source. In step 3, no job with a title limit outside Italy is in the New tab.
+- Result: passed 2026-11-02, on a Mac, on branch fix/title-location-limits. The run history was cleared first, so every source was read. In step 2, "Principal Software Engineer (Remote Eligible in Bulgaria)" is restricted to BG (it was worldwide). In step 3 that job is not in New for Italy, and "Senior FullStack PHP/React/Node.js Engineer (EU only)" has the EU stamp.

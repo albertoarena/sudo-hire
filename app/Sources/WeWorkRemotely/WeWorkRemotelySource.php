@@ -13,6 +13,7 @@ use App\Sources\JobSource;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
+use App\Sources\Support\TitleLimits;
 use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -79,7 +80,7 @@ final class WeWorkRemotelySource implements JobSource
                 description: HtmlToText::convert($this->text($raw, 'description')),
                 tags: [...$this->skills($this->text($raw, 'skills') ?? ''), $this->text($raw, 'category') ?? ''],
                 workMode: WorkMode::Remote,
-                eligibility: $this->eligibility($this->text($raw, 'country'), $this->text($raw, 'region')),
+                eligibility: TitleLimits::eligibility($this->eligibility($this->text($raw, 'country'), $this->text($raw, 'region')), WorkMode::Remote, $title),
                 officeLocation: null,
                 timezoneMin: null,
                 timezoneMax: null,

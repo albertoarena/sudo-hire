@@ -2,12 +2,15 @@
 
 namespace App\Sources\Ats\Readers;
 
+use App\Schema\Eligibility;
 use App\Schema\InvalidJob;
 use App\Schema\NormalisedJob;
+use App\Schema\WorkMode;
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\AtsSource;
 use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
+use App\Sources\Support\TitleLimits;
 use App\Sources\UnreadableResponse;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
@@ -135,6 +138,7 @@ trait ReadsRawJobs
 
     /**
      * The common fields of an ATS job, and the job built from them.
+     * The title narrows the eligibility here, once for every reader.
      *
      * @param  array<string, mixed>  $fields  NormalisedJob arguments
      *
@@ -142,6 +146,10 @@ trait ReadsRawJobs
      */
     private function job(AtsItem $item, string $id, string $company, array $fields): NormalisedJob
     {
+        if (($fields['eligibility'] ?? null) instanceof Eligibility && ($fields['workMode'] ?? null) instanceof WorkMode && is_string($fields['title'] ?? null)) {
+            $fields['eligibility'] = TitleLimits::eligibility($fields['eligibility'], $fields['workMode'], $fields['title']);
+        }
+
         try {
             return new NormalisedJob(...array_merge($fields, [
                 'source' => AtsSource::KEY,
