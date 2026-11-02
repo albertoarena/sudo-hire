@@ -944,3 +944,12 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the menu bar list keeps three tabs. Hidden jobs have no tab.
 - Reason: chosen by the project owner on 2026-11-02 during the M8b checks. After the Undo toast closes, a hidden job could not come back.
 - Replaces: none
+
+## 2026-11-02: The docs site lives in a separate repository
+
+- Milestone: Site
+- Decision: the docs site of sudohire.dev is built in the repository `albertoarena/sudo-hire-docs`, apart from the app. It is private until the release.
+- Decision: the site has the download, install and first run, the settings panes, the sources with their attribution, the privacy policy, troubleshooting and how to report a problem.
+- Decision: M9 needs the site. The release links to sudohire.dev for the download and the privacy policy. In M8c, "Read the privacy policy" and the troubleshooting help link to the site.
+- Reason: the project owner decided on 2026-11-02 that Sudo Hire is not released without a docs site. A separate repository keeps the site's content license, tests and deploys apart from the app.
+- Replaces: the link to PRIVACY.md in the Privacy pane (DESIGN.md "Settings window"), once the site is live
