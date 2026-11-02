@@ -147,3 +147,9 @@ it('skips an item that cannot be normalised', function (mixed $item) {
     'no company' => [['guid' => 'x', 'link' => 'https://larajobs.com/job/1', 'title' => 'Dev', 'company' => '', 'creator' => '', 'pubDate' => 'Sun, 25 Oct 2026 18:21:28 +0000']],
     'bad date' => [['guid' => 'x', 'link' => 'https://larajobs.com/job/1', 'title' => 'Dev', 'company' => 'Acme', 'pubDate' => 'yesterday-ish']],
 ]);
+
+it('narrows an empty location to the country in the title', function () {
+    $item = array_merge(laraJobsItems()[0], ['title' => 'Laravel Developer - Remote - Germany', 'location' => '']);
+
+    expect(JobFields::of((new LaraJobsSource)->normalise($item))['eligibility'])->toBe(JobFields::restricted(['DE']));
+});

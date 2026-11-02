@@ -125,3 +125,9 @@ it('skips a job that cannot be normalised', function (array $changes) {
     'no date' => [['first_published' => null]],
     'deadline before the posted date' => [['application_deadline' => '2020-01-01T00:00:00Z']],
 ]);
+
+it('narrows an unknown location to the region in the title', function () {
+    $item = greenhouseItem(['title' => 'Backend Engineer (Remote, EMEA)', 'location' => ['name' => 'Remote']]);
+
+    expect(JobFields::of((new GreenhouseReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt)))['eligibility'])->toBe(JobFields::restricted([], ['emea']));
+});

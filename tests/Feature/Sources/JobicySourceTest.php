@@ -167,3 +167,9 @@ it('skips a job that cannot be normalised', function (mixed $item) {
 it('gives no salary for a currency that is not ISO 4217', function () {
     expect((new JobicySource)->normalise(jobicyItem(0, ['salaryCurrency' => 'dollars']))->salary)->toBeNull();
 });
+
+it('keeps the places of the location that the title also names', function () {
+    $job = (new JobicySource)->normalise(jobicyItem(0, ['jobTitle' => 'PHP Developer (Remote, Europe)', 'jobGeo' => 'Germany, USA']));
+
+    expect(JobFields::of($job)['eligibility'])->toBe(JobFields::restricted(['DE']));
+});
