@@ -40,6 +40,15 @@ it('opens the settings window', function () {
         && $request['title'] === 'Sudo Hire Settings');
 });
 
+it('opens the settings window without the developer tools, also in debug mode', function () {
+    config(['app.debug' => true]);
+
+    $this->postJson('/api/app/settings')->assertNoContent();
+
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/open')
+        && $request['showDevTools'] === false);
+});
+
 it('quits the app', function () {
     $this->postJson('/api/app/quit')->assertNoContent();
 
