@@ -408,3 +408,54 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Click the icon.
 - Expected: the icon is the tilted stamp with the check cut out, as in `docs/design/sudo-hire-ui.html`, "Icon". It is sharp, about the height of the menu bar text, with the unseen count next to it. It is black in the light menu bar and white in the dark one. A click opens the list.
 - Result: not run
+
+## M8d: The first run opens on start and matches the design in light and dark
+
+- Added: 2026-11-02, branch m8d/first-run
+- Why manual: tests fake the NativePHP internal API and render the screens in jsdom. Only the app opens the window, with real fonts and colors.
+- Setup: run `php artisan migrate`, `php artisan native:migrate` and `npm run build` (README, "Two databases"). Quit Sudo Hire. Delete the stored settings: `DB_DATABASE=database/nativephp.sqlite php artisan tinker --execute='App\Models\StoredSettings::query()->delete();'`. Run `php artisan native:run`.
+- Steps:
+  1. Compare the window with `docs/design/sudo-hire-ui.html`, "First run". Press Start.
+  2. Look at the country field, then click in it.
+  3. Switch macOS to the dark appearance (System Settings, Appearance) and repeat steps 1 and 2.
+- Expected: the first run opens on start, 520px wide, titled "Welcome to Sudo Hire", without the developer tools. The texts, the step bars and the buttons match the prototype. In step 2 the field shows the country of the Mac region (System Settings, General, Language & Region). A click opens the whole country list, with that country active and in view. In dark appearance, every part uses the dark colors.
+- Result: not run
+
+## M8d: Closing the first run early stores nothing
+
+- Added: 2026-11-02, branch m8d/first-run
+- Why manual: only the app starts and closes the window.
+- Setup: as for "M8d: The first run opens on start and matches the design in light and dark".
+- Steps:
+  1. Press Start, choose a country, press Next, then close the window with its close button.
+  2. Open the menu bar list, then Settings.
+  3. Quit Sudo Hire and run `php artisan native:run` again.
+- Expected: in step 2, the list and Settings work, and Settings shows no country. In step 3, the first run opens again.
+- Result: not run
+
+## M8d: The first scan sends no notification and opens the list
+
+- Added: 2026-11-02, branch m8d/first-run
+- Why manual: the first scan runs as a NativePHP child process and reads the live sources. Only macOS shows notifications.
+- Setup: as for "M8d: The first run opens on start and matches the design in light and dark".
+- Steps:
+  1. Go through the first run, with keywords that match jobs (for example laravel and php), and press "Run first scan".
+  2. Watch the list of sources until each one shows "done" or an error. Wait 5 more minutes for the next scheduled scan.
+  3. Press "Open the list".
+  4. Quit Sudo Hire and run `php artisan native:run` again.
+- Expected: in step 2, each source moves from "waiting" to "reading" to "done" (a source that the scheduler read a moment before can show "done" at once). No notification comes, also after the scheduled scan. Step 3 closes the first run and opens the menu bar list with the first matches. In step 4, the first run does not open.
+- Result: not run
+
+## M8d: Country list on focus, Details, hidden jobs and retry time
+
+- Added: 2026-11-02, branch m8d/first-run
+- Why manual: tests fake the window API. Only the app has the menu bar list and the settings window.
+- Setup: Sudo Hire runs with a country. For step 3, one source has failed: in the app database, set the error of its last run, for example `DB_DATABASE=database/nativephp.sqlite php artisan tinker --execute='App\Models\SourceRun::query()->where("source", "weworkremotely")->latest("started_at")->first()?->update(["error_kind" => "http", "error" => "timed out"]);'`.
+- Steps:
+  1. Open Settings, Where you work, and click in Country. Type "ger".
+  2. Close Settings. Open the menu bar list and press "Details" in the source warning.
+  3. In Settings, select Jobs. Then press "Details" in the list again, with the settings window open.
+  4. In Settings, Sources, read the line under the failed source.
+  5. In Settings, Jobs, with more than 10 hidden jobs, look at Hidden jobs and press "Show all".
+- Expected: step 1 opens the whole list with the current country active, then shows only Germany. Steps 2 and 3 open Settings on Sources, also when the window is open on another pane. In step 4 the line says "Sudo Hire tries again at" and a time: the last read plus the interval of the source (2 hours for We Work Remotely). Step 5 shows 10 jobs, then all of them in place.
+- Result: not run

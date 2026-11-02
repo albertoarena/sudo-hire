@@ -369,7 +369,7 @@ On `sunk`, hairline on top.
 ### Inputs and form controls
 - **Text field and select:** `panel`, hairline border (`ink` at 25%), radius 6px, padding 4px 8px (selects 24px on the right). Hints below in 12px `ink-3`.
 - **Chip field:** a `panel` box with the same border and 4px padding. Chips on `sunk`, radius 4px, 12px. Each chip has a remove button with the close icon (inline SVG at 10px, not a text character), in `ink-3`, padding 2px, radius 3px. Hover: `ink` on `rule`. The button has an `aria-label` ("Remove laravel"). Enter adds a keyword (lowercase).
-- **Country combobox:** a text field over the app's whole country table. Typing filters by name, or by exact country code; the list shows up to 40 matches. Arrow keys move, Enter picks, Escape closes, and leaving the field restores the current country. The list is `panel`, radius 8px, 4px padding, at most 220px tall and scrolls. Options are 4px 8px, radius 5px, the name on the left and the code in 12px `ink-3` on the right. The active or hovered option is burgundy with `burgundy-ink` text. Use `role="combobox"` with `aria-expanded`, `aria-autocomplete="list"` and a `listbox` of `option`s. Hint: "Type to search all countries."
+- **Country combobox:** a text field over the app's whole country table. Focus opens the whole table, with the current country active and scrolled into view, and selects the text. Typing replaces the text and filters by name, or by exact country code; the list then shows up to 40 matches. Arrow keys move, Enter picks, Escape closes, and leaving the field restores the current country. The list is `panel`, radius 8px, 4px padding, at most 220px tall and scrolls. Options are 4px 8px, radius 5px, the name on the left and the code in 12px `ink-3` on the right. The active or hovered option is burgundy with `burgundy-ink` text. Use `role="combobox"` with `aria-expanded`, `aria-autocomplete="list"` and a `listbox` of `option`s. Hint: "Type to search all countries."
 - **Checkboxes, sliders:** native, with `accent-color: var(--burgundy)`.
 - **Switch:** 30 by 18px pill, `rule` when off, burgundy when on, white 14px knob, 0.15s.
 - **Preview box:** `panel`, hairline `rule` border, radius 8px, padding 10px 12px. Shows stamps or a sample notification.
@@ -386,7 +386,7 @@ Eight panes, in order:
    - **Time difference:** a select with Off, Up to 1 hour, through Up to 6 hours, and Custom. Custom shows a number field (0 to 12) followed by "hours". The filter keeps jobs whose timezone is within plus or minus N hours of the user's. Jobs with no timezone always pass. The hint says so; with Custom it gives an example instead ("Vancouver is 9 hours behind Rome").
 2. **Jobs** (search): include and exclude keyword chips, "also match the description", contract, seniority, posted within, hidden companies, hidden jobs.
    - **Posted within:** 24 hours, 3 days, 7 days, 14 days, 30 days. The default is 3 days. Hint: "Jobs are kept for 30 days."
-   - **Hidden jobs:** the jobs hidden with "Not for me": title, company and the date hidden, newest first, each with a "Show again" action. "Show again" moves the job back to New. With no hidden jobs: "No hidden jobs." Below the list, only when retention deleted some hidden jobs: a "Clear older hidden jobs (N)" action. It asks for a confirmation in the page, then deletes their tombstones.
+   - **Hidden jobs:** the jobs hidden with "Not for me": title, company and the date hidden, newest first, each with a "Show again" action. The list shows the 10 newest. A "Show all N hidden jobs" action shows the rest in place, with no scroll box inside the pane. "Show again" moves the job back to New. With no hidden jobs: "No hidden jobs." Below the list, only when retention deleted some hidden jobs: a "Clear older hidden jobs (N)" action. It asks for a confirmation in the page, then deletes their tombstones.
 3. **Pay** (coin): display currency, minimum per year, payments per year (12, 13, 14), minimum per day, salary not stated. A note with the ECB rate date.
 4. **Notifications** (bell): interval slider (1 to 24 hours) and a sample notification.
 5. **Sources** (feed): a table with On (switch), Source, Last read, Status. Status is a 7px dot plus text. A green dot shows the job count. A red dot shows the error name, with one plain sentence in `ink-2` below it.
@@ -397,12 +397,12 @@ Eight panes, in order:
 Tables: 12px, headers weight 500 in `ink-3`, cells padding 8px, hairline rows, top-aligned.
 
 ### First run
-A 520px window titled "Welcome to Sudo Hire". Four screens, shown by four 22 by 3px step bars (radius 2px) at the bottom left. Bars up to the current step are burgundy, the rest `rule`. Back (hidden on the first screen) and a primary button on the right.
+A 520px window titled "Welcome to Sudo Hire". It opens on start while no country is stored. Four screens, shown by four 22 by 3px step bars (radius 2px) at the bottom left. Bars up to the current step are burgundy, the rest `rule`. Back (hidden on the first screen) and a primary button on the right. Screen readers hear "Step 2 of 4", and each new screen moves the focus to its heading. Nothing is stored before "Run first scan": closing the window early opens the first run again at the next start.
 
 1. **Welcome:** "Jobs you can take, from where you live", one paragraph, the tagline in mono `ink-3`. Button: Start.
-2. **Country:** "Where do you work from?", the country combobox (preset from the Mac), a live stamp preview. Button: Next.
-3. **Keywords:** "What do you look for?", keyword chips, work mode checkboxes. Button: Run first scan.
-4. **First scan:** a list of sources, each with a green check and "done", or "reading" or "waiting" in `ink-3`. Button: Open the list.
+2. **Country:** "Where do you work from?", the country combobox (preset from the region of the Mac), a live stamp preview. Button: Next. Next needs a country: with none, the field shows "Choose the country you work from."
+3. **Keywords:** "What do you look for?", keyword chips, work mode checkboxes. Button: Run first scan. It saves the country, keywords and work modes in one request. A refused value shows its message on the screen, and the screen stays.
+4. **First scan:** a list of the enabled sources, each with a green check and "done", or "reading" or "waiting" in `ink-3`. A source that fails shows its error in `no`. Button: Open the list, which opens the menu bar list and closes the first run.
 
 ### Icons
 Inline SVG only, on a 16 by 16 view box, with `stroke="currentColor"` and round caps and joins. Icons have no fill, except the filled saved bookmark and the feed dot. Stroke width 1.4 by default; 1.5 for the chevron, the stamp mark and power; 1.6 for the check and the dot of the warning sign. Render sizes:

@@ -1017,3 +1017,32 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the SVG has the `rsvg-convert` commands that render the two images. A test checks the path and the sizes.
 - Reason: chosen by the project owner on 2026-11-02, before M8d, so that the Mac checks show the real mark. The app icon stays in M9.
 - Replaces: the menu bar mark part of the DESIGN.md open item "Final icon drawing"
+
+## 2026-11-02: The first run
+
+- Milestone: M8d
+- Decision: the app opens the first run on start while no country is stored (`NativeAppServiceProvider`). The first run stores nothing until "Run first scan". That button saves the country, keywords and work modes in one `PUT /api/settings`. Closing the window earlier stores nothing, so the first run opens again at the next start. The menu bar list and Settings keep working.
+- Decision: the country preset comes from the region of the Mac. `SystemCountry` reads `defaults read -g AppleLocale`: "en_IT@currency=eur" gives IT, and a region override ("rg=itzzzz") wins. A region that is not in the country table, a language with no region or a numeric region ("en_001") gives no preset. `GET /api/country-preset` gives it and stores nothing.
+- Reason: decided by the project owner on 2026-11-02 (M8d brief).
+- Replaces: none
+
+## 2026-11-02: The first scan
+
+- Milestone: M8d
+- Decision: the first save with a country sets `settings.first_scan_pending`. The next scan with notifications on is the first scan: it sends no notification, sets `notified_at` on the jobs that it counts, and clears the mark (`NotificationOutcome::FirstScan`). So the next summary has only newer jobs. With `--no-notify` the mark stays. Settings stored before M8d keep false.
+- Decision: the mark belongs to the stored settings, not to one command. If the scheduled `hire:scan` runs before the scan that the first run starts, it is the first scan. A `--first` option would fail here: the started scan exits when the scheduled one holds the lock, and the next scan would notify every job.
+- Decision: `POST /api/first-scan` starts `php artisan hire:scan` as a NativePHP child process (alias `first-scan`) and returns 202 at once: a scan can take a minute. `hire:scan` is isolated, so it never runs at the same time as the scheduled scan. With no country it gives 422.
+- Decision: `GET /api/first-scan` gives each enabled source as waiting, reading, done or failed, from `source_runs`. A run that has not finished is reading. A run that started after the first scan started, or the last run of a source that is not due, gives done or failed: the scheduler often reads every source while the first run is open, before a country is stored. Other sources are waiting. The page asks once a second until no source is waiting or reading.
+- Reason: the project owner decided on 2026-11-02 that the first scan sends no notification and that its jobs count as notified. M8d chose the mechanism.
+- Replaces: none
+
+## 2026-11-02: M8d follow-ups of the M8c checks
+
+- Milestone: M8d
+- Decision: the country combobox opens the whole table on focus, with the current country active and in view, and the text selected. Typing replaces the text and filters, with at most 40 matches. The settings window and the first run share it.
+- Decision: Hidden jobs in Settings, Jobs shows the 10 newest, then "Show all N hidden jobs" shows the rest in place.
+- Decision: "Details" in the source warning of the list opens Settings on Sources (`POST /api/app/settings` with `pane`). The page reads `?pane=`. When the settings window is open already, PHP sends it the new URL (`window/url`), because opening an open window only brings it to the front.
+- Decision: a failed source waits its full minimum interval, as before. The error sentence in Sources gives the time of the next try, the last run plus the interval ("Sudo Hire tries again at 21:00."), and "at the next scan" when that time has passed.
+- Decision: the 422 text for a minimum of 0 says "Leave the field empty to turn it off.", and the Privacy pane links to the privacy page of sudohire.dev (REQUIREMENTS section 11).
+- Reason: the M8c Mac checks and a failed We Work Remotely run on 2026-11-02. Decided by the project owner on 2026-11-02.
+- Replaces: none
