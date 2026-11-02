@@ -333,7 +333,7 @@ New / Saved / Applied, each with its count in `ink-3` after a 4px gap. Track on 
 ### Job row
 A grid with 3px gap, padding 9px 14px 7px 24px, a hairline at the bottom. Hover: `panel` at 60% over the page. Lines from top to bottom:
 
-1. **Title and stamp:** title on the left (flex 1, wraps), stamp on the right, 10px gap, top-aligned.
+1. **Title and stamp:** the stamp floats on the right, top-aligned, with a 10px gap. The title and the meta line wrap around it, so a short title leaves no gap under it. The meta line breaks only between its parts, and each "·" stays with the part before it.
 2. **Meta:** company · via Source · age, 12px `ink-2`, separators "·" in `ink-3`, 6px gap. A job on more than one source adds an "also on <source>" badge (11px, hairline border, radius 4px, padding 0 5px).
 3. **Pay:** the original amount, then the converted amount in `ink-2` with "≈", then the "OTE" badge for on-target earnings (styled like "also on"). For example "€5,500 - €7,000 / month" then "≈ €66k - €84k / year". Terms ("Full time, Senior") in `ink-2`. With no salary: a "?" badge (16px square, 1px `ink-3` border, radius 4px, 11px 600), then "Salary not stated", "·", terms, on one line.
 4. **Actions:** quiet text actions with a 14px icon (Save, Not for me, Applied), then a spacer, then the Apply button with the external-link icon. Actions start 6px left of the text edge so the icons line up with the text.
@@ -350,7 +350,7 @@ A grid with 3px gap, padding 9px 14px 7px 24px, a hairline at the bottom. Hover:
 Centered near the bottom of the popover (74px above the bottom, above the footer). `ink` background, `page` text, 12px, radius 6px, padding 6px 12px, one line. It rises 8px and fades in (opacity 0.2s, transform 0.25s, `cubic-bezier(.2,.8,.2,1)`), stays 3.2 seconds. Undo is an underlined text button. Use `role="status"` and `aria-live="polite"`.
 
 ### Pinned "Location not stated" row
-Only on the New tab, after the matches. A full-width button, sticky to the bottom of the list, on `page`, with hairlines above and below and the upward fade. Text "Location not stated: 2 jobs", 12px `ink-2`, a chevron on the right. Expanded (`aria-expanded="true"`): the chevron turns 90 degrees (0.2s), a note follows ("These jobs do not say where you can work from. Check before you apply. They are never in a notification."), then the rows. These rows have the dashed grey stamp, no unseen dot, and only Save, Not for me and Apply.
+Only on the New tab, after the matches. A full-width button, sticky to the bottom of the list, on `page`, with hairlines above and below and the upward fade. Text "Location not stated: 2 jobs", 12px `ink-2`, a chevron on the right. Expanded (`aria-expanded="true"`): the chevron turns 90 degrees (0.2s), a note follows ("These jobs do not say where you can work from. Check before you apply. They are never in a notification."), then the rows. Opening it scrolls the row to the top of the list, where it sticks, so its jobs show without a scroll. Closing it puts it back at the bottom. These rows have the dashed grey stamp, no unseen dot, and only Save, Not for me and Apply.
 
 ### Footer
 On `sunk`, hairline on top.

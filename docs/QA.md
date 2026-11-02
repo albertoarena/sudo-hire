@@ -330,5 +330,5 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Press Settings in the footer.
   3. Stop the PHP server of the app: run `pkill -f 'php -S 127.0.0.1'`. Open the list.
   4. Press "Quit Sudo Hire", then the menu item "Quit Sudo Hire".
-- Expected: step 1 opens the group with its note and rows (dashed stamps, no dot), then closes it. Step 2 opens the "Sudo Hire Settings" window with the placeholder page. Step 3 shows "Sudo Hire stopped in the background" with the Quit button, and no tabs or footer. Step 4 quits the app.
+- Expected: step 1 opens the group at the top of the list, with its note and rows below it (dashed stamps, no dot), then closes it and the row goes back to the bottom. Step 2 opens the "Sudo Hire Settings" window with the placeholder page. Step 3 shows "Sudo Hire stopped in the background" with the Quit button, and no tabs or footer. Step 4 quits the app.
 - Result: not run

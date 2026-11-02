@@ -15,17 +15,14 @@ const termText = computed(() => terms(props.row));
 <template>
     <article class="job" :class="{ unseen }" :data-id="row.id">
         <span v-if="unseen" class="dot" aria-label="Unseen"></span>
-        <div class="top">
-            <div class="t">{{ row.title }}</div>
-            <EntryStamp :stamp="row.stamp" :job-id="row.id" :seen="!unseen" />
-        </div>
+        <!-- The stamp floats, so the title and the meta line wrap around it. -->
+        <EntryStamp :stamp="row.stamp" :job-id="row.id" :seen="!unseen" />
+        <div class="t">{{ row.title }}</div>
+        <!-- The meta line breaks only at the spaces between the spans, and each "·" stays with the text before it. -->
         <div class="meta">
-            <span>{{ row.company }}</span>
-            <span class="sep">·</span>
-            <span>{{ row.attribution }}</span>
-            <span v-for="name in row.alsoOn" :key="name" class="badge">also on {{ name }}</span>
-            <span class="sep">·</span>
-            <span>{{ age(row.postedAt) }}</span>
+            <span class="nw">{{ row.company }}<span class="sep">·</span></span> <span class="nw">{{ row.attribution }}</span>
+            <template v-for="name in row.alsoOn" :key="name"> <span class="badge">also on {{ name }}</span></template>
+            <span class="nw"><span class="sep">·</span></span> <span class="nw">{{ age(row.postedAt) }}</span>
         </div>
         <template v-if="row.salary.original">
             <div class="pay">

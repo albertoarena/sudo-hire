@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { api, ServerStopped } from './api';
 import Icon from './Icon.vue';
 import JobRow from './JobRow.vue';
@@ -18,6 +18,9 @@ const sources = ref<Source[]>([]);
 const stopped = ref(false);
 const tab = ref<Tab>('new');
 const groupOpen = ref(false);
+const listEl = ref<HTMLElement | null>(null);
+const groupEl = ref<HTMLElement | null>(null);
+const noteEl = ref<HTMLElement | null>(null);
 const toast = ref<{ text: string; undo: (() => Promise<void>) | null } | null>(null);
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -114,6 +117,26 @@ function act(row: Row, state: JobState): Promise<void> {
     });
 }
 
+// Opening the group scrolls it to the top of the list, so its jobs show without a scroll.
+async function toggleGroup(): Promise<void> {
+    groupOpen.value = !groupOpen.value;
+
+    if (!groupOpen.value) {
+        return;
+    }
+
+    await nextTick();
+    const list = listEl.value;
+
+    if (!list || !groupEl.value || !noteEl.value) {
+        return;
+    }
+
+    const top = list.scrollTop + noteEl.value.getBoundingClientRect().top - list.getBoundingClientRect().top - groupEl.value.offsetHeight;
+    const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    list.scrollTo?.({ top, behavior: still ? 'auto' : 'smooth' });
+}
+
 function apply(row: Row): Promise<void> {
     return guard(() => api.openUrl(row.applyUrl));
 }
@@ -175,7 +198,7 @@ onBeforeUnmount(() => {
                 </div>
             </div>
 
-            <div class="list" role="tabpanel">
+            <div ref="listEl" class="list" role="tabpanel">
                 <JobRow v-for="row in rows" :key="row.id" :row="row" @act="act" @apply="apply" />
 
                 <div v-if="rows.length === 0" class="empty">
@@ -184,11 +207,11 @@ onBeforeUnmount(() => {
                 </div>
 
                 <template v-if="tab === 'new' && groupCount > 0">
-                    <button type="button" class="group" :aria-expanded="groupOpen" @click="groupOpen = !groupOpen">
+                    <button ref="groupEl" type="button" class="group" :aria-expanded="groupOpen" @click="toggleGroup">
                         Location not stated: {{ groupCount }} {{ groupCount === 1 ? 'job' : 'jobs' }}<Icon name="chev" />
                     </button>
                     <template v-if="groupOpen">
-                        <p class="group-note">These jobs do not say where you can work from. Check before you apply. They are never in a notification.</p>
+                        <p ref="noteEl" class="group-note">These jobs do not say where you can work from. Check before you apply. They are never in a notification.</p>
                         <JobRow v-for="row in view.locationNotStated" :key="row.id" :row="row" group @act="act" @apply="apply" />
                     </template>
                 </template>
