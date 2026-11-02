@@ -42,13 +42,16 @@ it('gives the region names of other countries', function (string $country, strin
     ['IN', 'asia', 'Asia'],
 ]);
 
-it('gives "Location" for a job open worldwide', function () {
-    expect(stampOf(Eligibility::worldwide()))->toBe(['kind' => 'admitted', 'place' => 'Location']);
+it('gives the country code of the user for a job open worldwide', function () {
+    expect(stampOf(Eligibility::worldwide()))->toBe(['kind' => 'admitted', 'place' => 'IT']);
 });
 
-it('gives "Location" when the user has no country', function () {
-    expect(stampOf(Eligibility::restricted(['europe'], ['IT']), ['country' => null]))->toBe(['kind' => 'admitted', 'place' => 'Location']);
-});
+it('gives "Anywhere" when the user has no country', function (Eligibility $eligibility) {
+    expect(stampOf($eligibility, ['country' => null]))->toBe(['kind' => 'admitted', 'place' => 'Anywhere']);
+})->with([
+    'worldwide' => [Eligibility::worldwide()],
+    'restricted' => [Eligibility::restricted(['europe'], ['IT'])],
+]);
 
 it('gives "not stated" for a job in the "Location not stated" group', function () {
     expect(stampOf(Eligibility::unknown()))->toBe(['kind' => 'not_stated', 'place' => 'Location']);

@@ -11,8 +11,9 @@ use App\Settings\Settings;
 
 /**
  * The entry stamp of a job row (DESIGN.md "The entry stamp"): the kind and the place.
- * The place is the user's country code when the job lists it, else the name of the first
- * region of the job that admits the user, else "Location". Pure: no I/O.
+ * For an admitted job, the place is the name of the first region of the job that admits
+ * the user, unless the job lists the user's country. Else it is the user's country code,
+ * or "Anywhere" with no country. "Location" is only for the not_stated kind. Pure: no I/O.
  */
 final readonly class Stamp
 {
@@ -24,6 +25,8 @@ final readonly class Stamp
     public const string REFUSED = 'refused';
 
     public const string LOCATION = 'Location';
+
+    public const string ANYWHERE = 'Anywhere';
 
     /** @var array<string, string> region key to the name on the stamp */
     private const array NAMES = [
@@ -55,23 +58,22 @@ final readonly class Stamp
             return new self(self::REFUSED, null);
         }
 
-        if ($country === null || $eligibility->type === EligibilityType::Worldwide) {
-            return new self(self::ADMITTED, self::LOCATION);
+        if ($country === null) {
+            return new self(self::ADMITTED, self::ANYWHERE);
         }
 
-        if (in_array($country, $eligibility->countries, true)) {
-            return new self(self::ADMITTED, $country);
-        }
+        if ($eligibility->type === EligibilityType::Restricted && ! in_array($country, $eligibility->countries, true)) {
+            $userRegions = Regions::of($country);
 
-        $userRegions = Regions::of($country);
-
-        foreach ($eligibility->regions as $region) {
-            if (in_array($region, $userRegions, true)) {
-                return new self(self::ADMITTED, self::NAMES[$region] ?? self::LOCATION);
+            foreach ($eligibility->regions as $region) {
+                if (in_array($region, $userRegions, true) && isset(self::NAMES[$region])) {
+                    return new self(self::ADMITTED, self::NAMES[$region]);
+                }
             }
         }
 
-        return new self(self::ADMITTED, self::LOCATION);
+        // The job lists the country, is open worldwide, or has no region name: the user's country.
+        return new self(self::ADMITTED, $country);
     }
 
     /**

@@ -31,7 +31,7 @@ it('gives the list with its counts', function () {
         ->assertJsonPath('counts', ['new' => 1, 'saved' => 0, 'applied' => 0, 'locationNotStated' => 1, 'unseen' => 1])
         ->assertJsonPath('new.0.id', $job->id)
         ->assertJsonPath('new.0.attribution', 'via Fake')
-        ->assertJsonPath('new.0.stamp', ['kind' => 'admitted', 'place' => 'Location'])
+        ->assertJsonPath('new.0.stamp', ['kind' => 'admitted', 'place' => 'IT'])
         ->assertJsonPath('locationNotStated.0.id', $group->id)
         ->assertJsonPath('saved', [])
         ->assertJsonPath('applied', [])

@@ -178,7 +178,7 @@ it('gives the "?" and OTE flags of the salary', function () {
         ->and($rows[1]['salary'])->toBe(['original' => '€90k OTE', 'converted' => null, 'unknown' => false, 'ote' => true]);
 });
 
-it('gives the stamp place: country, region or "Location"', function () {
+it('gives the stamp place: country, region, or the user\'s country for a worldwide job', function () {
     listJob('1', ['eligibility' => Eligibility::restricted([], ['IT'])], hoursAgo: 1);
     listJob('2', ['eligibility' => Eligibility::restricted(['europe'])], hoursAgo: 2);
     listJob('3', ['eligibility' => Eligibility::worldwide()], hoursAgo: 3);
@@ -189,7 +189,7 @@ it('gives the stamp place: country, region or "Location"', function () {
     expect(array_column($list['new'], 'stamp'))->toBe([
         ['kind' => 'admitted', 'place' => 'IT'],
         ['kind' => 'admitted', 'place' => 'Europe'],
-        ['kind' => 'admitted', 'place' => 'Location'],
+        ['kind' => 'admitted', 'place' => 'IT'],
     ])->and($list['locationNotStated'][0]['stamp'])->toBe(['kind' => 'not_stated', 'place' => 'Location']);
 });
 

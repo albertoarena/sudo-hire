@@ -861,7 +861,7 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the New count does not include the group. The group has its own count.
 - Decision: `App\Scan\JobMatcher` runs the filters and picks the links of the first enabled source. The scan and the list use it. When no source of a job is enabled, a saved or applied job shows the links of its main source.
 - Decision: the stamp kind is `admitted` or `not_stated`. A job with unknown eligibility is `not_stated`, also in lenient mode. A saved or applied job that the eligibility filter refuses now is `refused`, with no place.
-- Decision: the stamp place is the user's country code when the job lists it, else the name of the first region of the job that admits the user, else "Location". A worldwide job and a user with no country give "Location".
+- Decision: the place of an admitted stamp is the user's country code when the job lists it, else the name of the first region of the job that admits the user. A worldwide job, or a job with no matching region name, gives the user's country code, for example "IT". With no country in the settings, the place is "Anywhere". "Location" is only for the `not_stated` kind (approved by the project owner on 2026-11-02).
 - Decision: the source name is the attribution without "via". The ATS reader is "Company careers" in the source list. A job row keeps the attribution of the company, e.g. "via Acme careers".
 - Reason: approved in the M8a brief. The UI does not filter or parse (AGENTS.md), so the API gives the rows ready to show.
 - Replaces: none
