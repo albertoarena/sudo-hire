@@ -343,4 +343,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Run `php artisan tinker --execute='foreach (App\Models\Job::query()->latest("fetched_at")->limit(40)->get() as $j) { dump([$j->title, $j->eligibility_type, $j->eligibility_regions, $j->eligibility_countries]); }'`.
   3. Open the menu bar list.
 - Expected: in step 2, a title with a clear limit, for example "(Remote Eligible in Bulgaria)", "(US only)" or "- EMEA", has only the places of that limit. A title with no limit keeps the eligibility of the source. In step 3, no job with a title limit outside Italy is in the New tab.
-- Result: not run
+- Result: passed 2026-11-02, on a Mac, on branch fix/title-location-limits. The run history was cleared first, so every source was read. In step 2, "Principal Software Engineer (Remote Eligible in Bulgaria)" is restricted to BG (it was worldwide). In step 3 that job is not in New for Italy, and "Senior FullStack PHP/React/Node.js Engineer (EU only)" has the EU stamp.
