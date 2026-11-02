@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import EntryStamp from './EntryStamp.vue';
-import Icon from './Icon.vue';
+import EntryStamp from '../shared/EntryStamp.vue';
+import Icon from '../shared/Icon.vue';
 import { age, terms } from './text';
-import type { JobState, Row } from './types';
+import type { JobState, Row } from '../shared/types';
 
 const props = defineProps<{ row: Row; group?: boolean }>();
 const emit = defineEmits<{ act: [row: Row, state: JobState]; apply: [row: Row] }>();

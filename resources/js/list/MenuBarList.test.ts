@@ -1,8 +1,9 @@
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { source } from '../settings/fixtures';
 import { row, sources, status, view } from './fixtures';
 import MenuBarList from './MenuBarList.vue';
-import type { ListView, Source } from './types';
+import type { ListView, Source } from '../shared/types';
 
 type Call = { method: string; path: string; body: unknown };
 
@@ -172,7 +173,7 @@ describe('MenuBarList', () => {
     });
 
     it('shows the source warning and opens the settings from it', async () => {
-        currentSources = [{ key: 'weworkremotely', name: 'We Work Remotely', enabled: true, lastError: { message: 'cURL error 60', kind: 'certificate' } }];
+        currentSources = [source({ key: 'weworkremotely', name: 'We Work Remotely', lastError: { message: 'cURL error 60', kind: 'certificate' } })];
         const wrapper = await mountList();
 
         expect(wrapper.find('.warn').text()).toContain('We Work Remotely: certificate error');

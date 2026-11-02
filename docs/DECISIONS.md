@@ -966,3 +966,45 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the title tests use short inline titles, as the brief of this fix asks. Fixture titles that name a limit are in `title-location-table.php`. A test checks that every other fixture title gives nothing.
 - Reason: a We Work Remotely job titled "Principal Software Engineer (Remote Eligible in Bulgaria)" had a worldwide region and showed as a match for a user in Italy. A wrong match is worse than `unknown`. The job schema and the `JobSource` interface do not change.
 - Replaces: none
+
+## 2026-11-02: Settings save on change
+
+- Milestone: M8c
+- Decision: the settings window has no Save button. A checkbox, a select, a switch, the slider and a chip field save through `PUT /api/settings` when they change. A text or number field saves on blur or Enter. A 422 keeps the stored value and shows the API message under the field.
+- Decision: the window title follows the pane. Electron ignores the page title, so the page calls `POST /api/app/settings-title` with the pane key, and PHP sets the title from a fixed list.
+- Reason: approved in the M8c brief. A macOS settings window applies a change at once.
+- Replaces: none
+
+## 2026-11-02: The hidden jobs list and older hidden jobs
+
+- Milestone: M8c
+- Decision: `GET /api/hidden-jobs` gives the stored hidden jobs (title, company, hidden at), newest first, and the count of older hidden jobs. An older hidden job is a job that retention deleted: only its tombstones stay. The count is the number of jobs, not of tombstones.
+- Decision: "Show again" calls the state endpoint with `hidden` again, so the job goes back to New and its tombstones are deleted.
+- Decision: "Clear older hidden jobs (N)" shows only when N is more than 0. After a confirmation in the page, `DELETE /api/hidden-jobs/older` deletes the tombstones of the deleted jobs. A source that still lists one of these jobs can store it again. The tombstones of a stored hidden job stay. `PRIVACY.md` does not change.
+- Reason: chosen by the project owner on 2026-11-02. Tombstones have no retention in v1, so the user needs a way to remove them.
+- Replaces: none
+
+## 2026-11-02: App actions of the settings window
+
+- Milestone: M8c
+- Decision: `POST /api/app/show-data-folder` shows the database file of the app in Finder. `POST /api/app/open-log-folder` opens the folder of the log file. `POST /api/app/copy-diagnostics` puts the diagnostic report, as plain text, on the clipboard.
+- Decision: PHP gives every path and the report text. The actions ignore any path or text in the request.
+- Decision: `App\List\DiagnosticReport` builds the report for `GET /api/diagnostics` and for the clipboard, with the same rule: no settings, keywords, companies, jobs or error messages.
+- Reason: approved in the M8c brief. A path from the web view could open any file.
+- Replaces: none
+
+## 2026-11-02: Links to sudohire.dev
+
+- Milestone: M8c
+- Decision: "Read the privacy policy" opens https://sudohire.dev/privacy/. Troubleshooting links to https://sudohire.dev/help/, and "Report a problem" opens a new issue on the sudo-hire repository on GitHub. All open in the default browser through `POST /api/app/open-url`.
+- Decision: the links are constants in `resources/js/shared/links.ts`, the one place for web links in the UI. M9 checks that the site has these pages.
+- Reason: decided by the project owner on 2026-11-02 (see "The docs site lives in a separate repository"). The paths are a proposal, because the site has no page list yet.
+- Replaces: none
+
+## 2026-11-02: Parts that the first run shares
+
+- Milestone: M8c
+- Decision: the country combobox, the chip field and the stamp preview are components in `resources/js/shared/`, with the API client, the icons, the stamp and the stopped state. M8d uses them for the first run.
+- Decision: `GET /api/stamp-preview?country=XX` gives the stamps of two stored jobs for a country and does not save the country. It prefers one job that the country admits and one that it refuses, newest post first. With fewer jobs it gives what there is, and a job with no stated location comes last. Hidden jobs are left out.
+- Reason: approved in the M8c brief. The preview helps the user check the country before the first scan of new settings.
+- Replaces: none

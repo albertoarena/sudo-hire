@@ -1,4 +1,5 @@
-import type { ListView, Row, Source, Status } from './types';
+import { source } from '../settings/fixtures';
+import type { ListView, Row, Source, Status } from '../shared/types';
 
 // Test data in the shape of the M8a API. Titles and companies are invented.
 export function row(overrides: Partial<Row> = {}): Row {
@@ -42,6 +43,6 @@ export const status: Status = {
 };
 
 export const sources: Source[] = [
-    { key: 'himalayas', name: 'Himalayas', enabled: true, lastError: null },
-    { key: 'weworkremotely', name: 'We Work Remotely', enabled: true, lastError: null },
+    source({ key: 'himalayas', name: 'Himalayas' }),
+    source({ key: 'weworkremotely', name: 'We Work Remotely' }),
 ];

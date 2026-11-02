@@ -1,4 +1,4 @@
-// The JSON shapes of the M8a API (docs/DECISIONS.md, M8a entries).
+// The JSON shapes of the API that both windows read (docs/DECISIONS.md, M8a and M8c entries).
 
 export type JobState = 'saved' | 'applied' | 'hidden';
 
@@ -49,7 +49,24 @@ export interface Source {
     key: string;
     name: string;
     enabled: boolean;
+    minIntervalMinutes: number;
+    lastRunAt: string | null;
+    lastSuccessAt: string | null;
+    jobCount: number;
     lastError: { message: string; kind: string } | null;
+}
+
+export interface Country {
+    code: string;
+    name: string;
+}
+
+/** A job of the stamp preview (GET /api/stamp-preview). */
+export interface PreviewJob {
+    id: number;
+    title: string;
+    company: string;
+    stamp: Stamp;
 }
 
 export type Tab = 'new' | 'saved' | 'applied';
