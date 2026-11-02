@@ -9,6 +9,7 @@ use App\Schema\Eligibility;
 use App\Schema\NormalisedJob;
 use App\Schema\Salary;
 use App\Schema\SalaryPeriod;
+use App\Settings\SettingsStore;
 use App\Sources\LaraJobs\LaraJobsSource;
 use App\Sources\SourceRegistry;
 use App\Storage\JobStore;
@@ -159,6 +160,18 @@ it('says when there is no country and sends nothing', function () {
 
     expect($this->notifier->sent)->toBe([])
         ->and(Job::query()->whereNotNull('notified_at')->count())->toBe(0);
+});
+
+it('says when the first scan sends no notification', function () {
+    StoredSettings::query()->delete();
+    app(SettingsStore::class)->save(Make::settings(['country' => 'IT']));
+    commandJob(['sourceJobId' => '1']);
+
+    $this->artisan('hire:scan')
+        ->expectsOutputToContain('No notification: first scan. Its 1 job counts as notified.')
+        ->assertExitCode(0);
+
+    expect($this->notifier->sent)->toBe([]);
 });
 
 it('is isolated, also without the --isolated option', function () {

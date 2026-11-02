@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\CountryPresetController;
 use App\Http\Controllers\Api\DiagnosticsController;
+use App\Http\Controllers\Api\FirstScanController;
 use App\Http\Controllers\Api\HiddenJobController;
 use App\Http\Controllers\Api\JobStateController;
 use App\Http\Controllers\Api\ListController;
@@ -17,8 +18,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'app')->name('home');
 Route::view('/settings', 'settings')->name('settings');
+Route::view('/first-run', 'first-run')->name('first-run');
 
-// The JSON API of the menu bar list and the settings window. Web middleware: session and CSRF.
+// The JSON API of the menu bar list, the settings window and the first run. Web middleware: session and CSRF.
 Route::prefix('api')->name('api.')->group(function () {
     Route::get('list', ListController::class)->name('list');
     Route::put('jobs/{job}/state', JobStateController::class)->name('jobs.state')
@@ -44,9 +46,13 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::get('status', StatusController::class)->name('status');
     Route::get('diagnostics', DiagnosticsController::class)->name('diagnostics');
 
+    Route::post('first-scan', [FirstScanController::class, 'store'])->name('first-scan.store');
+    Route::get('first-scan', [FirstScanController::class, 'show'])->name('first-scan.show');
+
     Route::post('app/open-url', [AppActionController::class, 'openUrl'])->name('app.open-url');
     Route::post('app/settings', [AppActionController::class, 'openSettings'])->name('app.settings');
     Route::post('app/quit', [AppActionController::class, 'quit'])->name('app.quit');
+    Route::post('app/open-list', [AppActionController::class, 'openList'])->name('app.open-list');
     Route::post('app/show-data-folder', [AppActionController::class, 'showDataFolder'])->name('app.show-data-folder');
     Route::post('app/open-log-folder', [AppActionController::class, 'openLogFolder'])->name('app.open-log-folder');
     Route::post('app/copy-diagnostics', [AppActionController::class, 'copyDiagnostics'])->name('app.copy-diagnostics');

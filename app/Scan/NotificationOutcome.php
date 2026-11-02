@@ -13,4 +13,5 @@ enum NotificationOutcome: string
     case Off = 'off';
     case Failed = 'failed';
     case NoCountry = 'no_country';
+    case FirstScan = 'first_scan';
 }

@@ -97,6 +97,7 @@ class HireScanCommand extends Command implements Isolatable
             NotificationOutcome::Off => $this->line('Notification off (--no-notify).'),
             NotificationOutcome::Failed => $this->error("Notification failed: {$result->notificationError}"),
             NotificationOutcome::NoCountry => $this->line('No notification: set your country first.'),
+            NotificationOutcome::FirstScan => $this->line('No notification: first scan. '.(count($result->matches) === 1 ? 'Its 1 job counts' : 'Its '.count($result->matches).' jobs count').' as notified.'),
         };
     }
 

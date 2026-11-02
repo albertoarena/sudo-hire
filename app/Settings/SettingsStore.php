@@ -9,6 +9,7 @@ use App\Sources\UnknownSource;
 /**
  * Loads and saves the settings in the settings table, one row of JSON.
  * Before the first save, the defaults use the timezone of the Mac.
+ * The first save with a country makes the next scan the first scan.
  */
 final class SettingsStore
 {
@@ -32,7 +33,25 @@ final class SettingsStore
         $this->registry->assertKnown($settings->disabledSources);
 
         $stored = StoredSettings::query()->orderBy('id')->first() ?? new StoredSettings;
+
+        if ($settings->country !== null && ($stored->data['country'] ?? null) === null) {
+            $stored->first_scan_pending = true;
+        }
+
         $stored->data = $settings->toArray();
         $stored->save();
+    }
+
+    /**
+     * True until the first scan with a country has run.
+     */
+    public function firstScanPending(): bool
+    {
+        return StoredSettings::query()->orderBy('id')->first()?->first_scan_pending === true;
+    }
+
+    public function firstScanDone(): void
+    {
+        StoredSettings::query()->update(['first_scan_pending' => false]);
     }
 }

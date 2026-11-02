@@ -9,12 +9,13 @@ use Illuminate\Validation\Rule;
 use Native\Desktop\App;
 use Native\Desktop\Client\Client;
 use Native\Desktop\Clipboard;
+use Native\Desktop\MenuBar\MenuBarManager;
 use Native\Desktop\Shell;
 use Native\Desktop\Windows\Window;
 use Native\Desktop\Windows\WindowManager;
 
 /**
- * POST /api/app/*: the app actions of the menu bar list and the settings window. The web view
+ * POST /api/app/*: the app actions of the menu bar list, the settings window and the first run. The web view
  * cannot open the browser, Finder or a window, use the clipboard or quit by itself, so it asks
  * PHP, and PHP asks NativePHP. Paths come from PHP, never from the request.
  */
@@ -45,18 +46,38 @@ final class AppActionController
     }
 
     /**
-     * Opens the settings window. NativePHP opens the developer tools in debug mode, so turn them off.
+     * Opens the settings window, on a pane when the request names one ("Details" opens Sources).
+     * Opening a window that is open only brings it to the front, so an open window gets the new URL.
+     * NativePHP opens the developer tools in debug mode, so turn them off.
      */
-    public function openSettings(WindowManager $windows): Response
+    public function openSettings(Request $request, WindowManager $windows, Client $client): Response
     {
+        $pane = $request->validate(['pane' => ['sometimes', 'string', Rule::in(array_keys(self::PANE_TITLES))]])['pane'] ?? null;
+        $url = $pane === null ? route('settings') : route('settings', ['pane' => $pane]);
+
+        if ($pane !== null && $this->isOpen($windows, 'settings')) {
+            (new Window('settings'))->setClient($client)->url($url);
+        }
+
         $windows->open('settings')
-            ->url(route('settings'))
+            ->url($url)
             ->title('Sudo Hire Settings')
             ->width(720)
             ->height(520)
             ->minWidth(560)
             ->minHeight(420)
             ->showDevTools(false);
+
+        return response()->noContent();
+    }
+
+    /**
+     * "Open the list" on the last screen of the first run.
+     */
+    public function openList(WindowManager $windows, MenuBarManager $menuBar): Response
+    {
+        $windows->close('first-run');
+        $menuBar->show();
 
         return response()->noContent();
     }
@@ -102,5 +123,16 @@ final class AppActionController
         (new Window('settings'))->setClient($client)->title(self::PANE_TITLES[$pane]);
 
         return response()->noContent();
+    }
+
+    private function isOpen(WindowManager $windows, string $id): bool
+    {
+        foreach ($windows->all() as $window) {
+            if ($window->getId() === $id) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

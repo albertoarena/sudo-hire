@@ -15,6 +15,7 @@ use App\Schema\Eligibility;
 use App\Schema\NormalisedJob;
 use App\Schema\Salary;
 use App\Schema\SalaryPeriod;
+use App\Settings\SettingsStore;
 use App\Sources\LaraJobs\LaraJobsSource;
 use App\Sources\SourceRegistry;
 use App\Storage\JobStore;
@@ -389,6 +390,72 @@ it('keeps --no-notify as the outcome with no country', function () {
     storeJob();
 
     expect(scan(notify: false)->notification)->toBe(NotificationOutcome::Off);
+});
+
+/**
+ * The settings as the first run leaves them: the country is saved for the first time.
+ */
+function firstRunSettings(array $overrides = []): void
+{
+    StoredSettings::query()->delete();
+    app(SettingsStore::class)->save(Make::settings(array_merge(['country' => 'IT'], $overrides)));
+}
+
+it('sends no notification on the first scan, and sets notified_at on the jobs it counts', function () {
+    firstRunSettings(['keywordsInclude' => ['Laravel', 'PHP'], 'postedWithinHours' => 168]);
+    useSources([new FakeSource]);
+
+    $result = scan();
+
+    expect($result->notification)->toBe(NotificationOutcome::FirstScan)
+        ->and(matchedTitles($result))->toBe(['Senior Laravel Developer', 'PHP Engineer'])
+        ->and($this->notifier->sent)->toBe([])
+        ->and(SentNotification::query()->count())->toBe(0)
+        ->and(Job::query()->whereNotNull('notified_at')->count())->toBe(2)
+        ->and(app(SettingsStore::class)->firstScanPending())->toBeFalse();
+});
+
+it('does not set notified_at on the jobs the first scan does not count', function () {
+    firstRunSettings(['keywordsInclude' => ['django']]);
+    $job = storeJob();
+
+    expect(scan()->notification)->toBe(NotificationOutcome::FirstScan)
+        ->and($job->fresh()->notified_at)->toBeNull();
+});
+
+it('notifies only newer jobs after the first scan', function () {
+    firstRunSettings();
+    storeJob(['sourceJobId' => 'old']);
+    scan();
+
+    CarbonImmutable::setTestNow('2026-10-29T10:05:00Z');
+    storeJob(['sourceJobId' => 'new', 'title' => 'Laravel Developer']);
+    $result = scan();
+
+    expect($result->notification)->toBe(NotificationOutcome::Sent)
+        ->and(matchedTitles($result))->toBe(['Laravel Developer'])
+        ->and($this->notifier->sent)->toBe(['1 new job']);
+});
+
+it('keeps the first scan for later with notify off', function () {
+    firstRunSettings();
+    storeJob();
+
+    expect(scan(notify: false)->notification)->toBe(NotificationOutcome::Off)
+        ->and(app(SettingsStore::class)->firstScanPending())->toBeTrue()
+        ->and(Job::query()->whereNotNull('notified_at')->count())->toBe(0);
+});
+
+it('makes a scheduled scan the first scan when it runs before the started one', function () {
+    // The first run saves the country; whichever scan comes next is the first scan.
+    firstRunSettings();
+    storeJob();
+
+    $this->artisan('hire:scan')->assertSuccessful();
+
+    expect($this->notifier->sent)->toBe([])
+        ->and(Job::query()->whereNotNull('notified_at')->count())->toBe(1)
+        ->and(app(SettingsStore::class)->firstScanPending())->toBeFalse();
 });
 
 it('makes no live request', function () {
