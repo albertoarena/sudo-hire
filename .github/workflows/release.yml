@@ -1,0 +1,206 @@
+# Builds the macOS app for Apple silicon (arm64) and Intel (x64).
+# A tag v* builds, signs and notarises, checks the result, and uploads it to a draft release.
+# A human tests the draft and publishes it. This workflow never publishes a release.
+# workflow_dispatch builds an unsigned test app and keeps the DMGs as workflow artifacts only.
+# See docs/DECISIONS.md, "The release flow".
+
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: true
+
+jobs:
+  test:
+    name: Tests and the CA bundle check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, dom, libxml, mbstring
+          coverage: none
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend (page tests need the Vite manifest)
+        run: npm run build
+
+      - name: Prepare app
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Pest
+        run: vendor/bin/pest
+
+      - name: Vitest
+        run: npm test
+
+      - name: The CA bundle is not older than 180 days
+        run: php artisan release:check-cacert
+
+  build:
+    name: Build for arm64 and x64
+    needs: test
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The build bundles the PHP that runs it. Sudo Hire ships PHP 8.4.
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, sqlite3, dom, libxml, mbstring
+          coverage: none
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Refuse an old PHP
+        run: php -r 'if (PHP_VERSION_ID < 80400) { fwrite(STDERR, "The build needs PHP 8.4, not ".PHP_VERSION.PHP_EOL); exit(1); }'
+
+      - name: Set the version
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            version="$(node scripts/release-version.mjs "$GITHUB_REF_NAME")"
+          else
+            version="0.0.0-test.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "NATIVEPHP_APP_VERSION=$version" >> "$GITHUB_ENV"
+          echo "Version: $version"
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --no-dev --optimize-autoloader
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Prepare app
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Check the signing and notarisation secrets
+        if: github.event_name == 'push'
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          NATIVEPHP_APPLE_ID: ${{ secrets.NATIVEPHP_APPLE_ID }}
+          NATIVEPHP_APPLE_ID_PASS: ${{ secrets.NATIVEPHP_APPLE_ID_PASS }}
+          NATIVEPHP_APPLE_TEAM_ID: ${{ secrets.NATIVEPHP_APPLE_TEAM_ID }}
+        run: |
+          missing=0
+          for name in CSC_LINK CSC_KEY_PASSWORD NATIVEPHP_APPLE_ID NATIVEPHP_APPLE_ID_PASS NATIVEPHP_APPLE_TEAM_ID; do
+            if [ -z "${!name}" ]; then
+              echo "::error::The secret $name is not set."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Build, sign and notarise
+        if: github.event_name == 'push'
+        env:
+          NATIVEPHP_UPDATER_ENABLED: 'true'
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          NATIVEPHP_APPLE_ID: ${{ secrets.NATIVEPHP_APPLE_ID }}
+          NATIVEPHP_APPLE_ID_PASS: ${{ secrets.NATIVEPHP_APPLE_ID_PASS }}
+          NATIVEPHP_APPLE_TEAM_ID: ${{ secrets.NATIVEPHP_APPLE_TEAM_ID }}
+        run: php artisan native:build mac all --no-interaction
+
+      - name: Build unsigned
+        if: github.event_name != 'push'
+        env:
+          NATIVEPHP_UPDATER_ENABLED: 'true'
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: php artisan native:build mac all --no-interaction
+
+      - name: List the build
+        run: ls -la nativephp/electron/dist
+
+      # NativePHP logs a notarisation error and goes on, so these checks are the gate.
+      - name: Check the signature, Gatekeeper and the notarisation ticket
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          for dmg in nativephp/electron/dist/*.dmg; do
+            echo "Checking $dmg"
+            mount="$(mktemp -d)"
+            hdiutil attach "$dmg" -nobrowse -readonly -mountpoint "$mount" > /dev/null
+            app="$(find "$mount" -maxdepth 1 -name '*.app' | head -n 1)"
+            codesign --verify --deep --strict --verbose=2 "$app"
+            spctl -a -vv "$app"
+            xcrun stapler validate "$app"
+            hdiutil detach "$mount" > /dev/null
+          done
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sudo-hire-mac
+          if-no-files-found: error
+          path: |
+            nativephp/electron/dist/*.dmg
+            nativephp/electron/dist/*.zip
+            nativephp/electron/dist/*.blockmap
+            nativephp/electron/dist/latest-mac.yml
+
+  draft:
+    name: Upload to a draft release
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: sudo-hire-mac
+          path: dist
+
+      # latest-mac.yml names the files with a dash for each space ("Sudo-Hire-1.0.0-arm64.zip").
+      # GitHub would turn a space into a dot, and the updater would not find the file.
+      - name: Name the files as latest-mac.yml does
+        run: |
+          for file in dist/*' '*; do
+            [ -e "$file" ] || continue
+            mv "$file" "${file// /-}"
+          done
+          ls -la dist
+
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --draft \
+            --verify-tag \
+            --title "Sudo Hire ${GITHUB_REF_NAME#v}" \
+            --notes "Draft. Install and test both DMGs before you publish this release."
