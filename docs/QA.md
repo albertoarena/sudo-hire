@@ -471,7 +471,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Start Sudo Hire. Open the About panel (for example with Get Info in Finder, or the About item when the app has one).
   4. Do steps 1 to 3 in light and in dark appearance (System Settings, Appearance).
 - Expected: the burgundy rounded square with the light stamp, the same shape and size as other macOS app icons, with the transparent margin of the macOS grid. It is sharp at every size, with no white or square corners, in light and dark.
-- Result: not run
+- Result: passed 2026-11-03, on a Mac, on branch m9a/release-build, with the local unsigned arm64 build 0.0.0-test.1.
 
 ## M9a: An unsigned test build opens and scans
 
@@ -487,7 +487,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   5. Wait for the next scan with new matches, or check a summary notification.
   6. Open the log folder from Settings and read the newest log file.
 - Expected: the first run opens. Each source reads with no certificate error. The exchange rates of the ECB have a date in Settings. The log has no `cURL error 60` and no other SSL error. The summary notification shows, and a click on it opens the list.
-- Result: not run
+- Result: passed 2026-11-03, on a Mac, on branch m9a/release-build, with the local unsigned arm64 build 0.0.0-test.1.
 
 ## M9a: The built app sends only the requests in PRIVACY.md
 
@@ -499,4 +499,5 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Wait for one scan that reads the sources, and for the update check at the start.
   3. Read the list of hosts that Sudo Hire and its helper processes connected to.
 - Expected: the hosts are only the job boards that are on, the ATS providers of the companies in the list, the ECB for the exchange rates, and GitHub (`github.com` and its download hosts, for example `objects.githubusercontent.com`) for the update check. There is no other host: no analytics, no crash report, no Electron host. Connections to 127.0.0.1 are the app talking to itself.
+- Note: a first try on 2026-11-03 used `nettop`, with the local unsigned build. It saw only expected hosts: the ECB, Jobicy, Himalayas and We Work Remotely, from the PHP process of the app. It saw no outside connection of the Electron processes. But `nettop` samples once a second and missed short connections: LaraJobs and Remotive were read and not seen, and the update check at the start was not seen. So it cannot show that there is no other host. M9b runs this check again on the signed build, with LuLu or Little Snitch, when the repository is public and the update check gets a real answer.
 - Result: not run
