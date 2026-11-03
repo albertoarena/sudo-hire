@@ -4,9 +4,8 @@ use App\Providers\NativeAppServiceProvider;
 
 return [
     /**
-     * The version of your app.
-     * It is used to determine if the app needs to be updated.
-     * Increment this value every time you release a new version of your app.
+     * The version of your app. The updater compares it with the latest release.
+     * The release workflow sets it from the tag: v1.0.0 gives 1.0.0.
      */
     'version' => env('NATIVEPHP_APP_VERSION', '1.0.0'),
 
@@ -31,12 +30,12 @@ return [
     /**
      * The author of your application.
      */
-    'author' => env('NATIVEPHP_APP_AUTHOR'),
+    'author' => env('NATIVEPHP_APP_AUTHOR', 'Alberto Arena'),
 
     /**
      * The copyright notice for your application.
      */
-    'copyright' => env('NATIVEPHP_APP_COPYRIGHT'),
+    'copyright' => env('NATIVEPHP_APP_COPYRIGHT', 'Copyright (c) 2026 Alberto Arena. MIT license.'),
 
     /**
      * The description of your application.
@@ -59,11 +58,17 @@ return [
      * A list of environment keys that should be removed from the
      * .env file when the application is bundled for production.
      * You may use wildcards to match multiple keys.
+     * Sudo Hire also removes the signing certificate (CSC_*), the GitHub token of the
+     * release workflow (GH_TOKEN), and every password and token. APP_KEY stays: the app needs it.
      */
     'cleanup_env_keys' => [
         'AWS_*',
         'AZURE_*',
         'GITHUB_*',
+        'GH_TOKEN',
+        'CSC_*',
+        '*_PASSWORD',
+        '*_TOKEN',
         'DO_SPACES_*',
         '*_SECRET',
         'BIFROST_*',
@@ -97,22 +102,23 @@ return [
         /**
          * Whether or not the updater is enabled. Please note that the
          * updater will only work when your application is bundled
-         * for production.
+         * for production. Sudo Hire reads its public GitHub releases
+         * (docs/DECISIONS.md, "The updater").
          */
-        'enabled' => env('NATIVEPHP_UPDATER_ENABLED', false),
+        'enabled' => env('NATIVEPHP_UPDATER_ENABLED', true),
 
         /**
          * The updater provider to use.
          * Supported: "github", "s3", "spaces"
          * Note: The "s3" provider is compatible with S3-compatible services like Cloudflare R2.
          */
-        'default' => env('NATIVEPHP_UPDATER_PROVIDER', 'spaces'),
+        'default' => env('NATIVEPHP_UPDATER_PROVIDER', 'github'),
 
         'providers' => [
             'github' => [
                 'driver' => 'github',
-                'repo' => env('GITHUB_REPO'),
-                'owner' => env('GITHUB_OWNER'),
+                'repo' => env('GITHUB_REPO', 'sudo-hire'),
+                'owner' => env('GITHUB_OWNER', 'albertoarena'),
                 'token' => env('GITHUB_TOKEN'),
                 'vPrefixedTagName' => env('GITHUB_V_PREFIXED_TAG_NAME', true),
                 'private' => env('GITHUB_PRIVATE', false),
@@ -165,7 +171,7 @@ return [
      * Define your own scripts to run before and after the build process.
      */
     'prebuild' => [
-        // 'npm run build',
+        'npm run build',
     ],
 
     'postbuild' => [
