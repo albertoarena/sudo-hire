@@ -13,13 +13,14 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Stores normalised jobs with deduplication and retention (REQUIREMENTS section 9).
- * A job keeps its own links. Another source of the same job is stored as "also on",
- * with its own links: an apply link is never replaced (AGENTS.md rule 11).
+ * A job keeps its own links. Another source of the same job, or an identical copy on
+ * the same source, is stored as a "job_sources" row with its own links: an apply link
+ * is never replaced (AGENTS.md rule 11).
  * A hidden job leaves tombstones, so it does not come back.
  */
 final class JobStore
 {
-    /** A job from another source with the same fingerprint, stored this recently, is the same job. */
+    /** A job with the same fingerprint, stored this recently, is the same job (from the same source only when identical). */
     public const int DUPLICATE_DAYS = 14;
 
     /** A job not seen for this long is deleted, unless it is saved or applied. */
@@ -166,6 +167,8 @@ final class JobStore
             ->orderBy('id')
             ->first();
 
+        $first ??= $this->firstCopy($job);
+
         if ($first !== null) {
             AlsoOnSource::query()->create(['job_id' => $first->id, 'source' => $job->source, 'source_job_id' => $job->sourceJobId] + $this->links($job));
             $this->seen($first->id, $job->fetchedAt);
@@ -174,6 +177,41 @@ final class JobStore
         }
 
         Job::query()->create(Job::attributesOf($job));
+    }
+
+    /**
+     * The first job from the same source that the new job copies: the same fingerprint,
+     * first stored in the last DUPLICATE_DAYS, the same eligibility and the same salary.
+     */
+    private function firstCopy(NormalisedJob $job): ?Job
+    {
+        return Job::query()
+            ->where('source', $job->source)
+            ->where('fingerprint', $job->fingerprint)
+            ->where('created_at', '>=', CarbonImmutable::now()->subDays(self::DUPLICATE_DAYS))
+            ->orderBy('id')
+            ->get()
+            ->first(fn (Job $stored) => $this->identical($stored, $job));
+    }
+
+    /**
+     * Eligibility (type, regions, countries as sets) and salary (min, max, currency, period) are the same.
+     */
+    private function identical(Job $stored, NormalisedJob $job): bool
+    {
+        $sorted = function (array $values): array {
+            sort($values);
+
+            return $values;
+        };
+
+        return $stored->eligibility_type === $job->eligibility->type->value
+            && $sorted($stored->eligibility_regions) === $sorted($job->eligibility->regions)
+            && $sorted($stored->eligibility_countries) === $sorted($job->eligibility->countries)
+            && $stored->salary_min === $job->salary?->min
+            && $stored->salary_max === $job->salary?->max
+            && $stored->salary_currency === $job->salary?->currency
+            && $stored->salary_period === $job->salary?->period;
     }
 
     /**
@@ -190,7 +228,7 @@ final class JobStore
     }
 
     /**
-     * The job was seen through another source: retention counts from this fetch.
+     * The job was seen through another source or a copy: retention counts from this fetch.
      */
     private function seen(int $jobId, CarbonImmutable $fetchedAt): void
     {

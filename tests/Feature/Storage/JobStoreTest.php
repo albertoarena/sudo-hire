@@ -127,13 +127,159 @@ it('stores two jobs when the second source comes after 14 days', function () {
         ->and(AlsoOnSource::query()->count())->toBe(0);
 });
 
-it('stores two jobs with the same fingerprint from the same source', function () {
-    $store = new JobStore;
+/**
+ * The same job again on the same board, under another id and other links.
+ */
+function copyOnSameBoard(array $overrides = []): NormalisedJob
+{
+    return storedJob(array_merge([
+        'sourceJobId' => '43',
+        'sourceUrl' => 'https://example.com/jobs/43',
+        'applyUrl' => 'https://example.com/jobs/43/apply',
+    ], $overrides));
+}
 
-    $store->save([storedJob(), storedJob(['sourceJobId' => '43', 'sourceUrl' => 'https://example.com/jobs/43'])]);
+it('stores an identical copy from the same source as a row of the first job', function () {
+    $store = new JobStore;
+    $store->save([storedJob(), copyOnSameBoard()]);
+
+    $job = Job::query()->sole();
+    $copy = AlsoOnSource::query()->sole();
+
+    expect($job->source_job_id)->toBe('42')
+        ->and($job->source_url)->toBe('https://example.com/jobs/42')
+        ->and($job->apply_url)->toBe('https://example.com/jobs/42/apply')
+        ->and($copy->job_id)->toBe($job->id)
+        ->and($copy->source)->toBe('fake')
+        ->and($copy->source_job_id)->toBe('43')
+        ->and($copy->source_url)->toBe('https://example.com/jobs/43')
+        ->and($copy->apply_url)->toBe('https://example.com/jobs/43/apply')
+        ->and($copy->attribution)->toBe('via Fake');
+});
+
+it('compares the eligibility and the salary of a copy from the same source', function (array $first, array $copy, int $jobs) {
+    $store = new JobStore;
+    $store->save([storedJob($first), copyOnSameBoard($copy)]);
+
+    expect(Job::query()->count())->toBe($jobs)
+        ->and(AlsoOnSource::query()->count())->toBe(2 - $jobs);
+})->with([
+    'countries in another order' => fn () => [
+        ['eligibility' => Eligibility::restricted(['eu'], ['IT', 'ES'])],
+        ['eligibility' => Eligibility::restricted(['eu'], ['ES', 'IT'])],
+        1,
+    ],
+    'the same salary' => fn () => [
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, '60-70k EUR')],
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, 'EUR 60,000 - 70,000')],
+        1,
+    ],
+    'another country' => fn () => [
+        ['eligibility' => Eligibility::restricted([], ['IT'])],
+        ['eligibility' => Eligibility::restricted([], ['ES'])],
+        2,
+    ],
+    'another region' => fn () => [
+        ['eligibility' => Eligibility::restricted(['eu'])],
+        ['eligibility' => Eligibility::restricted(['north_america'])],
+        2,
+    ],
+    'another eligibility type' => fn () => [
+        ['eligibility' => Eligibility::worldwide()],
+        ['eligibility' => Eligibility::unknown()],
+        2,
+    ],
+    'another salary minimum' => fn () => [
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, '60-70k EUR')],
+        ['salary' => new Salary(65000.0, 70000.0, 'EUR', SalaryPeriod::Year, '65-70k EUR')],
+        2,
+    ],
+    'another salary maximum' => fn () => [
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, '60-70k EUR')],
+        ['salary' => new Salary(60000.0, null, 'EUR', SalaryPeriod::Year, 'from 60k EUR')],
+        2,
+    ],
+    'another salary currency' => fn () => [
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, '60-70k EUR')],
+        ['salary' => new Salary(60000.0, 70000.0, 'USD', SalaryPeriod::Year, '$60-70k')],
+        2,
+    ],
+    'another salary period' => fn () => [
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, '60-70k EUR')],
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Month, '60-70k EUR')],
+        2,
+    ],
+    'a salary and no salary' => fn () => [
+        ['salary' => new Salary(60000.0, 70000.0, 'EUR', SalaryPeriod::Year, '60-70k EUR')],
+        ['salary' => null],
+        2,
+    ],
+]);
+
+it('stores a copy from the same source with the first identical job', function () {
+    $store = new JobStore;
+    $store->save([
+        storedJob(['eligibility' => Eligibility::restricted([], ['IT'])]),
+        copyOnSameBoard(['eligibility' => Eligibility::restricted([], ['ES'])]),
+        copyOnSameBoard(['sourceJobId' => '44', 'eligibility' => Eligibility::restricted([], ['ES'])]),
+    ]);
+
+    $spain = Job::query()->where('source_job_id', '43')->sole();
+
+    expect(Job::query()->count())->toBe(2)
+        ->and(AlsoOnSource::query()->sole()->job_id)->toBe($spain->id)
+        ->and(AlsoOnSource::query()->sole()->source_job_id)->toBe('44')
+        ->and(Job::query()->where('source_job_id', '42')->sole()->eligibility_countries)->toBe(['IT']);
+});
+
+it('stores a new job when the copy from the same source comes after 14 days', function () {
+    $store = new JobStore;
+    $store->save([storedJob()]);
+
+    CarbonImmutable::setTestNow('2026-11-12T10:00:01Z');
+    $store->save([copyOnSameBoard()]);
 
     expect(Job::query()->count())->toBe(2)
         ->and(AlsoOnSource::query()->count())->toBe(0);
+});
+
+it('updates the row of a copy from the same source when it is fetched again', function () {
+    $store = new JobStore;
+    $store->save([storedJob(), copyOnSameBoard()]);
+
+    CarbonImmutable::setTestNow('2026-11-20T10:00:00Z');
+    $store->save([copyOnSameBoard(['applyUrl' => 'https://example.com/jobs/43/apply-now'])]);
+
+    $copy = AlsoOnSource::query()->sole();
+    $job = Job::query()->sole();
+
+    expect($copy->apply_url)->toBe('https://example.com/jobs/43/apply-now')
+        ->and($copy->fetched_at->toIso8601ZuluString())->toBe('2026-11-20T10:00:00Z')
+        ->and($job->fetched_at->toIso8601ZuluString())->toBe('2026-11-20T10:00:00Z')
+        ->and($job->apply_url)->toBe('https://example.com/jobs/42/apply');
+});
+
+it('updates the job when its first copy is fetched again', function () {
+    $store = new JobStore;
+    $store->save([storedJob(), copyOnSameBoard()]);
+
+    CarbonImmutable::setTestNow('2026-11-20T10:00:00Z');
+    $store->save([storedJob(['applyUrl' => 'https://example.com/jobs/42/apply-now'])]);
+
+    expect(Job::query()->sole()->apply_url)->toBe('https://example.com/jobs/42/apply-now')
+        ->and(Job::query()->sole()->fetched_at->toIso8601ZuluString())->toBe('2026-11-20T10:00:00Z')
+        ->and(AlsoOnSource::query()->sole()->source_job_id)->toBe('43');
+});
+
+it('stores another source as "also on" of a job with a copy from the same source', function () {
+    $store = new JobStore;
+    $store->save([storedJob(), copyOnSameBoard(), sameJobElsewhere()]);
+
+    expect(Job::query()->count())->toBe(1)
+        ->and(AlsoOnSource::query()->orderBy('id')->get(['source', 'source_job_id'])->toArray())->toBe([
+            ['source' => 'fake', 'source_job_id' => '43'],
+            ['source' => 'other', 'source_job_id' => 'x-7'],
+        ]);
 });
 
 it('gives the jobs that are not notified yet', function () {

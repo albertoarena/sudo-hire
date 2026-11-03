@@ -46,6 +46,7 @@ final class ListRow
 
     /**
      * The names of the other sources of the job, from their attribution: "via LaraJobs" gives "LaraJobs".
+     * Each source is named once, and the shown source is never named: a copy on the same board adds no name.
      *
      * @return list<string>
      */
@@ -60,12 +61,12 @@ final class ListRow
         $names = [];
 
         foreach ($sources as [$source, $attribution]) {
-            if ($source !== $shown) {
-                $names[] = self::name($attribution);
+            if ($source !== $shown && ! array_key_exists($source, $names)) {
+                $names[$source] = self::name($attribution);
             }
         }
 
-        return $names;
+        return array_values($names);
     }
 
     public static function name(string $attribution): string

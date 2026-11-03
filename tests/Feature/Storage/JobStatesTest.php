@@ -152,6 +152,28 @@ it('stores the keys of the job, of its "also on" rows and its fingerprint when i
     ]);
 });
 
+it('stores the keys of every copy from the same source when the job is hidden, and none comes back', function () {
+    $store = app(JobStore::class);
+    $job = savedJob();
+    $copy = fn () => stateJob(['sourceJobId' => '43', 'sourceUrl' => 'https://example.com/jobs/43', 'applyUrl' => 'https://example.com/jobs/43/apply']);
+    $store->save([$copy()]);
+
+    $store->setState($job, JobState::Hidden);
+
+    expect(HiddenJob::query()->orderBy('id')->get(['source', 'source_job_id'])->toArray())->toBe([
+        ['source' => 'fake', 'source_job_id' => '42'],
+        ['source' => 'fake', 'source_job_id' => '43'],
+    ]);
+
+    Job::query()->delete();
+    AlsoOnSource::query()->delete();
+    CarbonImmutable::setTestNow('2027-11-02T10:00:00Z');
+    $store->save([stateJob(), $copy()]);
+
+    expect(Job::query()->count())->toBe(0)
+        ->and(AlsoOnSource::query()->count())->toBe(0);
+});
+
 it('does not store a hidden job that is fetched again', function (NormalisedJob $again) {
     $store = app(JobStore::class);
     $store->save([sameJobOnOtherBoard()]);
