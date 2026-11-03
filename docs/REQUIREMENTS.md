@@ -68,7 +68,7 @@ One source class that reads a list of companies set by the user. Each entry is `
 | Source | Format | Min interval (default) | Notes |
 |---|---|---|---|
 | LaraJobs | RSS, `https://larajobs.com/feed` | 2 hours | Laravel only. Has `job:company`, `job:location`, `job:salary`, `job:job_type`, `job:tags`. |
-| Jobicy | JSON API | 1 hour | Use `tag=php`. Max 50 per request. Credit and link back. |
+| Jobicy | JSON API, `https://jobicy.com/api/jobs` | 6 hours | Use `industry=engineering`. Max 100 per request. Fair use: a few reads a day, never more than one an hour. Credit and link back. |
 | Remotive | JSON API | 6 hours | Has `search`. Max 4 fetches per day, 24 hour delay by design, attribution required. |
 | Himalayas | JSON API, paginated | 2 hours | Country list and timezone restrictions available. Search endpoint exists, PHP volume to check. Credit and link back, keep apply link. |
 | We Work Remotely | RSS, back-end category feed | 2 hours | Region often in title or category. |

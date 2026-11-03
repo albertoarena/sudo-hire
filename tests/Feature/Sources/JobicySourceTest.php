@@ -28,18 +28,27 @@ it('is a job source with its key, attribution and interval', function () {
     expect($source)->toBeInstanceOf(JobSource::class)
         ->and($source->key())->toBe('jobicy')
         ->and($source->attribution())->toBe('via Jobicy')
-        ->and($source->minInterval()->totalHours)->toEqual(1);
+        ->and($source->minInterval()->totalHours)->toEqual(6);
 });
 
-it('reads 50 PHP jobs from the API', function () {
-    Http::fake(['jobicy.com/*' => Http::response(JobFields::fixture('jobicy/remote-jobs.json'))]);
+it('reads the newest 100 engineering jobs from the API', function () {
+    Http::fake(['jobicy.com/*' => Http::response(JobFields::fixture('jobicy/jobs.json'))]);
 
     $items = iterator_to_array((new JobicySource)->fetch(), false);
 
     expect($items)->toHaveCount(3)
-        ->and($items[0]['id'])->toBe(157071);
+        ->and($items[0]['id'])->toBe(152299);
 
-    Http::assertSent(fn (Request $request) => $request->url() === 'https://jobicy.com/api/v2/remote-jobs?count=50&tag=php');
+    Http::assertSent(fn (Request $request) => $request->url() === 'https://jobicy.com/api/jobs?count=100&industry=engineering');
+});
+
+it('reads a job of the jobs endpoint', function () {
+    $job = (new JobicySource)->normalise(JobFields::json('jobicy/jobs.json')['jobs'][1]);
+
+    expect($job->sourceJobId)->toBe('158323')
+        ->and($job->seniority->value)->toBe('junior')
+        ->and($job->eligibility->regions)->toBe(['europe'])
+        ->and($job->salary)->toBeNull();
 });
 
 it('normalises a job field by field', function () {
@@ -125,6 +134,7 @@ it('maps the job level to the seniority', function (string $level, string $senio
     expect((new JobicySource)->normalise(jobicyItem(0, ['jobLevel' => $level]))->seniority->value)->toBe($seniority);
 })->with([
     ['Junior', 'junior'],
+    ['Entry-Level, Junior', 'junior'],
     ['Midweight', 'mid'],
     ['Senior', 'senior'],
     ['Manager', 'lead'],

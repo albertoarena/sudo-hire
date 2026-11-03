@@ -28,7 +28,7 @@ use Throwable;
  */
 final class JobicySource implements JobSource
 {
-    private const API_URL = 'https://jobicy.com/api/v2/remote-jobs';
+    private const API_URL = 'https://jobicy.com/api/jobs';
 
     private const PERIODS = [
         'yearly' => SalaryPeriod::Year,
@@ -43,13 +43,13 @@ final class JobicySource implements JobSource
     }
 
     /**
-     * One request gives the newest 50 jobs, so $since is not used.
+     * One request gives the newest 100 engineering jobs, so $since is not used.
      *
      * @return iterable<array<mixed>>
      */
     public function fetch(?CarbonInterface $since = null): iterable
     {
-        $jobs = Http::timeout(20)->get(self::API_URL, ['count' => 50, 'tag' => 'php'])->throw()->json('jobs');
+        $jobs = Http::timeout(20)->get(self::API_URL, ['count' => 100, 'industry' => 'engineering'])->throw()->json('jobs');
 
         if (! is_array($jobs) || ! array_is_list($jobs)) {
             throw new UnreadableResponse('The Jobicy response has no job list.');
@@ -93,7 +93,7 @@ final class JobicySource implements JobSource
                     default => ContractType::Unknown,
                 }, $title),
                 seniority: TitleFallback::seniority(match ($this->text($raw, 'jobLevel')) {
-                    'Junior' => Seniority::Junior,
+                    'Junior', 'Entry-Level, Junior' => Seniority::Junior,
                     'Midweight' => Seniority::Mid,
                     'Senior' => Seniority::Senior,
                     'Manager', 'Director' => Seniority::Lead,
@@ -116,7 +116,8 @@ final class JobicySource implements JobSource
 
     public function minInterval(): CarbonInterval
     {
-        return CarbonInterval::hour();
+        // Jobicy fair use: a few reads a day, never more than one an hour.
+        return CarbonInterval::hours(6);
     }
 
     /**
