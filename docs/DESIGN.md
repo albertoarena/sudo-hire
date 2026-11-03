@@ -317,6 +317,7 @@ A small ruled rectangle on the right of the job title. It answers "can I apply f
 - **Anatomy:** two centered lines, uppercase. Line 1 is the place (`stamp-place`: the country code like "IT", or a region like "Europe", or "Location"). Line 2 is the verdict (`stamp-word`). Padding 2px 7px 3px, border 1.5px in `currentColor`, radius 4px, line height 1.15. It never shrinks (`flex: none`).
 - **Admitted, country:** green ink. "IT / ADMITTED". The user's country is on the job's list.
 - **Admitted, region:** green ink. "EUROPE / ADMITTED". The user's region is on the job's list.
+- **Admitted, no country:** with no country in the settings, the stamp shows the job's own place, for example "BG / ADMITTED", and "ANYWHERE" only for a worldwide job.
 - **Not stated:** grey ink, **dashed** border. "LOCATION / NOT STATED". Only in the "Location not stated" group.
 - **Refused:** red ink. The job's own limit, for example "US / ONLY". When the job lists places but not the user's, "NOT / ADMITTED". Refused jobs are filtered out of the list. The refused stamp appears only in previews (settings and first run).
 - **Tilt:** each stamp is turned slightly, set through a `--r` custom property (`transform: rotate(var(--r))`). The angle comes from the job id: `tilt(id) = (((id * 37) % 41) - 20) / 10` degrees. That gives a range of -2.0 to +2.0 degrees, varied from row to row but fixed per job. A stamp never changes angle on refresh or between renders. Previews and samples without a job use a fixed angle; the default is -1.5 degrees.

@@ -46,12 +46,20 @@ it('gives the country code of the user for a job open worldwide', function () {
     expect(stampOf(Eligibility::worldwide()))->toBe(['kind' => 'admitted', 'place' => 'IT']);
 });
 
-it('gives "Anywhere" when the user has no country', function (Eligibility $eligibility) {
-    expect(stampOf($eligibility, ['country' => null]))->toBe(['kind' => 'admitted', 'place' => 'Anywhere']);
+it('gives the place of the job when the user has no country', function (Eligibility $eligibility, string $place) {
+    expect(stampOf($eligibility, ['country' => null]))->toBe(['kind' => 'admitted', 'place' => $place]);
 })->with([
-    'worldwide' => [Eligibility::worldwide()],
-    'restricted' => [Eligibility::restricted(['europe'], ['IT'])],
+    'worldwide' => [Eligibility::worldwide(), 'Anywhere'],
+    'one country' => [Eligibility::restricted([], ['BG']), 'BG'],
+    'the first listed country' => [Eligibility::restricted([], ['US', 'CA', 'GB']), 'US'],
+    'a region' => [Eligibility::restricted(['europe'], []), 'Europe'],
+    'a country before a region' => [Eligibility::restricted(['eu'], ['DE', 'FR']), 'DE'],
+    'a region key with no name' => [Eligibility::restricted(['northern_europe'], []), 'Northern Europe'],
 ]);
+
+it('gives "not stated" for a job with no location when the user has no country', function () {
+    expect(stampOf(Eligibility::unknown(), ['country' => null]))->toBe(['kind' => 'not_stated', 'place' => 'Location']);
+});
 
 it('gives "not stated" for a job in the "Location not stated" group', function () {
     expect(stampOf(Eligibility::unknown()))->toBe(['kind' => 'not_stated', 'place' => 'Location']);

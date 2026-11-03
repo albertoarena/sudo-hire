@@ -1037,3 +1037,12 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: rows stored before this change are not migrated. Separate copies already stored stay until retention deletes them.
 - Reason: a board can list one job under more than one URL (one job on We Work Remotely under two slugs, one role on Himalayas once for each country). The user saw the same job more than once, and a notification counted it more than once.
 - Replaces: the part of "Job storage, deduplication and retention" (2026-10-30) that merges only a job from another source.
+
+## 2026-11-03: The stamp place with no country
+
+- Milestone: fix (stamp with no country)
+- Decision: with no country in the settings, the place of an admitted stamp is the place of the job. A worldwide job gives "Anywhere". A restricted job gives its first listed country code, for example "BG". A restricted job with regions only gives the name of its first region.
+- Decision: the region name comes from `Stamp::NAMES`. A key with no name gets one from the key: the words split on "_", each with a capital first letter ("northern_europe" gives "Northern Europe").
+- Decision: the kind stays `admitted`, because with no country the eligibility filter is off. A job with unknown eligibility stays "LOCATION / NOT STATED".
+- Reason: "Anywhere" on every stamp said that a job open only in Bulgaria was open everywhere. The user reads the stamp first, so it must not claim more than the job says.
+- Replaces: the sentence "With no country in the settings, the place is "Anywhere"" of "The list service and the stamp" (2026-11-02)
