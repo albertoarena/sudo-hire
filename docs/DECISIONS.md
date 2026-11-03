@@ -1075,3 +1075,12 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the 422 text for a minimum of 0 says "Leave the field empty to turn it off.", and the Privacy pane links to the privacy page of sudohire.dev (REQUIREMENTS section 11).
 - Reason: the M8c Mac checks and a failed We Work Remotely run on 2026-11-02. Decided by the project owner on 2026-11-02.
 - Replaces: none
+
+## 2026-11-03: The Jobicy endpoint and interval
+
+- Milestone: fix (Jobicy)
+- Decision: the Jobicy source reads `https://jobicy.com/api/jobs?count=100&industry=engineering`, one page, every 6 hours. `/api/jobs` is the endpoint in the Jobicy docs; the old v2 address stays only for compatibility. The response has the same fields and job IDs.
+- Decision: no tag. The keyword filter (section 8) chooses the jobs, as for the other boards.
+- Decision: the job level "Entry-Level, Junior" gives `junior`.
+- Reason: on 2026-11-03, `tag=php` gave no jobs on both endpoints, so the source read nothing. `industry=engineering` gave 209 jobs in the 7-day window of the API, about 30 a day, so one page of 100 covers 3 days. The Jobicy fair use terms say a few reads a day are enough, and never more than one an hour. Decided by the project owner on 2026-11-03.
+- Replaces: the Jobicy request in "ATS endpoint parameters" and "Source terms of Jobicy" (2026-10-29: `?count=50&tag=php`, every hour), and the "1 hour" and `tag=php` notes of REQUIREMENTS section 4

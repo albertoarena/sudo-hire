@@ -35,6 +35,7 @@ final class FixtureTitles
             'larajobs/feed.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('//item/title') ?: []),
             'jobicy/remote-jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'jobTitle'),
             'jobicy/remote-jobs-junior.json' => fn ($file) => array_column($json($file)['jobs'], 'jobTitle'),
+            'jobicy/jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'jobTitle'),
             'remotive/remote-jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'remotive/remote-jobs-contract.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'himalayas/jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),

@@ -1,0 +1,82 @@
+{
+  "apiVersion": "2.2.19",
+  "documentationUrl": "https://jobi.cy/apidocs",
+  "friendlyNotice": "Thanks for using Jobicy API! Please ensure Jobicy is clearly credited with a direct link to the source, and all application buttons redirect to the original job URL provided in this feed. That’s all! You might be building something amazing, we wish you the best of luck!",
+  "jobCount": 3,
+  "lastUpdate": "2026-11-03T05:51:25+00:00",
+  "nextCursor": null,
+  "hasMore": false,
+  "appliedFilters": {
+    "count": 100,
+    "industry": "engineering"
+  },
+  "statusCode": 200,
+  "success": true,
+  "jobs": [
+    {
+      "id": 152299,
+      "url": "https://jobicy.com/jobs/152299-staff-software-engineer-5",
+      "jobSlug": "152299-staff-software-engineer-5",
+      "jobTitle": "Staff Software Engineer",
+      "companyName": "CodePath",
+      "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2026/06/58acdc3a-221.webp",
+      "jobIndustry": [
+        "Software Engineering"
+      ],
+      "jobType": [
+        "Full-Time"
+      ],
+      "jobGeo": "LATAM,  Canada,  Europe,  USA",
+      "jobLevel": "Director",
+      "jobExcerpt": "CodePath is the largest educator of college computer science students in the country. We've trained over 40,000 students from 1,000+ universities, and our partners include Amazon, Google, and other leading technology companies. We've spent nearly a decade training the next generation of technical talent, and we just launched a $150M initiative with Anthropic, building one&hellip;",
+      "jobDescription": "<p><a href=\"https://jobicy.com/company/codepath\" target=\"_blank\" rel=\"noopener\">CodePath</a> is the largest educator of college computer science students in the country. We've trained over 40,000 students from 1,000+ universities, and our partners include Amazon, Google, and other leading technology companies. We've spent nearly a decade training the next generation of technical talent, and we just launched a $150M initiative with Anthropic, building one of the most ambitious AI workforce programs in the world.</p>",
+      "pubDate": "2026-11-03T03:27:07+00:00",
+      "salaryMin": 170000,
+      "salaryMax": 190000,
+      "salaryCurrency": "USD",
+      "salaryPeriod": "yearly"
+    },
+    {
+      "id": 158323,
+      "url": "https://jobicy.com/jobs/158323-software-engineer-in-hardware-infrastructure",
+      "jobSlug": "158323-software-engineer-in-hardware-infrastructure",
+      "jobTitle": "Software Engineer in Hardware Infrastructure",
+      "companyName": "Nebius",
+      "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2026/06/d90c0566-221.webp",
+      "jobIndustry": [
+        "Software Engineering"
+      ],
+      "jobType": [
+        "Full-Time"
+      ],
+      "jobGeo": "Europe",
+      "jobLevel": "Entry-Level, Junior",
+      "jobExcerpt": "About Nebius: Nebius is leading a new era in cloud infrastructure for the global AI economy. We are building a full-stack AI cloud platform that supports developers and enterprises from data and model training through to production deployment, without the cost and complexity of building large in-house AI/ML infrastructure. Built by engineers, for engineers. From&hellip;",
+      "jobDescription": "<p><strong>About <a href=\"https://jobicy.com/company/nebius\" target=\"_blank\" rel=\"noopener\">Nebius</a>:</strong></p>\n<p>Nebius is leading a new era in cloud infrastructure for the global AI economy. We are building a full-stack AI cloud platform that supports developers and enterprises from data and model training through to production deployment, without the cost and complexity of building large in-house AI/ML infrastructure.</p>",
+      "pubDate": "2026-11-01T06:46:40+00:00"
+    },
+    {
+      "id": 158549,
+      "url": "https://jobicy.com/jobs/158549-staff-backend-engineer-developer-experience",
+      "jobSlug": "158549-staff-backend-engineer-developer-experience",
+      "jobTitle": "Staff Backend Engineer, Developer Experience",
+      "companyName": "GitLab",
+      "companyLogo": "https://jobicy.com/data/server-nyc0409/galaxy/mercury/2020/12/WRILS-201207055737-109952.jpg",
+      "jobIndustry": [
+        "Software Engineering"
+      ],
+      "jobType": [
+        "Full-Time"
+      ],
+      "jobGeo": "Canada,  UK,  USA",
+      "jobLevel": "Senior",
+      "jobExcerpt": "GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digital transformation. More than 50 million registered users and more than 50% of the Fortune 100* trust GitLab to ship better, more secure software faster. The same principles built into&hellip;",
+      "jobDescription": "<p><a href=\"https://jobicy.com/company/gitlab\" target=\"_blank\" rel=\"noopener\">GitLab</a> is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digital transformation. More than 50 million registered users and more than 50% of the Fortune 100* trust GitLab to ship better, more secure software faster.</p>",
+      "pubDate": "2026-11-02T14:15:10+00:00",
+      "salaryMin": 131600,
+      "salaryMax": 282000,
+      "salaryCurrency": "USD",
+      "salaryPeriod": "yearly"
+    }
+  ]
+}

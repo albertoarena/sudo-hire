@@ -46,6 +46,9 @@ return [
     'jobicy no level' => ['jobicy/remote-jobs.json', 'Security Operations Analyst - West Coast Shift', 'unknown', 'unknown'],
     'jobicy no level with bar' => ['jobicy/remote-jobs.json', 'DevOps Engineer | Live Entertainment Company', 'unknown', 'unknown'],
     'jobicy permanent' => ['jobicy/remote-jobs.json', 'Graphic Designer (Permanent work from home)', 'unknown', 'unknown'],
+    'jobicy staff' => ['jobicy/jobs.json', 'Staff Software Engineer', 'lead', 'unknown'],
+    'jobicy no level with in' => ['jobicy/jobs.json', 'Software Engineer in Hardware Infrastructure', 'unknown', 'unknown'],
+    'jobicy staff with comma' => ['jobicy/jobs.json', 'Staff Backend Engineer, Developer Experience', 'lead', 'unknown'],
 
     'remotive contractor' => ['remotive/remote-jobs-contract.json', 'Inside Sales Contractor', 'unknown', 'contract'],
     'remotive freelance' => ['remotive/remote-jobs-contract.json', 'Freelance Writer', 'unknown', 'contract'],
