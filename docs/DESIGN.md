@@ -428,7 +428,7 @@ The concept is "Stamp on cover": the job stamp in light ink on the passport cove
 - **App icon:** the macOS rounded square in burgundy (`burgundy`). It has the same interlaced guilloche as the header strip, with thin white waves at about 7% and 5% opacity. On it, a stamp in `burgundy-ink`: a rounded rectangle outline with a check mark inside, rotated -8 degrees. The build shows it at 128, 64 and 32px.
 - **Menu bar mark:** a one-color template icon, as macOS needs. A solid rounded rectangle, tilted -8 degrees, with the check cut out. Unlike the line icons, it is a filled shape. It sits at 15px next to the unseen count (11px, 600). The tilt keeps it from reading as a plain checkbox.
 
-The menu bar mark is in the app since 2026-11-02: `public/menuBarIconTemplate.png` at 15px and its 2x image, rendered from `resources/icons/menu-bar-mark.svg`. The app icon at every macOS size (16 to 1024px) is release work (M9).
+The menu bar mark is in the app since 2026-11-02: `public/menuBarIconTemplate.png` at 15px and its 2x image, rendered from `resources/icons/menu-bar-mark.svg`. The app icon is in the app since 2026-11-03 (M9a): `public/icon.png` and `public/icon.icns`, 16 to 1024px, rendered from `resources/icons/app-icon.svg` with `scripts/render-app-icon.sh`.
 
 ### Focus and selection
 - **Focus:** every focusable element shows `outline: 2px solid var(--focus)` with a 2px offset and 4px radius, on `:focus-visible` only.
@@ -460,6 +460,5 @@ Short and functional: the toast (0.2s and 0.25s), the chevron (0.2s), the switch
 
 ## Open items
 
-- **Final icon drawing:** the app icon at every macOS size, 16 to 1024px (M9).
 - **Apply and Applied:** some job sites move a job to Applied when Apply is pressed, so users may expect the same here. A possible answer: after Apply, the toast says "Opened in your browser" with a "Mark as applied" button. Not decided.
 - **Keyboard (after v1):** arrow keys move between jobs, Return opens Apply, S saves. The selected row style for keyboard movement is not designed. v1 has Tab order and focus rings.
