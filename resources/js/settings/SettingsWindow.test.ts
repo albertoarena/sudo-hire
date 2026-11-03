@@ -1,6 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ISSUE_URL, PRIVACY_URL } from '../shared/links';
+import { clock } from '../shared/text';
 import type { Source } from '../shared/types';
 import { company, countries, hiddenJobs, settings, source } from './fixtures';
 import SettingsWindow from './SettingsWindow.vue';
@@ -107,6 +108,31 @@ describe('SettingsWindow', () => {
         expect(wrapper.find('.pane h1').text()).toBe('Jobs');
         expect(document.title).toBe('Jobs');
         expect(writes().at(-1)).toEqual({ method: 'POST', path: '/api/app/settings-title', body: { pane: 'jobs' } });
+    });
+
+    it('opens on the pane that the URL names', async () => {
+        window.history.replaceState({}, '', '/settings?pane=sources');
+
+        try {
+            const wrapper = await mountWindow();
+
+            expect(wrapper.find('nav [aria-current="page"]').text()).toBe('Sources');
+            expect(writes()).toContainEqual({ method: 'POST', path: '/api/app/settings-title', body: { pane: 'sources' } });
+        } finally {
+            window.history.replaceState({}, '', '/');
+        }
+    });
+
+    it('opens on Where you work when the URL names no known pane', async () => {
+        window.history.replaceState({}, '', '/settings?pane=secrets');
+
+        try {
+            const wrapper = await mountWindow();
+
+            expect(wrapper.find('nav [aria-current="page"]').text()).toBe('Where you work');
+        } finally {
+            window.history.replaceState({}, '', '/');
+        }
     });
 
     it('shows a red dot on Sources when an enabled source fails', async () => {
@@ -230,6 +256,16 @@ describe('SettingsWindow', () => {
         expect(rows[1].text()).toContain('The secure connection failed.');
     });
 
+    it('gives the time when a failed source tries again', async () => {
+        const lastRunAt = new Date(Date.now() - 10 * 60_000).toISOString();
+        const retry = new Date(Date.parse(lastRunAt) + 120 * 60_000).toISOString();
+        sources = [source({ key: 'wwr', name: 'We Work Remotely', minIntervalMinutes: 120, lastRunAt, lastError: { message: 'timed out', kind: 'http' } })];
+        const wrapper = await mountWindow();
+        await openPane(wrapper, 'Sources');
+
+        expect(wrapper.find('tbody tr').text()).toContain(`The site did not answer. Sudo Hire tries again at ${clock(retry)}.`);
+    });
+
     it('adds a company and shows the API error for an unknown slug', async () => {
         const wrapper = await mountWindow();
         await openPane(wrapper, 'Companies');
@@ -276,6 +312,31 @@ describe('SettingsWindow', () => {
 
         expect(writes().at(-1)).toEqual({ method: 'PUT', path: '/api/jobs/31/state', body: { state: 'hidden' } });
         expect(wrapper.find('.hidden-jobs').text()).toContain('No hidden jobs.');
+    });
+
+    it('shows the 10 newest hidden jobs, then all of them on request', async () => {
+        const jobs = Array.from({ length: 12 }, (_, i) => ({ id: 100 + i, title: `Job ${i + 1}`, company: 'Globex', hiddenAt: '2026-11-01T08:00:00Z' }));
+        hidden = hiddenJobs({ jobs });
+        const wrapper = await mountWindow();
+        await openPane(wrapper, 'Jobs');
+
+        expect(wrapper.findAll('.hidden-jobs li')).toHaveLength(10);
+        expect(wrapper.find('.hidden-jobs li').text()).toContain('Job 1');
+
+        const more = wrapper.findAll('.hidden-jobs button').find((button) => button.text() === 'Show all 12 hidden jobs');
+        await more!.trigger('click');
+
+        expect(wrapper.findAll('.hidden-jobs li')).toHaveLength(12);
+        expect(wrapper.findAll('.hidden-jobs button').some((button) => button.text().startsWith('Show all'))).toBe(false);
+    });
+
+    it('has no "Show all" with 10 hidden jobs or fewer', async () => {
+        hidden = hiddenJobs({ jobs: Array.from({ length: 10 }, (_, i) => ({ id: 100 + i, title: `Job ${i + 1}`, company: 'Globex', hiddenAt: null })) });
+        const wrapper = await mountWindow();
+        await openPane(wrapper, 'Jobs');
+
+        expect(wrapper.findAll('.hidden-jobs li')).toHaveLength(10);
+        expect(wrapper.find('.hidden-jobs').text()).not.toContain('Show all');
     });
 
     it('clears older hidden jobs after a confirmation in the page', async () => {

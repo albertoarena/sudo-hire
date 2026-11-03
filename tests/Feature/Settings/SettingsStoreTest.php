@@ -83,3 +83,32 @@ it('stores nothing when it rejects the settings', function () {
 it('can be built by the container', function () {
     expect(app(SettingsStore::class))->toBeInstanceOf(SettingsStore::class);
 });
+
+it('marks the next scan as the first scan when a country is saved for the first time', function () {
+    $store = settingsStore();
+    $defaults = Settings::defaults('Europe/Rome');
+
+    expect($store->firstScanPending())->toBeFalse();
+
+    $store->save($defaults);
+    expect($store->firstScanPending())->toBeFalse();
+
+    $store->save(Settings::fromArray(array_merge($defaults->toArray(), ['country' => 'IT'])));
+    expect($store->firstScanPending())->toBeTrue();
+
+    $store->firstScanDone();
+    expect($store->firstScanPending())->toBeFalse();
+
+    // Another country later is not a first scan.
+    $store->save(Settings::fromArray(array_merge($defaults->toArray(), ['country' => 'DE'])));
+    expect($store->firstScanPending())->toBeFalse();
+});
+
+it('marks the first scan also when the first save has a country', function () {
+    $store = settingsStore();
+
+    $store->save(Settings::fromArray(array_merge(Settings::defaults('Europe/Rome')->toArray(), ['country' => 'IT'])));
+
+    expect($store->firstScanPending())->toBeTrue()
+        ->and($store->load()->country)->toBe('IT');
+});

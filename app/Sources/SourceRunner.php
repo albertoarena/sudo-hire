@@ -43,7 +43,7 @@ final class SourceRunner
     /**
      * Due when the last run started at least minInterval() ago, also after a failed run.
      */
-    private function isDue(JobSource $source): bool
+    public function isDue(JobSource $source): bool
     {
         $last = SourceRun::query()->where('source', $source->key())->latest('started_at')->first();
 

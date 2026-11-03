@@ -224,7 +224,7 @@ Minimum for v1:
 
 - Menu bar icon with a badge for unseen matches.
 - List of new matches: title, company, salary (original and converted), eligibility, source attribution, posted date. Apply opens the original apply link in the browser.
-- Settings screen for all filters, intervals, sources, display currency. It also has a Privacy pane (what the app sends and stores, a link to `PRIVACY.md`) and a Troubleshooting pane (common problems, the log folder, a diagnostic report with no personal data, and a link to open an issue).
+- Settings screen for all filters, intervals, sources, display currency. It also has a Privacy pane (what the app sends and stores, a link to the privacy page of sudohire.dev) and a Troubleshooting pane (common problems, the log folder, a diagnostic report with no personal data, and a link to open an issue).
 - Source status: last success and last error per source.
 - Clear message if the internal PHP server stopped (see `AGENTS.md`, NativePHP notes).
 

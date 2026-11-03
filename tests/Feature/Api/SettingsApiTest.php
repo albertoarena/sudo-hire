@@ -58,3 +58,9 @@ it('updates the badge after a change of the settings', function () {
 
     Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'menu-bar/label') && $request['label'] === '');
 });
+
+it('tells the user to leave a minimum empty to turn it off', function (string $field) {
+    $this->putJson('/api/settings', [$field => 0])
+        ->assertStatus(422)
+        ->assertExactJson(['message' => 'A minimum salary or day rate must be above 0. Leave the field empty to turn it off.']);
+})->with(['minAnnualSalary', 'minDayRate']);

@@ -23,6 +23,11 @@ const POSTED: [number, string][] = [
 const hidden = ref<HiddenJobs | null>(null);
 const confirming = ref(false);
 
+// The 10 newest, then "Show all" shows the rest in place.
+const LIMIT = 10;
+const showAll = ref(false);
+const shown = computed(() => (hidden.value === null || showAll.value ? (hidden.value?.jobs ?? []) : hidden.value.jobs.slice(0, LIMIT)));
+
 const loadHidden = () =>
     store.run(async () => {
         hidden.value = await api.hiddenJobs();
@@ -142,7 +147,7 @@ onMounted(loadHidden);
         <div class="ctl hidden-jobs">
             <template v-if="hidden">
                 <ul v-if="hidden.jobs.length" class="rows" aria-label="Hidden jobs">
-                    <li v-for="job in hidden.jobs" :key="job.id">
+                    <li v-for="job in shown" :key="job.id">
                         <span class="what">
                             <span class="t">{{ job.title }}</span>
                             <span class="m">{{ job.company }}<span class="sep"> · </span>hidden {{ day(job.hiddenAt) }}</span>
@@ -151,6 +156,9 @@ onMounted(loadHidden);
                     </li>
                 </ul>
                 <span v-else class="hint">No hidden jobs.</span>
+                <span v-if="!showAll && hidden.jobs.length > LIMIT">
+                    <button type="button" class="act flush" @click="showAll = true">Show all {{ hidden.jobs.length }} hidden jobs</button>
+                </span>
 
                 <template v-if="hidden.olderCount > 0">
                     <div v-if="confirming" class="confirm" role="group" aria-labelledby="clear-q">

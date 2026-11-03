@@ -81,6 +81,16 @@ final class Scan
             return new ScanResult($runs, $matches, $locationNotStated, NotificationOutcome::NoCountry, lastSentAt: $lastSentAt);
         }
 
+        // The first scan after the first run: its jobs count as notified, so the next summary has only newer jobs.
+        if ($this->settings->firstScanPending()) {
+            DB::transaction(function () use ($matches, $now) {
+                Job::query()->whereKey(array_map(fn (ScanMatch $match) => $match->job->id, $matches))->update(['notified_at' => $now]);
+                $this->settings->firstScanDone();
+            });
+
+            return new ScanResult($runs, $matches, $locationNotStated, NotificationOutcome::FirstScan, lastSentAt: $lastSentAt);
+        }
+
         if ($matches === []) {
             return new ScanResult($runs, $matches, $locationNotStated, NotificationOutcome::NoMatches, lastSentAt: $lastSentAt);
         }

@@ -33,6 +33,8 @@ it('refuses a write with no CSRF token', function (string $method, string $uri, 
     'open the log folder' => ['POST', '/api/app/open-log-folder', []],
     'copy the diagnostic report' => ['POST', '/api/app/copy-diagnostics', []],
     'set the window title' => ['POST', '/api/app/settings-title', ['pane' => 'jobs']],
+    'start the first scan' => ['POST', '/api/first-scan', []],
+    'open the list' => ['POST', '/api/app/open-list', []],
 ]);
 
 it('puts the CSRF token of the session in the page', function () {

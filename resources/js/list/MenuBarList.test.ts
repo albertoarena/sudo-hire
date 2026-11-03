@@ -172,7 +172,7 @@ describe('MenuBarList', () => {
         expect(wrapper.find('.empty').text()).toContain('No applications yet');
     });
 
-    it('shows the source warning and opens the settings from it', async () => {
+    it('shows the source warning and opens Sources from it', async () => {
         currentSources = [source({ key: 'weworkremotely', name: 'We Work Remotely', lastError: { message: 'cURL error 60', kind: 'certificate' } })];
         const wrapper = await mountList();
 
@@ -180,7 +180,7 @@ describe('MenuBarList', () => {
 
         await wrapper.find('.warn').trigger('click');
         await flushPromises();
-        expect(calls).toContainEqual({ method: 'POST', path: '/api/app/settings', body: undefined });
+        expect(calls).toContainEqual({ method: 'POST', path: '/api/app/settings', body: { pane: 'sources' } });
     });
 
     it('opens the settings and quits from the status bar', async () => {

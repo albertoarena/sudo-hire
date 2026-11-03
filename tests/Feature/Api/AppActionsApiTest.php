@@ -4,7 +4,9 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
-    Http::fake();
+    // The windows that NativePHP says are open.
+    $this->openWindows = [];
+    Http::fake(['*window/all' => fn () => Http::response($this->openWindows), '*' => Http::response()]);
 });
 
 it('opens a link in the default browser', function (string $url) {
@@ -47,6 +49,40 @@ it('opens the settings window without the developer tools, also in debug mode', 
 
     Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/open')
         && $request['showDevTools'] === false);
+});
+
+it('opens the settings window on a pane', function () {
+    $this->postJson('/api/app/settings', ['pane' => 'sources'])->assertNoContent();
+
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/open')
+        && $request['id'] === 'settings'
+        && str_ends_with($request['url'], '/settings?pane=sources'));
+    Http::assertNotSent(fn (Request $request) => str_ends_with($request->url(), 'window/url'));
+});
+
+it('moves an open settings window to the pane', function () {
+    $this->openWindows = [['id' => 'settings'], ['id' => 'first-run']];
+
+    $this->postJson('/api/app/settings', ['pane' => 'sources'])->assertNoContent();
+
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/url')
+        && $request['id'] === 'settings'
+        && str_ends_with($request['url'], '/settings?pane=sources'));
+    // The open window comes to the front.
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/open') && $request['id'] === 'settings');
+});
+
+it('refuses a pane that does not exist', function () {
+    $this->postJson('/api/app/settings', ['pane' => 'secrets'])->assertStatus(422);
+
+    Http::assertNothingSent();
+});
+
+it('opens the menu bar list and closes the first run', function () {
+    $this->postJson('/api/app/open-list')->assertNoContent();
+
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/close') && $request['id'] === 'first-run');
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'menu-bar/show'));
 });
 
 it('quits the app', function () {

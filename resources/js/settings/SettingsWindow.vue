@@ -66,9 +66,16 @@ function onVisible(): void {
     }
 }
 
+// "Details" in the list opens the window on Sources with ?pane=sources.
+function firstPane(): Pane {
+    const asked = new URLSearchParams(window.location.search).get('pane');
+
+    return PANES.find((item) => item.key === asked)?.key ?? 'where';
+}
+
 onMounted(async () => {
     await load();
-    select('where');
+    select(firstPane());
     window.addEventListener('focus', store.loadSources);
     document.addEventListener('visibilitychange', onVisible);
 });

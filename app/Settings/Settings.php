@@ -72,7 +72,7 @@ final readonly class Settings
         }
 
         if (($minAnnualSalary !== null && $minAnnualSalary <= 0) || ($minDayRate !== null && $minDayRate <= 0)) {
-            throw new InvalidSettings('A minimum salary or day rate must be above 0. Use null to turn it off.');
+            throw new InvalidSettings('A minimum salary or day rate must be above 0. Leave the field empty to turn it off.');
         }
 
         if (! in_array($postedWithinHours, self::POSTED_WITHIN_HOURS, true)) {

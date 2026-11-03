@@ -71,6 +71,10 @@ async function guard(work: () => Promise<void>): Promise<void> {
     }
 }
 
+// "Details" opens the settings window on Sources (DESIGN.md "Footer").
+const openSources = () => guard(() => api.openSettings('sources'));
+const openSettings = () => guard(() => api.openSettings());
+
 function load(): Promise<void> {
     return guard(async () => {
         const [list, scan, all] = await Promise.all([api.list(), api.status(), api.sources()]);
@@ -206,13 +210,13 @@ onBeforeUnmount(() => {
             </div>
 
             <footer class="foot">
-                <button v-if="warning" type="button" class="warn" @click="guard(api.openSettings)">
+                <button v-if="warning" type="button" class="warn" @click="openSources">
                     <Icon name="warn" />{{ warning }}<span class="more">Details</span>
                 </button>
                 <div class="bar">
                     <span>{{ scanLine }}</span>
                     <span class="sp"></span>
-                    <button type="button" class="act" @click="guard(api.openSettings)"><Icon name="gear" />Settings</button>
+                    <button type="button" class="act" @click="openSettings"><Icon name="gear" />Settings</button>
                     <button type="button" class="act" @click="guard(api.quit)"><Icon name="power" />Quit</button>
                 </div>
             </footer>
