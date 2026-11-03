@@ -221,6 +221,65 @@ it('gives the links of the first enabled source and the other sources as "also o
         ->toBe(['other', 'via Acme careers', ['Fake'], 'https://other.example/jobs/7', 'https://other.example/jobs/7/apply']);
 });
 
+/**
+ * The job of listJob('1') again on the same board, under another id.
+ */
+function listCopy(string $id): NormalisedJob
+{
+    return new NormalisedJob(...jobAttributes([
+        'sourceJobId' => $id,
+        'sourceUrl' => "https://example.com/jobs/{$id}",
+        'applyUrl' => "https://example.com/jobs/{$id}/apply",
+        'title' => 'Laravel Developer 1',
+        'eligibility' => Eligibility::worldwide(),
+        'postedAt' => CarbonImmutable::now()->subHour(),
+        'fetchedAt' => CarbonImmutable::now(),
+    ]));
+}
+
+it('gives no "also on" for a job with only copies from the same source', function () {
+    listJob('1');
+    app(JobStore::class)->save([listCopy('2'), listCopy('3')]);
+
+    $rows = jobList()['new'];
+
+    expect(rowIds($rows))->toHaveCount(1)
+        ->and([$rows[0]['source'], $rows[0]['alsoOn'], $rows[0]['applyUrl']])
+        ->toBe(['fake', [], 'https://example.com/jobs/1/apply']);
+});
+
+it('names each other source once and never the shown source', function () {
+    listJob('1');
+    $other = fn (string $id) => new NormalisedJob(...jobAttributes([
+        'source' => 'other',
+        'sourceJobId' => $id,
+        'sourceUrl' => "https://other.example/jobs/{$id}",
+        'applyUrl' => "https://other.example/jobs/{$id}/apply",
+        'title' => 'Laravel Developer 1',
+        'eligibility' => Eligibility::worldwide(),
+        'postedAt' => CarbonImmutable::now()->subHour(),
+        'fetchedAt' => CarbonImmutable::now(),
+        'attribution' => 'via Other',
+    ]));
+    app(JobStore::class)->save([listCopy('2'), $other('x-7'), $other('x-8')]);
+
+    expect(jobList()['new'][0]['alsoOn'])->toBe(['Other']);
+
+    listSettings(['disabledSources' => ['fake']]);
+    $row = jobList()['new'][0];
+
+    expect([$row['source'], $row['alsoOn'], $row['applyUrl']])
+        ->toBe(['other', ['Fake'], 'https://other.example/jobs/x-7/apply']);
+});
+
+it('does not pass the source filter through a copy from the same source', function () {
+    listJob('1');
+    app(JobStore::class)->save([listCopy('2')]);
+    listSettings(['disabledSources' => ['fake']]);
+
+    expect(jobList()['new'])->toBe([]);
+});
+
 it('gives seen and state on each row', function () {
     $job = app(JobStore::class)->setState(listJob('1'), JobState::Saved);
 

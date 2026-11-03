@@ -38,6 +38,19 @@ it('gives the list with its counts', function () {
         ->assertJsonStructure(['new' => [['id', 'title', 'company', 'source', 'attribution', 'alsoOn', 'postedAt', 'salary' => ['original', 'converted', 'unknown', 'ote'], 'terms' => ['contractType', 'seniority'], 'stamp' => ['kind', 'place'], 'sourceUrl', 'applyUrl', 'seen', 'state']]]);
 });
 
+it('gives the place of the job on the stamp when no country is stored', function () {
+    ApiHelpers::settings(['country' => null]);
+    $restricted = ApiHelpers::job('1', ['eligibility' => Eligibility::restricted([], ['BG']), 'postedAt' => CarbonImmutable::now()->subHour()]);
+    $worldwide = ApiHelpers::job('2');
+
+    $this->getJson('/api/list')
+        ->assertOk()
+        ->assertJsonPath('new.0.id', $worldwide->id)
+        ->assertJsonPath('new.0.stamp', ['kind' => 'admitted', 'place' => 'Anywhere'])
+        ->assertJsonPath('new.1.id', $restricted->id)
+        ->assertJsonPath('new.1.stamp', ['kind' => 'admitted', 'place' => 'BG']);
+});
+
 it('saves a job and gives the new state and the counts', function () {
     $job = ApiHelpers::job('1');
 

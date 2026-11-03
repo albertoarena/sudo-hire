@@ -1026,6 +1026,27 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: two Latin America jobs on Himalayas listed 45 countries. Two spellings were not in the table, so the old rule gave `unknown` and the jobs showed "Location not stated" for every user. A name that is skipped can only make the list smaller, never admit a country that the job did not name. Decided by the project owner on 2026-11-02.
 - Replaces: the `countryList()` rule "One name that is not in the tables gives `unknown`" of "Location parser rules" (2026-10-29)
 
+## 2026-11-02: Identical copies on the same board
+
+- Milestone: fix (same-board copies)
+- Decision: `JobStore::save()` stores a new job as a `job_sources` row of a stored job from the same source when the two are identical copies. Identical means: the same fingerprint, the stored job was first stored in the last `JobStore::DUPLICATE_DAYS` (14 days, `created_at`), the same eligibility (type, regions and countries, compared as sets) and the same salary (minimum, maximum, currency and period; no salary on both is the same). The row goes to the first such job (lowest id).
+- Decision: the copy row keeps its own source job ID, source link, apply link, attribution and fetch time. The job keeps the links of its first copy (AGENTS.md rule 11). A fetch of the copy moves the job's `fetched_at`, as for another source.
+- Decision: a copy with another eligibility or another salary is stored as its own job. The store does not merge them and does not widen the eligibility of a stored job.
+- Decision: a job from another source is checked first, as before. So a same-board copy goes to the job of another source with the same fingerprint when there is one.
+- Decision: "also on" names each other source once and never names the shown source. A job with only same-board copies shows no "also on". A copy row adds no new source key, so the source filter does not change. Hiding a job stores a tombstone for each copy key, as for each "also on" key.
+- Decision: rows stored before this change are not migrated. Separate copies already stored stay until retention deletes them.
+- Reason: a board can list one job under more than one URL (one job on We Work Remotely under two slugs, one role on Himalayas once for each country). The user saw the same job more than once, and a notification counted it more than once.
+- Replaces: the part of "Job storage, deduplication and retention" (2026-10-30) that merges only a job from another source.
+
+## 2026-11-03: The stamp place with no country
+
+- Milestone: fix (stamp with no country)
+- Decision: with no country in the settings, the place of an admitted stamp is the place of the job. A worldwide job gives "Anywhere". A restricted job gives its first listed country code, for example "BG". A restricted job with regions only gives the name of its first region.
+- Decision: the region name comes from `Stamp::NAMES`. A key with no name gets one from the key: the words split on "_", each with a capital first letter ("northern_europe" gives "Northern Europe").
+- Decision: the kind stays `admitted`, because with no country the eligibility filter is off. A job with unknown eligibility stays "LOCATION / NOT STATED".
+- Reason: "Anywhere" on every stamp said that a job open only in Bulgaria was open everywhere. The user reads the stamp first, so it must not claim more than the job says.
+- Replaces: the sentence "With no country in the settings, the place is "Anywhere"" of "The list service and the stamp" (2026-11-02)
+
 ## 2026-11-02: The first run
 
 - Milestone: M8d
