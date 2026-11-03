@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Settings\SettingsStore;
+use App\Updates\UpdateChecks;
 use Native\Desktop\Contracts\ProvidesPhpIni;
 use Native\Desktop\Facades\MenuBar;
 use Native\Desktop\Facades\Window;
@@ -14,9 +15,12 @@ class NativeAppServiceProvider implements ProvidesPhpIni
      * Sudo Hire lives in the menu bar: no dock icon, and no window on start once a country is stored.
      * Until then, the first run opens: closing it early stores nothing, so it opens again at the next start.
      * The icon is the stamp mark, a template image that macOS tints (resources/icons/menu-bar-mark.svg).
+     * NativePHP checks for updates on every start, so the start counts as the update check of the day.
      */
     public function boot(): void
     {
+        app(UpdateChecks::class)->record();
+
         MenuBar::create()
             ->icon(public_path('menuBarIconTemplate.png'))
             ->tooltip('Sudo Hire')
