@@ -1084,3 +1084,53 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the job level "Entry-Level, Junior" gives `junior`.
 - Reason: on 2026-11-03, `tag=php` gave no jobs on both endpoints, so the source read nothing. `industry=engineering` gave 209 jobs in the 7-day window of the API, about 30 a day, so one page of 100 covers 3 days. The Jobicy fair use terms say a few reads a day are enough, and never more than one an hour. Decided by the project owner on 2026-11-03.
 - Replaces: the Jobicy request in "ATS endpoint parameters" and "Source terms of Jobicy" (2026-10-29: `?count=50&tag=php`, every hour), and the "1 hour" and `tag=php` notes of REQUIREMENTS section 4
+
+## 2026-11-03: The app icon
+
+- Milestone: M9a
+- Decision: the source of the app icon is `resources/icons/app-icon.svg`, concept "Stamp on cover" from the approved prototype. It sits on the macOS icon grid: a rounded square of 824 by 824 on 1024, with a corner radius of 184, and a transparent margin.
+- Decision: `scripts/render-app-icon.sh` renders it with `rsvg-convert` and `iconutil` to `public/icon.png` (1024 by 1024) and `public/icon.icns` (16 to 1024 pixels, with the 2x sizes). NativePHP copies these two files into the build. The rendered files are in git, so a build needs no extra tool. A test checks the path and the size.
+- Reason: approved in the M9 brief. The menu bar mark does not change.
+- Replaces: the app icon part of the DESIGN.md open item "Final icon drawing"
+
+## 2026-11-03: The updater
+
+- Milestone: M9a
+- Decision: the updater is on. It reads the public GitHub releases of `albertoarena/sudo-hire`, with `v` tags and the `latest` channel. It needs no token. A draft release is not visible to it.
+- Decision: the app checks when it starts. NativePHP does this check. `hire:check-updates` runs every hour in the schedule and checks again only when the last check is 24 hours old. The start of the app counts as a check. So GitHub gets at most one check a day, plus one for each start.
+- Decision: the updater downloads a new version in the background. It installs it when the user quits the app. It never restarts the app and never installs while the app runs.
+- Decision: when a version is downloaded, the app shows a native notification once for each version: "Sudo Hire 1.1.0 is ready. It installs when you quit Sudo Hire." If the notification fails, the next download event tries again.
+- Decision: the update check at the start also shows the notification of Electron when the download ends. So the first start after a new release can show two notices. This comes from NativePHP and is not changed here.
+- Reason: approved in the M9 brief. The user decides when to quit, so the user decides when the update installs.
+- Replaces: none
+
+## 2026-11-03: The release flow
+
+- Milestone: M9a
+- Decision: a tag `v*` starts `.github/workflows/release.yml`. The version comes from the tag: `v1.0.0` gives `1.0.0` (`scripts/release-version.mjs`).
+- Decision: the workflow runs Pest and Vitest first, then the CA bundle check. One macOS runner then builds the app for arm64 and x64 in one NativePHP build, with PHP 8.4. One build writes one `latest-mac.yml` for both architectures, which the updater needs.
+- Decision: on a tag, the build is signed with `CSC_LINK` and `CSC_KEY_PASSWORD` and notarised with `NATIVEPHP_APPLE_ID`, `NATIVEPHP_APPLE_ID_PASS` and `NATIVEPHP_APPLE_TEAM_ID`, all GitHub secrets. The workflow stops when one is missing. It checks the app in each DMG with `codesign --verify --deep --strict`, `spctl -a -vv` and `xcrun stapler validate`. Only then a separate job, the only one with `contents: write`, uploads the DMGs, the zip files and `latest-mac.yml` to a draft release.
+- Decision: before the upload, the draft job replaces each space in the file names with a dash, as `latest-mac.yml` does. GitHub would change a space to a dot, and the updater would not find the zip.
+- Decision: a human installs and tests the draft on Apple silicon and on Intel, then publishes it. The workflow never publishes.
+- Decision: `workflow_dispatch` builds unsigned and keeps the DMGs as workflow artifacts only, with the version `0.0.0-test.<run number>`.
+- Decision: every third party action is pinned to a full commit SHA.
+- Reason: REQUIREMENTS section 15. NativePHP logs a notarisation error and goes on, so the checks are the gate before the draft.
+- Replaces: none
+
+## 2026-11-03: The CA bundle check
+
+- Milestone: M9a
+- Decision: `php artisan release:check-cacert` reads the date in the header of the CA bundle of `nativephp/desktop` ("Certificate data from Mozilla as of"). It fails when the bundle is older than 180 days, or has no date. It prints the date. The release workflow runs it before the build.
+- Decision: to fix a failure, update `nativephp/desktop` to a version with a newer bundle.
+- Reason: "TLS trust comes from the NativePHP CA bundle" says that a release must not ship an old bundle. The file date is not used, because a checkout changes it.
+- Replaces: none
+
+## 2026-11-03: The build config
+
+- Milestone: M9a
+- Decision: the author is Alberto Arena. The copyright is "Copyright (c) 2026 Alberto Arena. MIT license.", the same as `LICENSE`.
+- Decision: the build runs `npm run build` first (`prebuild`). The release build installs Composer packages with `--no-dev`, so the app ships no test tools.
+- Decision: the bundled `.env` loses the signing certificate (`CSC_*`), the GitHub tokens (`GITHUB_*`, `GH_TOKEN`), the Apple notarisation keys, and every key that ends in `_PASSWORD`, `_TOKEN` or `_SECRET`. `APP_KEY` stays, because the app needs it. A test runs the NativePHP cleanup on a fake `.env`.
+- Decision: `Info.plist` keeps the usage descriptions that Electron and NativePHP put in every app: camera, microphone, audio capture, Bluetooth, Documents and Downloads. Sudo Hire uses none of them. A description gives no access. macOS asks the user only when an app tries to use the device or the folder, and Sudo Hire never tries. The signed app also has no camera or microphone entitlement, so the hardened runtime blocks that access. Electron is installed again after the `prebuild` step, so the build cannot remove its descriptions.
+- Reason: approved in the M9 brief. The release workflow writes `.env` from `.env.example`, so it has no secret. The cleanup protects a local build too. A patch of NativePHP and Electron at build time would remove only part of the descriptions (Alberto, 2026-11-03).
+- Replaces: none

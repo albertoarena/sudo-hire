@@ -6,15 +6,16 @@ Sudo Hire is in early development. This page describes version 1. It changes whe
 
 ## What the app sends
 
-The app reads public job lists, and one public exchange rate file. Each request is a plain download. It carries no identifier for you, no device id and no usage data. Like any web server, each site can see the IP address that the request comes from. This project never sees it, because it runs no server of its own.
+The app reads public job lists, one public exchange rate file, and the list of Sudo Hire releases. Each request is a plain download. It carries no identifier for you, no device id and no usage data. Like any web server, each site can see the IP address that the request comes from. This project never sees it, because it runs no server of its own.
 
 The app sends requests to these places:
 
 - **The job boards that you keep enabled:** LaraJobs, Jobicy, Remotive, Himalayas and We Work Remotely. Each board is read no more often than its terms allow: at most once an hour, and less often for most boards. The search words are fixed (php, laravel). Your keywords never leave your Mac.
 - **The career pages of the companies that you add:** Greenhouse, Lever, Ashby or Personio, one request for each company, at most every 6 hours. The address contains the company name, so that provider can see which of its companies the app reads. It cannot see the other companies on your list.
 - **The European Central Bank:** the daily reference exchange rates, at most once a day, to show salaries in your currency.
+- **GitHub, for updates:** the app asks the releases page of Sudo Hire on GitHub if there is a new version. It asks when it starts, and then at most once a day. The request is an ordinary download that names the app version. It sends no settings, no keywords and no job data. When there is a new version, the app downloads it from GitHub too.
 
-There are no other network calls. No telemetry, no crash reporting, no update ping.
+There are no other network calls. No telemetry, no crash reporting.
 
 When you open a job or an apply link, it opens in your default browser. That is your browser visiting a page, and the app sends nothing with it. The job board or the company then applies its own privacy terms.
 
@@ -32,10 +33,11 @@ Everything stays on your Mac, in a local SQLite database and in log files:
 - Your settings: country, timezone, work modes, keywords, salary, contract types, seniority, blocked companies, disabled sources, display currency and notification interval
 - Internal cache, queue and session data that the app needs to run. It contains no data about you
 - A log file with warnings and errors, for example a source that could not be read
+- The time of the last update check, and a new version that the app downloaded, until it installs when you quit the app
 
 The app reads the timezone of your Mac to set a default. It reads it on your Mac and does not send it.
 
-Nothing is synced anywhere. Deleting the app and its application support folder removes all of it.
+Nothing is synced anywhere. Deleting the app, its application support folder and its update folders in `~/Library/Caches` removes all of it.
 
 ## Notifications
 
