@@ -459,3 +459,45 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   5. In Settings, Jobs, with more than 10 hidden jobs, look at Hidden jobs and press "Show all".
 - Expected: step 1 opens the whole list with the current country active, then shows only Germany. Steps 2 and 3 open Settings on Sources, also when the window is open on another pane. In step 4 the line says "Sudo Hire tries again at" and a time: the last read plus the interval of the source (2 hours for We Work Remotely). Step 5 shows 10 jobs, then all of them in place.
 - Result: passed 2026-11-03, on a Mac, on branch m8d/first-run, with 12 hidden jobs (9 hidden for this check).
+
+## M9a: The app icon in Finder, the DMG window and the About panel
+
+- Added: 2026-11-03, branch m9a/release-build
+- Why manual: tests check the files and the sizes. Only macOS shows the icon in Finder, in the DMG window and in the About panel.
+- Setup: the DMG from "M9a: An unsigned test build opens and scans". Before you open it, check that `public/icon.png` and `public/icon.icns` are the output of `scripts/render-app-icon.sh`.
+- Steps:
+  1. Open the DMG. Look at the app icon in the DMG window.
+  2. Drag Sudo Hire to Applications. In Finder, look at the icon in Applications with the icon view at the smallest and the largest size, and in the list view.
+  3. Start Sudo Hire. Open the About panel (for example with Get Info in Finder, or the About item when the app has one).
+  4. Do steps 1 to 3 in light and in dark appearance (System Settings, Appearance).
+- Expected: the burgundy rounded square with the light stamp, the same shape and size as other macOS app icons, with the transparent margin of the macOS grid. It is sharp at every size, with no white or square corners, in light and dark.
+- Result: passed 2026-11-03, on a Mac, on branch m9a/release-build, with the local unsigned arm64 build 0.0.0-test.1.
+
+## M9a: An unsigned test build opens and scans
+
+- Added: 2026-11-03, branch m9a/release-build
+- Why manual: only a Mac can open the built app, and only a live scan shows TLS errors with the CA bundle of the build.
+- Setup: build this branch on this Mac with PHP 8.4, as the release workflow does: `flock isolate php 8.4`, then `NATIVEPHP_APP_VERSION=0.0.0-test.1 php artisan native:build mac arm64`, then `flock isolate php 8.3`. The build is unsigned. Take the DMG from `nativephp/electron/dist`. Remove any older Sudo Hire from Applications and its application support folder.
+- Note: "Run workflow" (`workflow_dispatch`) is available only when the workflow is on `main`. M9b checks the build of the workflow.
+- Steps:
+  1. Open the DMG and drag Sudo Hire to Applications.
+  2. In Applications, right click Sudo Hire and choose Open, then Open again. If macOS refuses, open System Settings, Privacy & Security, and choose "Open Anyway".
+  3. Go through the first run and press "Run first scan". Add one ATS company first, for example with the company list in Settings.
+  4. Wait for the first scan. Open the menu bar list.
+  5. Wait for the next scan with new matches, or check a summary notification.
+  6. Open the log folder from Settings and read the newest log file.
+- Expected: the first run opens. Each source reads with no certificate error. The exchange rates of the ECB have a date in Settings. The log has no `cURL error 60` and no other SSL error. The summary notification shows, and a click on it opens the list.
+- Result: passed 2026-11-03, on a Mac, on branch m9a/release-build, with the local unsigned arm64 build 0.0.0-test.1.
+
+## M9a: The built app sends only the requests in PRIVACY.md
+
+- Added: 2026-11-03, branch m9a/release-build
+- Why manual: tests have no live network. Only a network monitor on the Mac sees every connection of the built app, Electron included.
+- Setup: the app from "M9a: An unsigned test build opens and scans", installed and set up. A network monitor: Little Snitch, LuLu, or `nettop -p "Sudo Hire"` in Terminal.
+- Steps:
+  1. Start the network monitor. Start Sudo Hire.
+  2. Wait for one scan that reads the sources, and for the update check at the start.
+  3. Read the list of hosts that Sudo Hire and its helper processes connected to.
+- Expected: the hosts are only the job boards that are on, the ATS providers of the companies in the list, the ECB for the exchange rates, and GitHub (`github.com` and its download hosts, for example `objects.githubusercontent.com`) for the update check. There is no other host: no analytics, no crash report, no Electron host. Connections to 127.0.0.1 are the app talking to itself.
+- Note: a first try on 2026-11-03 used `nettop`, with the local unsigned build. It saw only expected hosts: the ECB, Jobicy, Himalayas and We Work Remotely, from the PHP process of the app. It saw no outside connection of the Electron processes. But `nettop` samples once a second and missed short connections: LaraJobs and Remotive were read and not seen, and the update check at the start was not seen. So it cannot show that there is no other host. M9b runs this check again on the signed build, with LuLu or Little Snitch, when the repository is public and the update check gets a real answer.
+- Result: not run

@@ -18,6 +18,14 @@ Early development. Not ready to use yet.
 
 Every job keeps its source name, its original link and its original apply link.
 
+## Install
+
+1. Download the DMG for your Mac from the [releases page](https://github.com/albertoarena/sudo-hire/releases) or from [sudohire.dev](https://sudohire.dev). Take `arm64` for a Mac with Apple silicon (M1 and later), or `x64` for a Mac with an Intel processor. To find out, open the Apple menu and choose About This Mac.
+2. Open the DMG and drag Sudo Hire to Applications.
+3. Start Sudo Hire from Applications. It lives in the menu bar and has no Dock icon.
+
+The app checks for a new version when it starts and then at most once a day. It downloads the new version and installs it when you quit the app. See [PRIVACY.md](PRIVACY.md).
+
 ## Stack
 
 Laravel, NativePHP, PHP 8.4, SQLite, Vue 3 with TypeScript, Tailwind CSS.
@@ -134,6 +142,19 @@ php -d curl.cainfo=/opt/homebrew/etc/ca-certificates/cert.pem \
 ```
 
 To fix it for good, set `curl.cainfo` and `openssl.cafile` in your `php.ini` (`php --ini` shows the file) to a current bundle. Do not turn off certificate checks.
+
+## Release
+
+For the maintainer. The workflow `.github/workflows/release.yml` builds, signs and notarises the app. It never publishes a release.
+
+1. Make sure that `main` is green. Tag it with the version and push the tag: `git tag v1.0.0 && git push origin v1.0.0`.
+2. The workflow runs the tests and the CA bundle check, then builds the app for Apple silicon and Intel. It signs and notarises the app, checks it, and uploads both DMGs and the updater files to a draft release.
+3. Install the draft DMGs on an Apple silicon Mac and on an Intel Mac (or with Rosetta). Run the checks in [docs/QA.md](docs/QA.md).
+4. Publish the draft on GitHub. The updater sees only published releases.
+
+The workflow needs five repository secrets: `CSC_LINK` and `CSC_KEY_PASSWORD` (the Developer ID Application certificate as a base64 `.p12` file, and its password), and `NATIVEPHP_APPLE_ID`, `NATIVEPHP_APPLE_ID_PASS` and `NATIVEPHP_APPLE_TEAM_ID` (the Apple ID, an app-specific password and the team ID, for notarisation).
+
+To test the build without the secrets, run the workflow on `main` with "Run workflow". It builds an unsigned app and keeps the DMGs as workflow artifacts. It makes no release.
 
 ## Documentation
 

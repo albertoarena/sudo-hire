@@ -1,0 +1,78 @@
+<!--
+  The app icon (docs/DESIGN.md, "App icon and menu bar mark"), concept "Stamp on cover".
+  A burgundy rounded square on the macOS icon grid (824 of 1024, radius 184), with the guilloche of the
+  header strip in thin white waves, and the stamp in burgundy-ink, tilted -8 degrees.
+  Render: scripts/render-app-icon.sh writes public/icon.png (1024 by 1024) and public/icon.icns.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <clipPath id="cover"><rect x="100" y="100" width="824" height="824" rx="184"/></clipPath>
+  </defs>
+  <g clip-path="url(#cover)">
+    <rect x="100" y="100" width="824" height="824" fill="#5E1B2B"/>
+    <path d="M80 130 C 230 96, 380 96, 512 130 S 794 164, 944 130" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 143 C 230 177, 380 177, 512 143 S 794 109, 944 143" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 156 C 230 122, 380 122, 512 156 S 794 190, 944 156" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 169 C 230 203, 380 203, 512 169 S 794 135, 944 169" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 182 C 230 148, 380 148, 512 182 S 794 216, 944 182" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 195 C 230 229, 380 229, 512 195 S 794 161, 944 195" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 208 C 230 174, 380 174, 512 208 S 794 242, 944 208" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 221 C 230 255, 380 255, 512 221 S 794 187, 944 221" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 234 C 230 200, 380 200, 512 234 S 794 268, 944 234" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 247 C 230 281, 380 281, 512 247 S 794 213, 944 247" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 260 C 230 226, 380 226, 512 260 S 794 294, 944 260" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 273 C 230 307, 380 307, 512 273 S 794 239, 944 273" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 286 C 230 252, 380 252, 512 286 S 794 320, 944 286" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 299 C 230 333, 380 333, 512 299 S 794 265, 944 299" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 312 C 230 278, 380 278, 512 312 S 794 346, 944 312" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 325 C 230 359, 380 359, 512 325 S 794 291, 944 325" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 338 C 230 304, 380 304, 512 338 S 794 372, 944 338" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 351 C 230 385, 380 385, 512 351 S 794 317, 944 351" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 364 C 230 330, 380 330, 512 364 S 794 398, 944 364" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 377 C 230 411, 380 411, 512 377 S 794 343, 944 377" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 390 C 230 356, 380 356, 512 390 S 794 424, 944 390" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 403 C 230 437, 380 437, 512 403 S 794 369, 944 403" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 416 C 230 382, 380 382, 512 416 S 794 450, 944 416" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 429 C 230 463, 380 463, 512 429 S 794 395, 944 429" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 442 C 230 408, 380 408, 512 442 S 794 476, 944 442" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 455 C 230 489, 380 489, 512 455 S 794 421, 944 455" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 468 C 230 434, 380 434, 512 468 S 794 502, 944 468" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 481 C 230 515, 380 515, 512 481 S 794 447, 944 481" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 494 C 230 460, 380 460, 512 494 S 794 528, 944 494" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 507 C 230 541, 380 541, 512 507 S 794 473, 944 507" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 520 C 230 486, 380 486, 512 520 S 794 554, 944 520" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 533 C 230 567, 380 567, 512 533 S 794 499, 944 533" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 546 C 230 512, 380 512, 512 546 S 794 580, 944 546" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 559 C 230 593, 380 593, 512 559 S 794 525, 944 559" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 572 C 230 538, 380 538, 512 572 S 794 606, 944 572" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 585 C 230 619, 380 619, 512 585 S 794 551, 944 585" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 598 C 230 564, 380 564, 512 598 S 794 632, 944 598" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 611 C 230 645, 380 645, 512 611 S 794 577, 944 611" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 624 C 230 590, 380 590, 512 624 S 794 658, 944 624" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 637 C 230 671, 380 671, 512 637 S 794 603, 944 637" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 650 C 230 616, 380 616, 512 650 S 794 684, 944 650" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 663 C 230 697, 380 697, 512 663 S 794 629, 944 663" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 676 C 230 642, 380 642, 512 676 S 794 710, 944 676" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 689 C 230 723, 380 723, 512 689 S 794 655, 944 689" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 702 C 230 668, 380 668, 512 702 S 794 736, 944 702" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 715 C 230 749, 380 749, 512 715 S 794 681, 944 715" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 728 C 230 694, 380 694, 512 728 S 794 762, 944 728" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 741 C 230 775, 380 775, 512 741 S 794 707, 944 741" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 754 C 230 720, 380 720, 512 754 S 794 788, 944 754" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 767 C 230 801, 380 801, 512 767 S 794 733, 944 767" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 780 C 230 746, 380 746, 512 780 S 794 814, 944 780" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 793 C 230 827, 380 827, 512 793 S 794 759, 944 793" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 806 C 230 772, 380 772, 512 806 S 794 840, 944 806" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 819 C 230 853, 380 853, 512 819 S 794 785, 944 819" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 832 C 230 798, 380 798, 512 832 S 794 866, 944 832" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 845 C 230 879, 380 879, 512 845 S 794 811, 944 845" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 858 C 230 824, 380 824, 512 858 S 794 892, 944 858" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 871 C 230 905, 380 905, 512 871 S 794 837, 944 871" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 884 C 230 850, 380 850, 512 884 S 794 918, 944 884" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 897 C 230 931, 380 931, 512 897 S 794 863, 944 897" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <path d="M80 910 C 230 876, 380 876, 512 910 S 794 944, 944 910" stroke="#ffffff" stroke-opacity="0.07" stroke-width="3" fill="none"/>
+    <path d="M80 923 C 230 957, 380 957, 512 923 S 794 889, 944 923" stroke="#ffffff" stroke-opacity="0.049" stroke-width="3" fill="none"/>
+    <g transform="rotate(-8 512 512)"><rect x="242" y="352" width="540" height="320" rx="42" fill="none" stroke="#F4E8EA" stroke-width="32"/>
+    <path d="M382 512 L470 600 L644 420" fill="none" stroke="#F4E8EA" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </g>
+</svg>
