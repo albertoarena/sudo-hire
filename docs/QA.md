@@ -501,3 +501,15 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Expected: the hosts are only the job boards that are on, the ATS providers of the companies in the list, the ECB for the exchange rates, and GitHub (`github.com` and its download hosts, for example `objects.githubusercontent.com`) for the update check. There is no other host: no analytics, no crash report, no Electron host. Connections to 127.0.0.1 are the app talking to itself.
 - Note: a first try on 2026-11-03 used `nettop`, with the local unsigned build. It saw only expected hosts: the ECB, Jobicy, Himalayas and We Work Remotely, from the PHP process of the app. It saw no outside connection of the Electron processes. But `nettop` samples once a second and missed short connections: LaraJobs and Remotive were read and not seen, and the update check at the start was not seen. So it cannot show that there is no other host. M9b runs this check again on the signed build, with LuLu or Little Snitch, when the repository is public and the update check gets a real answer.
 - Result: not run
+
+## M9a follow-up: A scheduled scan reads the ECB rates
+
+- Added: 2026-11-04, branch fix/scheduled-scan-ca
+- Why manual: only the built app starts `hire:scan` from the scheduler, in a process with no `-d` flags.
+- Setup: build this branch on this Mac as in "M9a: An unsigned test build opens and scans" and install it over the old app. Keep the application support folder.
+- Steps:
+  1. Start Sudo Hire and wait 10 minutes, for at least one scheduled scan.
+  2. Open the log folder from Settings and read the newest log file.
+  3. Open Settings and read the date of the exchange rates.
+- Expected: after the start of the new build, the log has no `ECB rates fetch failed` line and no `cURL error 60`. The exchange rates have the date of the latest ECB working day.
+- Result: passed 2026-11-04, on a Mac, on branch fix/scheduled-scan-ca, with the local unsigned arm64 build 0.0.0-test.2. The first scheduled scan after the start (20:35, Europe/Rome) fetched the ECB rates of 2026-11-04. The log has no cURL error 60 after the start; the last one was at 20:30, with the old build.

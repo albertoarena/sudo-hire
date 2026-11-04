@@ -1134,3 +1134,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: `Info.plist` keeps the usage descriptions that Electron and NativePHP put in every app: camera, microphone, audio capture, Bluetooth, Documents and Downloads. Sudo Hire uses none of them. A description gives no access. macOS asks the user only when an app tries to use the device or the folder, and Sudo Hire never tries. The signed app also has no camera or microphone entitlement, so the hardened runtime blocks that access. Electron is installed again after the `prebuild` step, so the build cannot remove its descriptions.
 - Reason: approved in the M9 brief. The release workflow writes `.env` from `.env.example`, so it has no secret. The cleanup protects a local build too. A patch of NativePHP and Electron at build time would remove only part of the descriptions (Alberto, 2026-11-03).
 - Replaces: none
+
+## 2026-11-04: Child processes get the CA bundle through SSL_CERT_FILE
+
+- Milestone: M9a (follow-up)
+- Decision: when a PHP process of the app starts with `curl.cainfo` set, the app sets `SSL_CERT_FILE` to the same bundle (`App\Sources\Support\CaBundle`, called in `AppServiceProvider::boot`). Every process that it starts inherits it.
+- Decision: the CA bundle stays the NativePHP bundle, and certificate checks stay on, as in "TLS trust comes from the NativePHP CA bundle".
+- Reason: NativePHP passes the bundle only as `-d` flags to the PHP processes that it starts. The scheduler starts `hire:scan` in the background with `PHP_BINARY` and no flags, so the scan used `/etc/ssl/cert.pem` of macOS. That file has no "Sectigo Public Server Authentication Root E46", so every scheduled ECB fetch failed with cURL error 60 in the installed app on 2026-11-04. The job boards worked, because their roots are in that file. The first scan runs in a process that NativePHP starts, so the M9a check did not see it.
+- Replaces: none
