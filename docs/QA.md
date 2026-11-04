@@ -512,4 +512,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Open the log folder from Settings and read the newest log file.
   3. Open Settings and read the date of the exchange rates.
 - Expected: after the start of the new build, the log has no `ECB rates fetch failed` line and no `cURL error 60`. The exchange rates have the date of the latest ECB working day.
-- Result: not run
+- Result: passed 2026-11-04, on a Mac, on branch fix/scheduled-scan-ca, with the local unsigned arm64 build 0.0.0-test.2. The first scheduled scan after the start (20:35, Europe/Rome) fetched the ECB rates of 2026-11-04. The log has no cURL error 60 after the start; the last one was at 20:30, with the old build.
