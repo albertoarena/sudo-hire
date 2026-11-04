@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Scan\MacNotifier;
 use App\Scan\NativeNotifier;
 use App\Scan\Notifier;
+use App\Sources\Support\CaBundle;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        CaBundle::shareWithChildProcesses(ini_get('curl.cainfo'));
     }
 }
