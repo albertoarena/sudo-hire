@@ -80,7 +80,7 @@ These apply to every commit and pull request.
 
 Can: pure logic, parsers, sources with fixtures, filters, storage, Pest and Vitest tests, CI fixes.
 
-Cannot: menu bar, windows, macOS notifications, permission prompts, `osascript`, signing, notarization. For these, write the code and the tests with fakes, then add the manual steps to `docs/QA.md`. The human checks them on a Mac before merging.
+Cannot: menu bar, windows, macOS notifications, permission prompts, `osascript`, signing, notarisation. For these, write the code and the tests with fakes, then add the manual steps to `docs/QA.md`. The human checks them on a Mac before merging.
 
 ## Container workarounds (Linux cloud sessions)
 
