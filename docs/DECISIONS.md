@@ -1142,3 +1142,13 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the CA bundle stays the NativePHP bundle, and certificate checks stay on, as in "TLS trust comes from the NativePHP CA bundle".
 - Reason: NativePHP passes the bundle only as `-d` flags to the PHP processes that it starts. The scheduler starts `hire:scan` in the background with `PHP_BINARY` and no flags, so the scan used `/etc/ssl/cert.pem` of macOS. That file has no "Sectigo Public Server Authentication Root E46", so every scheduled ECB fetch failed with cURL error 60 in the installed app on 2026-11-04. The job boards worked, because their roots are in that file. The first scan runs in a process that NativePHP starts, so the M9a check did not see it.
 - Replaces: none
+
+## 2026-11-05: Apple silicon only, and macOS 12
+
+- Milestone: prep for M9b
+- Decision: the app is built only for Apple silicon (arm64). `.github/workflows/release.yml` runs `native:build mac arm64`. There is no Intel build.
+- Decision: the app needs macOS 12 (Monterey) or later. Electron 40 and the bundled PHP both need macOS 12.
+- Decision: the draft job names the DMG `sudo-hire-<version>-arm64.dmg`. The zip keeps the name in `latest-mac.yml` ("Sudo-Hire-<version>-arm64.zip"), because the updater reads only the zip.
+- Decision: a human tests the draft on a Mac with Apple silicon.
+- Reason: approved by Alberto (2026-11-04). Nobody can test an Intel build on an Intel Mac before a release. The project does not ship an untested build.
+- Replaces: the arm64 and x64 build and the test on Intel in "The release flow" (2026-11-03)
