@@ -48,3 +48,10 @@ it('uses the singular for one job', function (array $include, string $text) {
     'with include keywords' => [['Laravel'], '1 new job: 1 Laravel'],
     'no include keywords' => [[], '1 new job'],
 ]);
+
+it('starts each keyword with a capital letter and keeps the rest as the user wrote it', function () {
+    $jobs = [['Senior Laravel Developer'], ['PHP Engineer'], ['Node.js Developer']];
+
+    expect(summaryOf($jobs, ['laravel', 'PHP', 'node.js']))->toBe('3 new jobs: 1 Laravel, 1 PHP, 1 Node.js')
+        ->and(summaryOf([['Développeur Élixir']], ['élixir']))->toBe('1 new job: 1 Élixir');
+});

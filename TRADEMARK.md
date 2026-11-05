@@ -23,8 +23,7 @@ project's name or brand. Those are separate, and they are:
 - **All the art made for the project**, wherever it appears: the app icon, the menu
   bar mark, logos, cover and social images. This covers every size and color
   variant, still or animated. That includes the copies the app ships with.
-- The domain **sudohire.dev**, and the design, layout and written copy of the site
-  on it.
+- The domain **sudohire.dev**, and the design and layout of the site on it.
 
 These identify this project. They are how people know that a thing came from here,
 and they are not part of the MIT grant.

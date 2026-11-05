@@ -77,5 +77,5 @@ onBeforeUnmount(() => clearTimeout(timer));
         <button type="button" class="btn" aria-live="polite" @click="copy">{{ copied ? 'Copied' : 'Copy diagnostic report' }}</button>
         <button type="button" class="btn primary" @click="open(ISSUE_URL)">Report a problem<Icon name="ext" /></button>
     </div>
-    <span class="hint">The report has the app version, the macOS version and the status of each source. It has no settings, keywords or jobs.</span>
+    <span class="hint">The report has the app version, the macOS version, the PHP version and the status of each source. It has no settings, keywords or jobs.</span>
 </template>

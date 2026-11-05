@@ -380,6 +380,13 @@ describe('SettingsWindow', () => {
         expect(copy().text()).toBe('Copy diagnostic report');
     });
 
+    it('names every version that the diagnostic report has', async () => {
+        const wrapper = await mountWindow();
+        await openPane(wrapper, 'Troubleshooting');
+
+        expect(wrapper.find('.hint').text()).toContain('the app version, the macOS version, the PHP version and the status of each source');
+    });
+
     it('opens the privacy policy and the issue page in the browser', async () => {
         const wrapper = await mountWindow();
         await openPane(wrapper, 'Privacy');

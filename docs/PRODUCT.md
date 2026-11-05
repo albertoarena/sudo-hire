@@ -42,7 +42,7 @@ Success: the user trusts the list. Every job in it accepts people from where the
   - Hidden, saved and applied need storage that M6a does not have yet.
 - **Badges:** "?" for an unknown salary, "OTE" for on-target earnings, "also on" for a job that more than one source lists.
 - **"Location not stated" group:** jobs with unknown eligibility, in the default "group" mode, are shown apart from the matches and never notified.
-- **Settings:** every filter of REQUIREMENTS section 8 and the notification interval (1 to 24 hours). Also the sources toggle, the ATS company list (`ats:add`), display currency, monthly payments (12, 13, 14) and hours per day. A Privacy pane and a Troubleshooting pane (confirmed 2026-11-01) explain the data and help with problems.
+- **Settings:** every filter of REQUIREMENTS section 8 and the notification interval (1 to 24 hours). Also the sources toggle, the ATS company list (`ats:add`), display currency and monthly payments (12, 13, 14). A Privacy pane and a Troubleshooting pane (confirmed 2026-11-01) explain the data and help with problems.
 - **Source status:** last success and last error per source. A certificate failure shows as "certificate error".
 - **ECB rates:** settings show the rate date and name the ECB as the source. Converted amounts say they are converted.
 - **Server stopped:** a clear "stopped in the background" message if the internal PHP server dies.

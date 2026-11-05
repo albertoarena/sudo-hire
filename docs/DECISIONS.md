@@ -1152,3 +1152,10 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: a human tests the draft on a Mac with Apple silicon.
 - Reason: approved by Alberto (2026-11-04). Nobody can test an Intel build on an Intel Mac before a release. The project does not ship an untested build.
 - Replaces: the arm64 and x64 build and the test on Intel in "The release flow" (2026-11-03)
+
+## 2026-11-05: Keywords in the summary notification start with a capital letter
+
+- Milestone: prep for M9b
+- Decision: in the summary notification, each keyword starts with a capital letter. The rest stays as the user wrote it: "laravel" gives "Laravel", "PHP" stays "PHP", "php" gives "Php".
+- Reason: approved by Alberto (2026-11-04). The settings keep a keyword as the user typed it, so a lowercase keyword gave "4 laravel" while the docs show "4 Laravel".
+- Replaces: none
