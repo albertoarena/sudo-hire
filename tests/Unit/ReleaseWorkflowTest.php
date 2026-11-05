@@ -70,3 +70,72 @@ it('names the DMG sudo-hire-<version>-arm64.dmg and leaves the zip as latest-mac
         ->toContain('mv "$file" "dist/sudo-hire-${name#Sudo-Hire-}"')
         ->not->toContain('dist/Sudo-Hire-*.zip');
 });
+
+it('uses the release environment only for a tag, so a manual run stays unsigned', function () {
+    expect(releaseWorkflow())->toContain("environment: \${{ github.event_name == 'push' && 'release' || '' }}");
+});
+
+it('notarises with an App Store Connect API key and no Apple ID', function () {
+    $workflow = releaseWorkflow();
+
+    expect($workflow)->not->toContain('NATIVEPHP_APPLE_')
+        ->not->toContain('APPLE_APP_SPECIFIC_PASSWORD')
+        ->toContain('APPLE_API_KEY: ${{ env.APPLE_API_KEY_PATH }}')
+        ->toContain('APPLE_API_KEY_ID: ${{ vars.APPLE_API_KEY_ID }}')
+        ->toContain('APPLE_API_ISSUER: ${{ vars.APPLE_API_ISSUER }}');
+});
+
+it('checks every signing value before the build', function () {
+    $workflow = releaseWorkflow();
+    $check = substr($workflow, strpos($workflow, 'name: Check the signing and notarisation values'));
+
+    foreach (['CSC_LINK', 'CSC_KEY_PASSWORD', 'APPLE_API_KEY', 'APPLE_API_KEY_ID', 'APPLE_API_ISSUER'] as $name) {
+        expect($check)->toContain($name);
+    }
+
+    expect(strpos($workflow, 'name: Check the signing and notarisation values'))->toBeLessThan(strpos($workflow, 'name: Build, sign and notarise'));
+});
+
+it('writes the API key to the runner temp folder and always removes the key and the keychain', function () {
+    $workflow = releaseWorkflow();
+    $cleanup = substr($workflow, strpos($workflow, 'name: Remove the key and the keychain'), 400);
+
+    expect($workflow)->toContain('"$RUNNER_TEMP/notary-key.p8"')
+        ->toContain('umask 077')
+        ->and($cleanup)->toContain('if: always()')
+        ->toContain('rm -f "$RUNNER_TEMP/notary-key.p8"')
+        ->toContain('security delete-keychain');
+});
+
+it('signs, notarises and staples the DMG after the build', function () {
+    $workflow = releaseWorkflow();
+    $step = substr($workflow, strpos($workflow, 'name: Sign, notarise and staple the DMG'));
+
+    expect($step)->toContain('codesign --force --timestamp --sign')
+        ->toContain('xcrun notarytool submit')
+        ->toContain('--wait')
+        ->and(strpos($workflow, 'name: Sign, notarise and staple the DMG'))->toBeGreaterThan(strpos($workflow, 'name: Build, sign and notarise'))
+        ->and(strpos($workflow, 'name: Sign, notarise and staple the DMG'))->toBeLessThan(strpos($workflow, 'name: Check the signature, Gatekeeper and the notarisation ticket'));
+});
+
+it('runs every stapler call of the workflow through the retry script', function () {
+    preg_match_all('/^.*xcrun stapler (staple|validate).*$/m', releaseWorkflow(), $matches);
+
+    expect($matches[0])->not->toBeEmpty();
+
+    foreach ($matches[0] as $line) {
+        expect($line)->toContain('scripts/retry.sh 5 ');
+    }
+});
+
+it('checks the DMG itself, and not only the app in it', function () {
+    expect(releaseWorkflow())->toContain('spctl -a -vv -t open --context context:primary-signature "$dmg"')
+        ->toContain('scripts/retry.sh 5 xcrun stapler validate "$dmg"');
+});
+
+it('marks a tag with a dash as a pre-release', function () {
+    $workflow = releaseWorkflow();
+
+    expect($workflow)->toContain('if [[ "$GITHUB_REF_NAME" == *-* ]]; then')
+        ->toContain('--prerelease');
+});

@@ -149,14 +149,19 @@ To fix it for good, set `curl.cainfo` and `openssl.cafile` in your `php.ini` (`p
 
 For the maintainer. The workflow `.github/workflows/release.yml` builds, signs and notarises the app. It never publishes a release.
 
-1. Make sure that `main` is green. Tag it with the version and push the tag: `git tag v1.0.0 && git push origin v1.0.0`.
-2. The workflow runs the tests and the CA bundle check, then builds the app for Apple silicon. It signs and notarises the app, checks it, and uploads the DMG and the updater files to a draft release.
-3. Install the draft DMG on a Mac with Apple silicon. Run the checks in [docs/QA.md](docs/QA.md).
-4. Publish the draft on GitHub. The updater sees only published releases.
+1. Make sure that `main` is green. Tag it with the version and push the tag: `git tag v1.0.0 && git push origin v1.0.0`. A release candidate has a dash: `v1.0.0-rc.1`.
+2. Approve the run in GitHub Actions. The signing values are in the environment `release`, which waits for the maintainer.
+3. The workflow runs the tests and the CA bundle check, then builds the app for Apple silicon. It signs, notarises and staples the app and the DMG, checks them, and uploads the DMG and the updater files to a draft release. A release candidate becomes a draft pre-release.
+4. Install the draft DMG on a Mac with Apple silicon. Run the checks in [docs/QA.md](docs/QA.md).
+5. Write the release notes in the draft, then publish it. The updater sees only published releases.
 
-The workflow needs five repository secrets: `CSC_LINK` and `CSC_KEY_PASSWORD` (the Developer ID Application certificate as a base64 `.p12` file, and its password), and `NATIVEPHP_APPLE_ID`, `NATIVEPHP_APPLE_ID_PASS` and `NATIVEPHP_APPLE_TEAM_ID` (the Apple ID, an app-specific password and the team ID, for notarisation).
+The environment `release` holds three secrets and two variables:
 
-To test the build without the secrets, run the workflow on `main` with "Run workflow". It builds an unsigned app and keeps the DMG as a workflow artifact. It makes no release.
+- `CSC_LINK` and `CSC_KEY_PASSWORD`: the Developer ID Application certificate as a base64 `.p12` file, and its password.
+- `APPLE_API_KEY`: the App Store Connect API key (`.p8`) as base64, for notarisation.
+- The variables `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`: the key ID and the issuer ID of that key.
+
+To test the build without the signing values, run the workflow on `main` with "Run workflow". It builds an unsigned app and keeps the DMG as a workflow artifact. It makes no release.
 
 ## Documentation
 

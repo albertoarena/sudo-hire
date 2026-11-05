@@ -41,7 +41,7 @@ it('turns the updater on with the public GitHub repository and v tags', function
     ]);
 });
 
-it('removes every signing, notarization and GitHub secret from the bundled .env', function () {
+it('removes every signing, notarisation and GitHub secret from the bundled .env', function () {
     $env = storage_path('framework/testing/release-env-'.uniqid());
     File::ensureDirectoryExists(dirname($env));
     File::put($env, implode("\n", [
@@ -52,6 +52,9 @@ it('removes every signing, notarization and GitHub secret from the bundled .env'
         'NATIVEPHP_APPLE_ID=example',
         'NATIVEPHP_APPLE_ID_PASS=example',
         'NATIVEPHP_APPLE_TEAM_ID=example',
+        'APPLE_API_KEY=/tmp/example.p8',
+        'APPLE_API_KEY_ID=example',
+        'APPLE_API_ISSUER=example',
         'GITHUB_TOKEN=example',
         'GITHUB_AUTOUPDATE_TOKEN=example',
         'GH_TOKEN=example',
@@ -70,7 +73,7 @@ it('removes every signing, notarization and GitHub secret from the bundled .env'
     expect($kept)->toContain('APP_NAME="Sudo Hire"')
         ->toContain('APP_KEY=base64:example')
         ->not->toContain('CSC_')
-        ->not->toContain('NATIVEPHP_APPLE')
+        ->not->toContain('APPLE_')
         ->not->toContain('GITHUB_')
         ->not->toContain('GH_TOKEN')
         ->not->toContain('AWS_')
