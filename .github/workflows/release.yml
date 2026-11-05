@@ -1,7 +1,7 @@
-# Builds the macOS app for Apple silicon (arm64) and Intel (x64).
+# Builds the macOS app for Apple silicon (arm64). There is no Intel build.
 # A tag v* builds, signs and notarises, checks the result, and uploads it to a draft release.
 # A human tests the draft and publishes it. This workflow never publishes a release.
-# workflow_dispatch builds an unsigned test app and keeps the DMGs as workflow artifacts only.
+# workflow_dispatch builds an unsigned test app and keeps the DMG as a workflow artifact only.
 # See docs/DECISIONS.md, "The release flow".
 
 name: Release
@@ -63,7 +63,7 @@ jobs:
         run: php artisan release:check-cacert
 
   build:
-    name: Build for arm64 and x64
+    name: Build for arm64
     needs: test
     runs-on: macos-latest
     timeout-minutes: 90
@@ -133,14 +133,14 @@ jobs:
           NATIVEPHP_APPLE_ID: ${{ secrets.NATIVEPHP_APPLE_ID }}
           NATIVEPHP_APPLE_ID_PASS: ${{ secrets.NATIVEPHP_APPLE_ID_PASS }}
           NATIVEPHP_APPLE_TEAM_ID: ${{ secrets.NATIVEPHP_APPLE_TEAM_ID }}
-        run: php artisan native:build mac all --no-interaction
+        run: php artisan native:build mac arm64 --no-interaction
 
       - name: Build unsigned
         if: github.event_name != 'push'
         env:
           NATIVEPHP_UPDATER_ENABLED: 'true'
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: php artisan native:build mac all --no-interaction
+        run: php artisan native:build mac arm64 --no-interaction
 
       - name: List the build
         run: ls -la nativephp/electron/dist
@@ -186,11 +186,17 @@ jobs:
 
       # latest-mac.yml names the files with a dash for each space ("Sudo-Hire-1.0.0-arm64.zip").
       # GitHub would turn a space into a dot, and the updater would not find the file.
-      - name: Name the files as latest-mac.yml does
+      # The updater reads only the zip, so the DMG gets the download name "sudo-hire-1.0.0-arm64.dmg".
+      - name: Name the files as latest-mac.yml does, and name the DMG for download
         run: |
           for file in dist/*' '*; do
             [ -e "$file" ] || continue
             mv "$file" "${file// /-}"
+          done
+          for file in dist/Sudo-Hire-*.dmg dist/Sudo-Hire-*.dmg.blockmap; do
+            [ -e "$file" ] || continue
+            name="$(basename "$file")"
+            mv "$file" "dist/sudo-hire-${name#Sudo-Hire-}"
           done
           ls -la dist
 
@@ -203,4 +209,4 @@ jobs:
             --draft \
             --verify-tag \
             --title "Sudo Hire ${GITHUB_REF_NAME#v}" \
-            --notes "Draft. Install and test both DMGs before you publish this release."
+            --notes "Draft. Install and test the DMG before you publish this release."

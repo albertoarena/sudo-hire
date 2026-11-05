@@ -15,6 +15,7 @@ final class SummaryText
     /**
      * Each job counts once, under the first include keyword that it matches,
      * in the order of the settings. With no include keywords, only the count.
+     * Each keyword starts with a capital letter; the rest stays as the user wrote it.
      *
      * @param  list<NormalisedJob>  $jobs
      */
@@ -36,9 +37,14 @@ final class SummaryText
         $parts = [];
 
         foreach (array_filter($groups) as $keyword => $jobCount) {
-            $parts[] = "{$jobCount} {$keyword}";
+            $parts[] = $jobCount.' '.self::capitalised((string) $keyword);
         }
 
         return $parts === [] ? $text : $text.': '.implode(', ', $parts);
+    }
+
+    private static function capitalised(string $keyword): string
+    {
+        return mb_strtoupper(mb_substr($keyword, 0, 1)).mb_substr($keyword, 1);
     }
 }

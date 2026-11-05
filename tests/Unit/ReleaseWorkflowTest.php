@@ -54,3 +54,19 @@ it('checks the signature, Gatekeeper and the notarisation ticket', function () {
         ->toContain('spctl -a -vv')
         ->toContain('xcrun stapler validate');
 });
+
+it('builds only for Apple silicon', function () {
+    $workflow = releaseWorkflow();
+
+    expect(substr_count($workflow, 'native:build mac arm64'))->toBe(2)
+        ->and($workflow)->not->toContain('native:build mac all')
+        ->not->toContain('native:build mac x64');
+});
+
+it('names the DMG sudo-hire-<version>-arm64.dmg and leaves the zip as latest-mac.yml names it', function () {
+    $workflow = releaseWorkflow();
+
+    expect($workflow)->toContain('for file in dist/Sudo-Hire-*.dmg dist/Sudo-Hire-*.dmg.blockmap; do')
+        ->toContain('mv "$file" "dist/sudo-hire-${name#Sudo-Hire-}"')
+        ->not->toContain('dist/Sudo-Hire-*.zip');
+});
