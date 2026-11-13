@@ -36,6 +36,8 @@ const workModes = ref<string[]>([]);
 const countryError = ref<string | undefined>();
 const saveError = ref<string | undefined>();
 const scan = ref<FirstScan | null>(null);
+const testing = ref(false);
+const testText = ref('');
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 const primaryText = computed(() => ['Start', 'Next', 'Run first scan', 'Open the list'][step.value]);
@@ -111,6 +113,27 @@ function primary(): Promise<void> {
         }
     }).finally(() => {
         busy.value = false;
+    });
+}
+
+// The first notification makes macOS ask if Sudo Hire can send notifications. Without a yes,
+// the summaries never show, so the first run asks while the user is looking.
+function sendTestNotification(): Promise<void> {
+    testing.value = true;
+
+    return guard(async () => {
+        try {
+            await api.testNotification();
+            testText.value = 'Sent. If no notification shows, open System Settings, Notifications, Sudo Hire, and allow notifications.';
+        } catch (error) {
+            if (!(error instanceof ApiError)) {
+                throw error;
+            }
+
+            testText.value = 'Sudo Hire could not send it. Open System Settings, Notifications, Sudo Hire, and allow notifications.';
+        }
+    }).finally(() => {
+        testing.value = false;
     });
 }
 
@@ -194,6 +217,12 @@ onBeforeUnmount(() => clearTimeout(timer));
                         <span class="state">{{ source.status === 'failed' ? errorText(source.errorKind ?? 'other') : source.status }}</span>
                     </li>
                 </ul>
+                <section class="fr-notify" aria-labelledby="fr-notify-title">
+                    <h2 id="fr-notify-title">Notifications</h2>
+                    <p>Sudo Hire sends one summary when new jobs match. macOS asks once if Sudo Hire can send notifications: choose Allow.</p>
+                    <div><button type="button" class="btn" :disabled="testing" @click="sendTestNotification">Send a test notification</button></div>
+                    <p class="hint" aria-live="polite">{{ testText }}</p>
+                </section>
             </template>
         </main>
 

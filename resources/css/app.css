@@ -1215,6 +1215,23 @@
         color: var(--no);
     }
 
+    .fr-notify {
+        display: grid;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 0.5px solid var(--rule);
+    }
+
+    .fr-notify h2 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .fr-body .fr-notify p.hint {
+        color: var(--ink-3);
+    }
+
     /* Narrow fallback: the sidebar becomes a row, the form one column. */
     @media (max-width: 679px) {
         .settings {

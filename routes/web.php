@@ -53,6 +53,7 @@ Route::prefix('api')->name('api.')->group(function () {
     Route::post('app/settings', [AppActionController::class, 'openSettings'])->name('app.settings');
     Route::post('app/quit', [AppActionController::class, 'quit'])->name('app.quit');
     Route::post('app/open-list', [AppActionController::class, 'openList'])->name('app.open-list');
+    Route::post('app/test-notification', [AppActionController::class, 'testNotification'])->name('app.test-notification');
     Route::post('app/show-data-folder', [AppActionController::class, 'showDataFolder'])->name('app.show-data-folder');
     Route::post('app/open-log-folder', [AppActionController::class, 'openLogFolder'])->name('app.open-log-folder');
     Route::post('app/copy-diagnostics', [AppActionController::class, 'copyDiagnostics'])->name('app.copy-diagnostics');

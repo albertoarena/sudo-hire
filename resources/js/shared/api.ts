@@ -77,4 +77,5 @@ export const api = {
     startFirstScan: () => call<FirstScan>('POST', '/api/first-scan'),
     firstScan: () => call<FirstScan>('GET', '/api/first-scan'),
     openList: () => call<void>('POST', '/api/app/open-list'),
+    testNotification: () => call<void>('POST', '/api/app/test-notification'),
 };

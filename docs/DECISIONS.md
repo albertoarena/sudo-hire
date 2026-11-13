@@ -1216,3 +1216,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the release workflow starts a copy of the built app once. It fails when the app writes no config cache to Application Support, when it writes the cache into its bundle, or, for a tag, when `codesign --verify --deep --strict` fails after the start.
 - Reason: NativePHP (2.4.0) runs `artisan optimize` each time the app starts. With no secure bundle it does not set the cache paths, so Laravel wrote three files into the signed app and broke its signature. The installed `v1.0.0-rc.1` showed "a sealed resource is missing or invalid". The app also needed write access to its own folder in Applications.
 - Replaces: none
+
+## 2026-11-13: The first run asks macOS for notifications
+
+- Milestone: M9b
+- Decision: the last screen of the first run, "First scan", has a Notifications part with "Send a test notification" (`POST /api/app/test-notification`). The first notification of an app makes macOS ask if the app can send notifications, so the question comes while the user looks at the first run.
+- Decision: the action answers 204 when the internal API shows the notification, and 502 when it does not. The first run then says where to allow notifications in System Settings. The first run stays four screens.
+- Reason: approved by Alberto (2026-11-13), before v1. In the `v1.0.0-rc.1` check, macOS asked with the first notification, the update notice, while nobody looked. The question went by, notifications stayed off, and the update notice did not show. Without notifications the summary, the main part of the app, never shows.
+- Replaces: none
