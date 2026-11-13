@@ -513,3 +513,62 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Open Settings and read the date of the exchange rates.
 - Expected: after the start of the new build, the log has no `ECB rates fetch failed` line and no `cURL error 60`. The exchange rates have the date of the latest ECB working day.
 - Result: passed 2026-11-04, on a Mac, on branch fix/scheduled-scan-ca, with the local unsigned arm64 build 0.0.0-test.2. The first scheduled scan after the start (20:35, Europe/Rome) fetched the ECB rates of 2026-11-04. The log has no cURL error 60 after the start; the last one was at 20:30, with the old build.
+
+## M9b: The signed draft opens with no Gatekeeper warning
+
+- Added: 2026-11-05, branch m9b/first-release
+- Why manual: only macOS Gatekeeper decides on a downloaded app, and only a real download gets the quarantine flag.
+- Setup: the draft release of a tag, for example `v1.0.0-rc.1`. Remove any older Sudo Hire from Applications and its application support folder. A Mac with Apple silicon.
+- Steps:
+  1. Download `sudo-hire-<version>-arm64.dmg` from the draft with a browser. Check the flag: `xattr -p com.apple.quarantine ~/Downloads/sudo-hire-*-arm64.dmg` prints a value.
+  2. Turn off Wi-Fi. Open the DMG, drag Sudo Hire to Applications, and start it.
+  3. Turn on Wi-Fi. In Terminal: `spctl -a -vv /Applications/Sudo\ Hire.app` and `spctl -a -vv -t open --context context:primary-signature ~/Downloads/sudo-hire-*-arm64.dmg`.
+- Expected: in step 2 the DMG opens and the app starts with no warning that it cannot be checked or is from an unknown developer. macOS can ask once to open an app downloaded from the internet. Both commands in step 3 say "accepted" and "source=Notarized Developer ID".
+- Result: not run
+
+## M9b: The signed app sends only the requests in PRIVACY.md
+
+- Added: 2026-11-05, branch m9b/first-release
+- Why manual: tests have no live network. `nettop` missed short connections in M9a, so this check needs a firewall that logs every connection.
+- Setup: the app from "M9b: The signed draft opens with no Gatekeeper warning", set up with a country and keywords. LuLu or Little Snitch, set to ask or to log every new connection. The repository is public, so the update check gets a real answer.
+- Steps:
+  1. Start the firewall. Start Sudo Hire.
+  2. Wait for one scan that reads the sources, and for the update check at the start.
+  3. Read the list of hosts that Sudo Hire and its helper processes connected to.
+- Expected: as in "M9a: The built app sends only the requests in PRIVACY.md": only the job boards that are on, the ATS providers of the companies in the list, the ECB, and GitHub for the update check. No other host.
+- Result: not run
+
+## M9b: The app updates to the next release
+
+- Added: 2026-11-05, branch m9b/first-release
+- Why manual: the updater reads the published releases on GitHub. Only two real releases show the full path.
+- Setup: the first release, for example `v1.0.0-rc.1`, published as a pre-release and installed. Then the next one, for example `v1.0.0-rc.2`, tagged, tested and published. If the release candidates cannot update (see DECISIONS "Release candidates and the updater"), use `v1.0.0` and `v1.0.1`.
+- Steps:
+  1. Quit Sudo Hire and start it again.
+  2. Wait for the notification "Sudo Hire <version> is ready. It installs when you quit Sudo Hire."
+  3. Quit Sudo Hire. Start it again.
+  4. In Finder, open Get Info on Sudo Hire in Applications.
+- Expected: the notification in step 2 names the new version. After step 3 the app starts with no warning. Get Info shows the new version.
+- Result: not run
+
+## M9b: Every link of the app opens a live page
+
+- Added: 2026-11-05, branch m9b/first-release
+- Why manual: tests check the addresses. Only a browser shows that the pages exist.
+- Setup: sudohire.dev is live and the repository is public. The app from "M9b: The signed draft opens with no Gatekeeper warning".
+- Steps:
+  1. Open Settings, Privacy and press "Read the privacy policy".
+  2. Open Settings, Troubleshooting and press "Report a problem".
+  3. Open the releases page from the README.
+- Expected: step 1 opens https://sudohire.dev/privacy/. Step 2 opens a new issue form on the public repository, then https://sudohire.dev/help/. These are the three addresses in `resources/js/shared/links.ts`. Each page loads with no error.
+- Result: not run
+
+## M9b: Get Info shows the name, the version and the copyright
+
+- Added: 2026-11-05, branch m9b/first-release
+- Why manual: only Finder shows the values of the signed app.
+- Setup: the app from "M9b: The signed draft opens with no Gatekeeper warning".
+- Steps:
+  1. In Finder, select Sudo Hire in Applications and open Get Info.
+- Expected: the name "Sudo Hire", the version of the tag with no `v` (for example 1.0.0-rc.1), "Copyright (c) 2026 Alberto Arena. MIT license.", and the app icon.
+- Result: not run

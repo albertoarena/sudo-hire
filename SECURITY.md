@@ -23,6 +23,6 @@ Sudo Hire reads job posts from public job boards and company career pages. Anyon
 - A company entry that makes the app send a request to a host other than its ATS provider
 - The app sending anything over the network other than the requests described in [PRIVACY.md](PRIVACY.md)
 - The app reading a source without a certificate check
-- An official release that is not signed and notarized, or that Gatekeeper warns about
+- An official release that is not signed and notarised, or that Gatekeeper warns about
 
 A job that is fake, wrong or offensive is not a security problem in the app. Report it to the job board that lists it. A job with a wrong country, salary or seniority is a parser bug: open an issue, see [CONTRIBUTING.md](CONTRIBUTING.md).

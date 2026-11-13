@@ -1159,3 +1159,35 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: in the summary notification, each keyword starts with a capital letter. The rest stays as the user wrote it: "laravel" gives "Laravel", "PHP" stays "PHP", "php" gives "Php".
 - Reason: approved by Alberto (2026-11-04). The settings keep a keyword as the user typed it, so a lowercase keyword gave "4 laravel" while the docs show "4 Laravel".
 - Replaces: none
+
+## 2026-11-05: Notarisation with an App Store Connect API key
+
+- Milestone: M9b
+- Decision: the release workflow notarises with an App Store Connect API key, not with an Apple ID. electron-builder (26.8.1) does it with `APPLE_API_KEY` (the path of the `.p8` file), `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`. The notarisation of NativePHP (`build/notarize.js`) needs an Apple ID, so it skips.
+- Decision: the signing values are in the GitHub environment `release`, which waits for the approval of the maintainer. Secrets: `CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_API_KEY` (the `.p8` as base64). Variables: `APPLE_API_KEY_ID`, `APPLE_API_ISSUER`. Only a tag uses the environment. A manual run has no signing values and builds unsigned.
+- Decision: the workflow writes the `.p8` to the runner temp folder, readable only by its owner. A last step always removes it, with the `.p12` and the temporary keychain.
+- Decision: the API key is a Team Key with Developer access, only for Sudo Hire. It can be revoked alone.
+- Decision: the bundled `.env` also loses every `APPLE_*` key.
+- Reason: approved by Alberto (2026-11-05). An API key gives no access to the Apple ID, and a change of the Apple ID password does not stop it.
+- Replaces: the Apple ID, the app-specific password and the team ID in "The release flow" (2026-11-03)
+
+## 2026-11-05: The signed app and the signed DMG are stapled
+
+- Milestone: M9b
+- Decision: electron-builder signs the app, notarises it and staples it before it makes the zip and the DMG. So the app in both files has its ticket. Its stapler call has 3 retries with short pauses (`@electron/notarize`). If all fail, the build fails: run the job again.
+- Decision: electron-builder does not sign the DMG, and NativePHP does not let the app change that. A workflow step signs the DMG with the same certificate (from a temporary keychain), notarises it with `notarytool --wait`, and staples it. The step fails when Apple does not accept the DMG, and prints the notarisation log.
+- Decision: the step removes the DMG blockmap, because it no longer matches the signed DMG. The DMG entry in `latest-mac.yml` keeps the old checksum. The updater reads only the zip, so this has no effect.
+- Decision: every stapler call of the workflow runs through `scripts/retry.sh`: 5 attempts, 15 seconds apart. On macOS runners `xcrun stapler` sometimes fails with error 68 ("The network connection was lost"), after Apple accepted the notarisation.
+- Decision: the checks step also checks the DMG itself (`spctl -t open` and `stapler validate`), and not only the app in it.
+- Reason: approved in the M9b brief. A stapled ticket lets the first open work with no network.
+- Replaces: none
+
+## 2026-11-05: Release candidates and the updater
+
+- Milestone: M9b
+- Decision: a tag with a dash, for example `v1.0.0-rc.1`, makes a draft pre-release. The maintainer writes the release notes by hand in the draft. There is no CHANGELOG file.
+- Decision: the updater (electron-updater 6.8.3) allows pre-releases only when the installed version has a pre-release part. So an app on `1.0.0-rc.1` finds the newest published `rc` release, for example `1.0.0-rc.2`. It looks for `rc-mac.yml`, does not find it, and reads `latest-mac.yml` of that release. An app on `1.0.0` reads only `/releases/latest`, which has no pre-release.
+- Decision: an app on a release candidate does not update to the final release with no dash, for example `1.0.0`. Install the final release by hand over a release candidate.
+- Decision: the app has no About item, because it lives in the menu bar. Get Info in Finder shows the name, the version, the copyright and the icon.
+- Reason: approved in the M9b brief, from the electron-updater code (`GitHubProvider.getLatestVersion`). The first rc to rc update in M9b confirms it.
+- Replaces: none
