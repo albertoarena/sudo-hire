@@ -1207,3 +1207,12 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: `APPLE_API_KEY_ID` and `APPLE_API_ISSUER` are secrets in the environment `release`, not variables.
 - Reason: approved by Alberto (2026-11-13). The repository is public, so its workflow logs are public too. GitHub masks secrets in a log, but not variables. The two IDs cannot notarise without the `.p8`, but they do not need to be public.
 - Replaces: the variables `APPLE_API_KEY_ID` and `APPLE_API_ISSUER` in "Notarisation with an App Store Connect API key" (2026-11-05)
+
+## 2026-11-13: The bootstrap cache stays outside the signed app
+
+- Milestone: M9b
+- Decision: when the app runs from its `.app` bundle, `bootstrap/app.php` points `APP_CONFIG_CACHE`, `APP_ROUTES_CACHE` and `APP_EVENTS_CACHE` to `bootstrap/cache` in Application Support (`App\Native\BootstrapCache`). A path that is already set stays. Local development does not change.
+- Decision: `packages.php` and `services.php` stay in the bundle. The build writes them, they are part of the signature, and `artisan optimize` does not write them again.
+- Decision: the release workflow starts a copy of the built app once. It fails when the app writes no config cache to Application Support, when it writes the cache into its bundle, or, for a tag, when `codesign --verify --deep --strict` fails after the start.
+- Reason: NativePHP (2.4.0) runs `artisan optimize` each time the app starts. With no secure bundle it does not set the cache paths, so Laravel wrote three files into the signed app and broke its signature. The installed `v1.0.0-rc.1` showed "a sealed resource is missing or invalid". The app also needed write access to its own folder in Applications.
+- Replaces: none

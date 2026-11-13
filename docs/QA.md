@@ -524,7 +524,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Turn off Wi-Fi. Open the DMG, drag Sudo Hire to Applications, and start it.
   3. Turn on Wi-Fi. In Terminal: `spctl -a -vv /Applications/Sudo\ Hire.app` and `spctl -a -vv -t open --context context:primary-signature ~/Downloads/sudo-hire-*-arm64.dmg`.
 - Expected: in step 2 the DMG opens and the app starts with no warning that it cannot be checked or is from an unknown developer. macOS can ask once to open an app downloaded from the internet. Both commands in step 3 say "accepted" and "source=Notarized Developer ID".
-- Result: not run
+- Result: failed 2026-11-13 (v1.0.0-rc.1: steps 1 and 2 passed, with only the question about an app from the internet. In step 3 `spctl` on the app gave "a sealed resource is missing or invalid": at its first start the app wrote config.php, routes-v7.php and events.php into bootstrap/cache inside its bundle. See DECISIONS "The bootstrap cache stays outside the signed app". The DMG command was not run.)
 
 ## M9b: The signed app sends only the requests in PRIVACY.md
 
