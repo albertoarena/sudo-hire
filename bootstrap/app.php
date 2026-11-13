@@ -1,9 +1,12 @@
 <?php
 
+use App\Native\BootstrapCache;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+
+BootstrapCache::keepOutsideTheBundle(dirname(__DIR__), getenv('NATIVEPHP_USER_DATA_PATH'));
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
