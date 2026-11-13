@@ -81,8 +81,9 @@ it('notarises with an App Store Connect API key and no Apple ID', function () {
     expect($workflow)->not->toContain('NATIVEPHP_APPLE_')
         ->not->toContain('APPLE_APP_SPECIFIC_PASSWORD')
         ->toContain('APPLE_API_KEY: ${{ env.APPLE_API_KEY_PATH }}')
-        ->toContain('APPLE_API_KEY_ID: ${{ vars.APPLE_API_KEY_ID }}')
-        ->toContain('APPLE_API_ISSUER: ${{ vars.APPLE_API_ISSUER }}');
+        ->toContain('APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}')
+        ->toContain('APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}')
+        ->not->toContain('vars.');
 });
 
 it('checks every signing value before the build', function () {
@@ -116,6 +117,43 @@ it('signs, notarises and staples the DMG after the build', function () {
         ->toContain('--wait')
         ->and(strpos($workflow, 'name: Sign, notarise and staple the DMG'))->toBeGreaterThan(strpos($workflow, 'name: Build, sign and notarise'))
         ->and(strpos($workflow, 'name: Sign, notarise and staple the DMG'))->toBeLessThan(strpos($workflow, 'name: Check the signature, Gatekeeper and the notarisation ticket'));
+});
+
+it('makes the signing keychain itself and passes it to electron-builder', function () {
+    $workflow = releaseWorkflow();
+    $import = strpos($workflow, 'name: Import the signing certificate');
+    $build = strpos($workflow, 'name: Build, sign and notarise');
+    $importStep = substr($workflow, $import, $build - $import);
+    $buildStep = substr($workflow, $build, strpos($workflow, 'name: Build unsigned') - $build);
+
+    expect($import)->toBeLessThan($build)
+        ->and($importStep)->toContain('security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain"')
+        ->toContain('security list-keychains -d user -s "$keychain"')
+        ->toContain('echo "CSC_KEYCHAIN=$keychain" >> "$GITHUB_ENV"')
+        ->toContain('echo "CSC_NAME=$identity" >> "$GITHUB_ENV"')
+        ->and($buildStep)->not->toContain('CSC_LINK')
+        ->not->toContain('CSC_KEY_PASSWORD');
+});
+
+it('signs the DMG from the same keychain as the app', function () {
+    $workflow = releaseWorkflow();
+    $step = substr($workflow, strpos($workflow, 'name: Sign, notarise and staple the DMG'));
+
+    expect($step)->toContain('--sign "Developer ID Application: $CSC_NAME" --keychain "$CSC_KEYCHAIN"')
+        ->and(substr_count($workflow, 'security create-keychain'))->toBe(1);
+});
+
+it('fails when the build makes no DMG, zip or latest-mac.yml', function () {
+    $workflow = releaseWorkflow();
+    $step = substr($workflow, strpos($workflow, 'name: List the build'), 500);
+
+    expect($step)->toContain("for pattern in '*.dmg' '*.zip' 'latest-mac.yml'; do")
+        ->toContain('exit 1');
+});
+
+it('builds on a fixed macOS image', function () {
+    expect(releaseWorkflow())->toContain('runs-on: macos-15')
+        ->not->toContain('runs-on: macos-latest');
 });
 
 it('runs every stapler call of the workflow through the retry script', function () {
