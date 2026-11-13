@@ -1191,3 +1191,12 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the app has no About item, because it lives in the menu bar. Get Info in Finder shows the name, the version, the copyright and the icon.
 - Reason: approved in the M9b brief, from the electron-updater code (`GitHubProvider.getLatestVersion`). The first rc to rc update in M9b confirms it.
 - Replaces: none
+
+## 2026-11-13: The workflow makes the signing keychain
+
+- Milestone: M9b
+- Decision: a workflow step makes a temporary keychain with a random password, imports the `.p12` from `CSC_LINK` into it, and passes it to electron-builder with `CSC_KEYCHAIN` and `CSC_NAME`. The build step gets no `CSC_LINK`, so electron-builder does not import the certificate itself. The DMG step signs from the same keychain.
+- Decision: the step that lists the build fails when there is no DMG, zip or `latest-mac.yml`. `native:build` exits 0 even when electron-builder fails.
+- Decision: the build job runs on `macos-15`, not `macos-latest`.
+- Reason: the first `v1.0.0-rc.1` run failed. electron-builder 26.8.1 gives the `.p12` password where its keychain password goes (`set-key-partition-list -k`), and macOS refuses it. The build went on with no signed app and no DMG, and the DMG step failed. A fixed runner image cannot change a release without a commit.
+- Replaces: the temporary keychain of the DMG step in "The signed app and the signed DMG are stapled" (2026-11-05)
