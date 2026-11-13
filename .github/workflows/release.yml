@@ -65,7 +65,8 @@ jobs:
   build:
     name: Build for arm64
     needs: test
-    runs-on: macos-latest
+    # A fixed image, so a new macos-latest cannot change a release without a commit.
+    runs-on: macos-15
     timeout-minutes: 90
     # The signing values live in the environment "release", which waits for the maintainer's approval.
     # A manual run uses no environment, so it has no signing values and builds unsigned.
@@ -137,14 +138,42 @@ jobs:
           (umask 077 && printf '%s' "$APPLE_API_KEY_BASE64" | base64 --decode > "$key")
           echo "APPLE_API_KEY_PATH=$key" >> "$GITHUB_ENV"
 
-      # electron-builder signs the app with CSC_LINK, notarises it with the API key and staples it,
+      # A keychain that lives only for this job, with the Developer ID certificate. The build and the DMG step sign from it.
+      # electron-builder 26.8.1 can import CSC_LINK itself, but it gives the .p12 password where the keychain password goes, and macOS refuses it.
+      - name: Import the signing certificate
+        if: github.event_name == 'push'
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          keychain_password="$(openssl rand -hex 24)"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          (umask 077 && printf '%s' "$CSC_LINK" | base64 --decode > "$RUNNER_TEMP/developer-id.p12")
+          security import "$RUNNER_TEMP/developer-id.p12" -k "$keychain" -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          rm -f "$RUNNER_TEMP/developer-id.p12"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain" > /dev/null
+          existing=()
+          while IFS= read -r line; do existing+=("$(sed -e 's/^ *"//' -e 's/"$//' <<< "$line")"); done < <(security list-keychains -d user)
+          security list-keychains -d user -s "$keychain" "${existing[@]}"
+          identity="$(security find-identity -v -p codesigning "$keychain" | sed -n 's/.*"Developer ID Application: \(.*\)"$/\1/p' | head -n 1)"
+          if [ -z "$identity" ]; then
+            echo "::error::CSC_LINK has no Developer ID Application certificate."
+            exit 1
+          fi
+          echo "Signing as: Developer ID Application: $identity"
+          echo "CSC_KEYCHAIN=$keychain" >> "$GITHUB_ENV"
+          echo "CSC_NAME=$identity" >> "$GITHUB_ENV"
+
+      # electron-builder signs the app from that keychain (CSC_KEYCHAIN, CSC_NAME), notarises it with the API key and staples it,
       # before it makes the zip and the DMG. NativePHP's own notarisation needs an Apple ID, so it skips.
       - name: Build, sign and notarise
         if: github.event_name == 'push'
         env:
           NATIVEPHP_UPDATER_ENABLED: 'true'
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
           APPLE_API_KEY: ${{ env.APPLE_API_KEY_PATH }}
           APPLE_API_KEY_ID: ${{ vars.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ vars.APPLE_API_ISSUER }}
@@ -157,32 +186,29 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: php artisan native:build mac arm64 --no-interaction
 
+      # native:build exits 0 even when electron-builder fails, so check that the files are there.
       - name: List the build
-        run: ls -la nativephp/electron/dist
+        run: |
+          ls -la nativephp/electron/dist
+          for pattern in '*.dmg' '*.zip' 'latest-mac.yml'; do
+            if ! compgen -G "nativephp/electron/dist/$pattern" > /dev/null; then
+              echo "::error::The build made no $pattern. See the log of the build step."
+              exit 1
+            fi
+          done
 
       # electron-builder does not sign the DMG. Sign it with the same certificate, notarise it and staple it,
       # so the first open works with no network. The DMG blockmap no longer matches, and the updater uses only the zip.
       - name: Sign, notarise and staple the DMG
         if: github.event_name == 'push'
         env:
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
           APPLE_API_KEY_ID: ${{ vars.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ vars.APPLE_API_ISSUER }}
         run: |
           set -euo pipefail
-          keychain="$RUNNER_TEMP/dmg-signing.keychain-db"
-          keychain_password="$(openssl rand -hex 24)"
-          security create-keychain -p "$keychain_password" "$keychain"
-          security set-keychain-settings -lut 3600 "$keychain"
-          security unlock-keychain -p "$keychain_password" "$keychain"
-          (umask 077 && printf '%s' "$CSC_LINK" | base64 --decode > "$RUNNER_TEMP/developer-id.p12")
-          security import "$RUNNER_TEMP/developer-id.p12" -k "$keychain" -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
-          rm -f "$RUNNER_TEMP/developer-id.p12"
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain" > /dev/null
           for dmg in nativephp/electron/dist/*.dmg; do
             echo "Signing $dmg"
-            codesign --force --timestamp --sign "Developer ID Application" --keychain "$keychain" "$dmg"
+            codesign --force --timestamp --sign "Developer ID Application: $CSC_NAME" --keychain "$CSC_KEYCHAIN" "$dmg"
             result="$(xcrun notarytool submit "$dmg" --key "$APPLE_API_KEY_PATH" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_API_ISSUER" --wait --output-format json)" || true
             echo "$result"
             if [ "$(jq -r .status <<< "$result" 2> /dev/null)" != "Accepted" ]; then
@@ -216,7 +242,7 @@ jobs:
         if: always()
         run: |
           rm -f "$RUNNER_TEMP/notary-key.p8" "$RUNNER_TEMP/developer-id.p12"
-          security delete-keychain "$RUNNER_TEMP/dmg-signing.keychain-db" 2> /dev/null || true
+          security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2> /dev/null || true
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
