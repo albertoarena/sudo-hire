@@ -14,6 +14,7 @@ let stored: Settings;
 let preset: string | null;
 let refuse: string | null;
 let scans: FirstScan[];
+let notificationStatus: number;
 
 const countries = [
     { code: 'DE', name: 'Germany' },
@@ -51,6 +52,7 @@ function fakeServer(): void {
             if (path.startsWith('/api/stamp-preview')) return json({ jobs: [] });
             if (path === '/api/first-scan' && method === 'POST') return json(scans.length > 1 ? scans.shift() : scans[0], 202);
             if (path === '/api/first-scan') return json(scans.length > 1 ? scans.shift() : scans[0]);
+            if (path === '/api/app/test-notification') return new Response(null, { status: notificationStatus });
 
             return new Response(null, { status: 204 });
         }),
@@ -81,6 +83,7 @@ beforeEach(() => {
     preset = 'IT';
     refuse = null;
     scans = [scan([['ats', 'waiting'], ['larajobs', 'waiting']])];
+    notificationStatus = 204;
     fakeServer();
 });
 
@@ -208,6 +211,37 @@ describe('FirstRun', () => {
         const polls = calls.filter((call) => call.path === '/api/first-scan').length;
         await vi.advanceTimersByTimeAsync(5000);
         expect(calls.filter((call) => call.path === '/api/first-scan')).toHaveLength(polls);
+    });
+
+    it('sends a test notification from the last screen, so macOS asks for permission', async () => {
+        const wrapper = await mountFirstRun();
+        await next(wrapper);
+        await next(wrapper);
+        await next(wrapper);
+
+        const button = wrapper.findAll('.fr-notify .btn').find((item) => item.text() === 'Send a test notification');
+        expect(wrapper.find('.fr-notify h2').text()).toBe('Notifications');
+        expect(wrapper.find('.fr-notify p').text()).toContain('choose Allow');
+
+        await button!.trigger('click');
+        await flushPromises();
+
+        expect(calls.at(-1)).toEqual({ method: 'POST', path: '/api/app/test-notification', body: undefined });
+        expect(wrapper.find('.fr-notify .hint').text()).toBe('Sent. If no notification shows, open System Settings, Notifications, Sudo Hire, and allow notifications.');
+    });
+
+    it('says where to allow notifications when the test notification fails', async () => {
+        notificationStatus = 502;
+        const wrapper = await mountFirstRun();
+        await next(wrapper);
+        await next(wrapper);
+        await next(wrapper);
+
+        await wrapper.find('.fr-notify .btn').trigger('click');
+        await flushPromises();
+
+        expect(wrapper.find('.fr-notify .hint').text()).toBe('Sudo Hire could not send it. Open System Settings, Notifications, Sudo Hire, and allow notifications.');
+        expect(wrapper.find('.settings-stopped').exists()).toBe(false);
     });
 
     it('opens the list from the last screen', async () => {

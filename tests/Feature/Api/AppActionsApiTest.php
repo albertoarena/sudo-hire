@@ -6,7 +6,13 @@ use Illuminate\Support\Facades\Http;
 beforeEach(function () {
     // The windows that NativePHP says are open.
     $this->openWindows = [];
-    Http::fake(['*window/all' => fn () => Http::response($this->openWindows), '*' => Http::response()]);
+    // What the internal API answers to a notification.
+    $this->notificationResponse = fn () => Http::response(['reference' => 'sudo-hire-test']);
+    Http::fake([
+        '*window/all' => fn () => Http::response($this->openWindows),
+        '*/notification' => fn () => ($this->notificationResponse)(),
+        '*' => Http::response(),
+    ]);
 });
 
 it('opens a link in the default browser', function (string $url) {
@@ -84,6 +90,24 @@ it('opens the menu bar list and closes the first run', function () {
     Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'window/close') && $request['id'] === 'first-run');
     Http::assertSent(fn (Request $request) => str_ends_with($request->url(), 'menu-bar/show'));
 });
+
+it('sends a test notification', function () {
+    $this->postJson('/api/app/test-notification')->assertNoContent();
+
+    Http::assertSent(fn (Request $request) => str_ends_with($request->url(), '/notification')
+        && $request['title'] === 'Sudo Hire'
+        && $request['body'] === 'Notifications work. Sudo Hire sends one summary when new jobs match.'
+        && $request['reference'] === 'sudo-hire-test');
+});
+
+it('answers 502 when the test notification does not show', function (Closure $response) {
+    $this->notificationResponse = $response;
+
+    $this->postJson('/api/app/test-notification')->assertStatus(502);
+})->with([
+    'refused' => [fn () => Http::response(['error' => 'Unauthorized'], 403)],
+    'no answer' => [fn () => Http::failedConnection('Connection refused')],
+]);
 
 it('quits the app', function () {
     $this->postJson('/api/app/quit')->assertNoContent();

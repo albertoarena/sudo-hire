@@ -10,9 +10,11 @@ use Native\Desktop\App;
 use Native\Desktop\Client\Client;
 use Native\Desktop\Clipboard;
 use Native\Desktop\MenuBar\MenuBarManager;
+use Native\Desktop\Notification;
 use Native\Desktop\Shell;
 use Native\Desktop\Windows\Window;
 use Native\Desktop\Windows\WindowManager;
+use Throwable;
 
 /**
  * POST /api/app/*: the app actions of the menu bar list, the settings window and the first run. The web view
@@ -21,6 +23,10 @@ use Native\Desktop\Windows\WindowManager;
  */
 final class AppActionController
 {
+    public const string TEST_NOTIFICATION = 'Notifications work. Sudo Hire sends one summary when new jobs match.';
+
+    public const string TEST_REFERENCE = 'sudo-hire-test';
+
     /** The settings window title for each pane (DESIGN.md "Settings window"). */
     public const array PANE_TITLES = [
         'where' => 'Where you work',
@@ -80,6 +86,29 @@ final class AppActionController
         $menuBar->show();
 
         return response()->noContent();
+    }
+
+    /**
+     * "Send a test notification" on the last screen of the first run. The first notification makes macOS ask
+     * if Sudo Hire can show notifications, so the user sees that question while the first run is open.
+     * 502 when the internal API does not show it.
+     */
+    public function testNotification(Notification $notification): Response
+    {
+        try {
+            $notification
+                ->title('Sudo Hire')
+                ->message(self::TEST_NOTIFICATION)
+                ->reference(self::TEST_REFERENCE)
+                ->show();
+        } catch (Throwable $error) {
+            report($error);
+
+            return response()->noContent(502);
+        }
+
+        // The internal API gives the reference back only when it shows the notification.
+        return response()->noContent($notification->reference === self::TEST_REFERENCE ? 204 : 502);
     }
 
     public function quit(App $app): Response
