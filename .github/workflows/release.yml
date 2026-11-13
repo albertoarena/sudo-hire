@@ -238,6 +238,42 @@ jobs:
             hdiutil detach "$mount" > /dev/null
           done
 
+      # NativePHP runs artisan optimize each time the app starts. Start a copy of the built app once and check
+      # that it writes its cache to Application Support and leaves the signed bundle as it was.
+      - name: Start the app once and check that it does not change its bundle
+        run: |
+          set -euo pipefail
+          copy="$RUNNER_TEMP/first-start"
+          mkdir -p "$copy"
+          ditto "nativephp/electron/dist/mac-arm64/Sudo Hire.app" "$copy/Sudo Hire.app"
+          executable="$(/usr/libexec/PlistBuddy -c 'Print CFBundleExecutable' "$copy/Sudo Hire.app/Contents/Info.plist")"
+          cache="$HOME/Library/Application Support/sudo-hire/bootstrap/cache/config.php"
+          rm -f "$cache"
+          "$copy/Sudo Hire.app/Contents/MacOS/$executable" > "$RUNNER_TEMP/first-start.log" 2>&1 &
+          pid=$!
+          for _ in $(seq 1 120); do
+            [ -f "$cache" ] && break
+            sleep 1
+          done
+          sleep 5
+          kill "$pid" 2> /dev/null || true
+          sleep 5
+          pkill -f "$copy/Sudo Hire.app" 2> /dev/null || true
+          if [ ! -f "$cache" ]; then
+            tail -n 50 "$RUNNER_TEMP/first-start.log"
+            echo "::error::The app did not write its config cache to Application Support."
+            exit 1
+          fi
+          added="$(find "$copy/Sudo Hire.app/Contents/Resources/build/app/bootstrap/cache" -type f \( -name config.php -o -name routes-v7.php -o -name events.php \))"
+          if [ -n "$added" ]; then
+            echo "$added"
+            echo "::error::The app wrote its cache into its own bundle."
+            exit 1
+          fi
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            codesign --verify --deep --strict --verbose=2 "$copy/Sudo Hire.app"
+          fi
+
       - name: Remove the key and the keychain
         if: always()
         run: |

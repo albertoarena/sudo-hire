@@ -151,6 +151,18 @@ it('fails when the build makes no DMG, zip or latest-mac.yml', function () {
         ->toContain('exit 1');
 });
 
+it('starts the app once and fails when it changes its own bundle', function () {
+    $workflow = releaseWorkflow();
+    $start = strpos($workflow, 'name: Start the app once and check that it does not change its bundle');
+    $step = substr($workflow, $start, strpos($workflow, 'name: Remove the key and the keychain') - $start);
+
+    expect($start)->toBeGreaterThan(strpos($workflow, 'name: Check the signature, Gatekeeper and the notarisation ticket'))
+        ->and($step)->not->toContain('if: github.event_name')
+        ->toContain('Application Support/sudo-hire/bootstrap/cache/config.php')
+        ->toContain('-name config.php -o -name routes-v7.php -o -name events.php')
+        ->toContain('codesign --verify --deep --strict --verbose=2 "$copy/Sudo Hire.app"');
+});
+
 it('builds on a fixed macOS image', function () {
     expect(releaseWorkflow())->toContain('runs-on: macos-15')
         ->not->toContain('runs-on: macos-latest');
