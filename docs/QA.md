@@ -524,7 +524,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Turn off Wi-Fi. Open the DMG, drag Sudo Hire to Applications, and start it.
   3. Turn on Wi-Fi. In Terminal: `spctl -a -vv /Applications/Sudo\ Hire.app` and `spctl -a -vv -t open --context context:primary-signature ~/Downloads/sudo-hire-*-arm64.dmg`.
 - Expected: in step 2 the DMG opens and the app starts with no warning that it cannot be checked or is from an unknown developer. macOS can ask once to open an app downloaded from the internet. Both commands in step 3 say "accepted" and "source=Notarized Developer ID".
-- Result: failed 2026-11-13 (v1.0.0-rc.1: steps 1 and 2 passed, with only the question about an app from the internet. In step 3 `spctl` on the app gave "a sealed resource is missing or invalid": at its first start the app wrote config.php, routes-v7.php and events.php into bootstrap/cache inside its bundle. See DECISIONS "The bootstrap cache stays outside the signed app". The DMG command was not run.)
+- Result: passed 2026-11-13, on `v1.0.0-rc.1` built from 1f1e12e: the DMG from the draft had the quarantine flag (Chrome), the app opened with no network and only the question about an app from the internet, and after it ran, both commands said "accepted" and "source=Notarized Developer ID". The bundle cache had only packages.php and services.php. Before that: failed 2026-11-13 on the first `v1.0.0-rc.1` build. In step 3 `spctl` on the app gave "a sealed resource is missing or invalid": at its first start the app wrote config.php, routes-v7.php and events.php into bootstrap/cache inside its bundle. See DECISIONS "The bootstrap cache stays outside the signed app".
 
 ## M9b: The signed app sends only the requests in PRIVACY.md
 
@@ -549,7 +549,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Quit Sudo Hire. Start it again.
   4. In Finder, open Get Info on Sudo Hire in Applications.
 - Expected: the notification in step 2 names the new version. After step 3 the app starts with no warning. Get Info shows the new version.
-- Result: not run
+- Result: passed 2026-11-13, from `v1.0.0-rc.1` to `v1.0.0-rc.2`, both published as pre-releases. After a restart the app downloaded rc.2 and staged it. After Quit, ShipIt logged "Installation completed successfully", the app started with no warning, Get Info and the Info.plist showed 1.0.0-rc.2, and `spctl` said "accepted". The notification of step 2 did not show: notifications for Sudo Hire were off in System Settings, because macOS asked with that first notification while nobody looked. The app had recorded the notice as shown. See DECISIONS "The first run asks macOS for notifications".
 
 ## M9b: Every link of the app opens a live page
 
@@ -561,6 +561,18 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Open Settings, Troubleshooting and press "Report a problem".
   3. Open the releases page from the README.
 - Expected: step 1 opens https://sudohire.dev/privacy/. Step 2 opens a new issue form on the public repository, then https://sudohire.dev/help/. These are the three addresses in `resources/js/shared/links.ts`. Each page loads with no error.
+- Result: not run
+
+## M9b: The first run asks macOS for notifications
+
+- Added: 2026-11-13, branch fix/first-run-notifications
+- Why manual: only macOS shows its question about notifications, and only a real notification shows on screen.
+- Setup: a release installed from its DMG, with no data folder in Application Support, so the first run opens. Best on a Mac user account where Sudo Hire never sent a notification. On a Mac where it did, macOS remembers the answer and does not ask again.
+- Steps:
+  1. Go through the first run to "First scan".
+  2. Press Send a test notification.
+  3. If macOS asks if Sudo Hire can send notifications, choose Allow. If it does not ask, open System Settings, Notifications, Sudo Hire, turn on Allow notifications, and press the button again.
+- Expected: after step 2 the hint says where to allow notifications. With notifications allowed, the notification "Notifications work. Sudo Hire sends one summary when new jobs match." shows. System Settings, Notifications lists Sudo Hire with notifications on.
 - Result: not run
 
 ## M9b: Get Info shows the name, the version and the copyright
