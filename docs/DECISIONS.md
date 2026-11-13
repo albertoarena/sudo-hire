@@ -1200,3 +1200,10 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the build job runs on `macos-15`, not `macos-latest`.
 - Reason: the first `v1.0.0-rc.1` run failed. electron-builder 26.8.1 gives the `.p12` password where its keychain password goes (`set-key-partition-list -k`), and macOS refuses it. The build went on with no signed app and no DMG, and the DMG step failed. A fixed runner image cannot change a release without a commit.
 - Replaces: the temporary keychain of the DMG step in "The signed app and the signed DMG are stapled" (2026-11-05)
+
+## 2026-11-13: The key ID and the issuer ID are secrets
+
+- Milestone: M9b
+- Decision: `APPLE_API_KEY_ID` and `APPLE_API_ISSUER` are secrets in the environment `release`, not variables.
+- Reason: approved by Alberto (2026-11-13). The repository is public, so its workflow logs are public too. GitHub masks secrets in a log, but not variables. The two IDs cannot notarise without the `.p8`, but they do not need to be public.
+- Replaces: the variables `APPLE_API_KEY_ID` and `APPLE_API_ISSUER` in "Notarisation with an App Store Connect API key" (2026-11-05)

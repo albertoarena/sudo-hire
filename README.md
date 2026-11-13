@@ -155,11 +155,11 @@ For the maintainer. The workflow `.github/workflows/release.yml` builds, signs a
 4. Install the draft DMG on a Mac with Apple silicon. Run the checks in [docs/QA.md](docs/QA.md).
 5. Write the release notes in the draft, then publish it. The updater sees only published releases.
 
-The environment `release` holds three secrets and two variables:
+The environment `release` holds five secrets:
 
 - `CSC_LINK` and `CSC_KEY_PASSWORD`: the Developer ID Application certificate as a base64 `.p12` file, and its password.
 - `APPLE_API_KEY`: the App Store Connect API key (`.p8`) as base64, for notarisation.
-- The variables `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`: the key ID and the issuer ID of that key.
+- `APPLE_API_KEY_ID` and `APPLE_API_ISSUER`: the key ID and the issuer ID of that key.
 
 To test the build without the signing values, run the workflow on `main` with "Run workflow". It builds an unsigned app and keeps the DMG as a workflow artifact. It makes no release.
 
