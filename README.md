@@ -4,11 +4,7 @@ A macOS menu bar app for developers. It fetches new job posts from company caree
 
 The main problem it solves: "remote" often does not mean "remote from anywhere". Sudo Hire checks where you can work from, so a developer in Italy does not see a job that is "Remote, US only".
 
-## Status
-
-Early development. Not ready to use yet.
-
-## Features (planned for v1)
+## Features
 
 - Reads jobs from company career pages (Greenhouse, Lever, Ashby, Personio) and from job boards (LaraJobs, Jobicy, Remotive, Himalayas, We Work Remotely).
 - Filters by country eligibility, work mode, salary, day rate, contract type, seniority, keywords and timezone.
