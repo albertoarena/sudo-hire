@@ -1100,7 +1100,7 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the app checks when it starts. NativePHP does this check. `hire:check-updates` runs every hour in the schedule and checks again only when the last check is 24 hours old. The start of the app counts as a check. So GitHub gets at most one check a day, plus one for each start.
 - Decision: the updater downloads a new version in the background. It installs it when the user quits the app. It never restarts the app and never installs while the app runs.
 - Decision: when a version is downloaded, the app shows a native notification once for each version: "Sudo Hire 1.1.0 is ready. It installs when you quit Sudo Hire." If the notification fails, the next download event tries again.
-- Decision: the update check at the start also shows the notification of Electron when the download ends. So the first start after a new release can show two notices. This comes from NativePHP and is not changed here.
+- Decision: the update check at the start also shows the notification of Electron when the download ends. So the first start after a new release can show two notices. This comes from NativePHP and is not changed here. In the rc.2 to rc.3 update only the notice of Electron showed, with the app name "sudo-hire". The notice of the app was created and recorded as shown, and did not appear. The user still learns of the update, so v1.0.0 ships with this. A single notice is in `docs/ROADMAP.md`.
 - Reason: approved in the M9 brief. The user decides when to quit, so the user decides when the update installs.
 - Replaces: none
 
