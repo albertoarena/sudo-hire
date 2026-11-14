@@ -550,6 +550,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. In Finder, open Get Info on Sudo Hire in Applications.
 - Expected: the notification in step 2 names the new version. After step 3 the app starts with no warning. Get Info shows the new version.
 - Result: passed 2026-11-13, from `v1.0.0-rc.1` to `v1.0.0-rc.2`, both published as pre-releases. After a restart the app downloaded rc.2 and staged it. After Quit, ShipIt logged "Installation completed successfully", the app started with no warning, Get Info and the Info.plist showed 1.0.0-rc.2, and `spctl` said "accepted". The notification of step 2 did not show: notifications for Sudo Hire were off in System Settings, because macOS asked with that first notification while nobody looked. The app had recorded the notice as shown. See DECISIONS "The first run asks macOS for notifications".
+- Result: passed 2026-11-14, from `v1.0.0-rc.2` to `v1.0.0-rc.3`, both published as pre-releases, with notifications on. After a restart the app downloaded rc.3 and staged it. The Electron notice "A new update is ready to install" showed. The notice of step 2 did not show, although the app created it and recorded it as shown. See DECISIONS "The updater". The first Quit was followed by a start 4 seconds later: ShipIt logged "App Still Running Error", kept rc.2 and staged rc.3 again. After a second Quit and a wait, ShipIt logged "Installation completed successfully", the Info.plist showed 1.0.0-rc.3, `codesign --verify --deep --strict` passed and `spctl` said "accepted". After the next start, bootstrap/cache in the bundle had only packages.php and services.php, and the signature still passed.
 
 ## M9b: Every link of the app opens a live page
 
@@ -573,7 +574,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Press Send a test notification.
   3. If macOS asks if Sudo Hire can send notifications, choose Allow. If it does not ask, open System Settings, Notifications, Sudo Hire, turn on Allow notifications, and press the button again.
 - Expected: after step 2 the hint says where to allow notifications. With notifications allowed, the notification "Notifications work. Sudo Hire sends one summary when new jobs match." shows. System Settings, Notifications lists Sudo Hire with notifications on.
-- Result: not run
+- Result: passed 2026-11-14, on `v1.0.0-rc.3` installed by the updater, with the data folder moved aside. Step 2 showed the notification "Notifications work. Sudo Hire sends one summary when new jobs match." macOS did not ask: on this Mac it had asked before, and notifications for Sudo Hire were already on.
 
 ## M9b: Get Info shows the name, the version and the copyright
 
@@ -583,4 +584,4 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Steps:
   1. In Finder, select Sudo Hire in Applications and open Get Info.
 - Expected: the name "Sudo Hire", the version of the tag with no `v` (for example 1.0.0-rc.1), "Copyright (c) 2026 Alberto Arena. MIT license.", and the app icon.
-- Result: not run
+- Result: passed 2026-11-14, on `v1.0.0-rc.3`: "Sudo Hire", version 1.0.0-rc.3, "Copyright (c) 2026 Alberto Arena. MIT license." The icon was not checked.
