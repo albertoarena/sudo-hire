@@ -13,6 +13,7 @@ return [
     // Salary fields
     'LaraJobs dollars with decimals' => ['larajobs/feed.xml', '$160,000.00 - $180,000.00', null, 160000.0, 180000.0, 'USD', 'unknown'],
     'LaraJobs pounds' => ['larajobs/feed.xml', '£70,000 - £90,000', null, 70000.0, 90000.0, 'GBP', 'unknown'],
+    'LaraJobs code and symbol on both sides' => ['larajobs/feed-code-and-symbol.xml', 'USD$134,450.00 - USD $167,258.30', null, 134450.0, 167258.3, 'USD', 'unknown'],
     'LaraJobs empty salary' => ['larajobs/feed.xml', '', null, null],
     'Remotive k range' => ['remotive/remote-jobs.json', '$170k - $200k', null, 170000.0, 200000.0, 'USD', 'unknown'],
     'Remotive hourly range' => ['remotive/remote-jobs-contract.json', '$50-$75 /hour', null, 50.0, 75.0, 'USD', 'hour'],

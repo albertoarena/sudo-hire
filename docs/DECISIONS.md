@@ -1224,3 +1224,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the action answers 204 when the internal API shows the notification, and 502 when it does not. The first run then says where to allow notifications in System Settings. The first run stays four screens.
 - Reason: approved by Alberto (2026-11-13), before v1. In the `v1.0.0-rc.1` check, macOS asked with the first notification, the update notice, while nobody looked. The question went by, notifications stayed off, and the update notice did not show. Without notifications the summary, the main part of the app, never shows.
 - Replaces: none
+
+## 2026-11-14: A currency code before a symbol
+
+- Milestone: 1.0.1
+- Decision: the salary parser reads a code just before a symbol as part of the same amount: "USD$134,450.00 - USD $167,258.30" is 134,450 to 167,258.30 USD. The code and the symbol must agree, as in "$162,000 USD": "EUR $80,000" gives no salary.
+- Decision: "PHP" before a symbol is the language, not pesos: "Senior PHP $120k" is 120,000 USD.
+- Reason: in `v1.0.0` a LaraJobs salary with "USD $" before the second amount lost its maximum, so the list converted only the minimum ("≈ €122k"). Found by Alberto on 2026-11-14.
+- Replaces: none

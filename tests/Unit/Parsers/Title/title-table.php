@@ -40,6 +40,7 @@ return [
 
     'larajobs senior us only' => ['larajobs/feed.xml', 'Senior Full Stack Software Engineer (PHP/Laravel) - US Only', 'senior', 'unknown'],
     'larajobs senior' => ['larajobs/feed.xml', 'Senior Laravel Developer', 'senior', 'unknown'],
+    'larajobs product engineer' => ['larajobs/feed-code-and-symbol.xml', 'Product Engineer (Laravel - Remote)', 'unknown', 'unknown'],
     'larajobs senior fullstack' => ['larajobs/feed.xml', 'Senior Fullstack PHP/Laravel Developer – Remote (Europe/Berlin Time Zone)', 'senior', 'unknown'],
 
     'jobicy junior permanent' => ['jobicy/remote-jobs-junior.json', 'Junior Accountant (Permanent work from home)', 'junior', 'unknown'],

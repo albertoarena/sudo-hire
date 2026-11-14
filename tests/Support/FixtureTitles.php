@@ -33,6 +33,7 @@ final class FixtureTitles
             'personio/positions.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('/workzag-jobs/position/name') ?: []),
             'personio/positions-empty.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('/workzag-jobs/position/name') ?: []),
             'larajobs/feed.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('//item/title') ?: []),
+            'larajobs/feed-code-and-symbol.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('//item/title') ?: []),
             'jobicy/remote-jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'jobTitle'),
             'jobicy/remote-jobs-junior.json' => fn ($file) => array_column($json($file)['jobs'], 'jobTitle'),
             'jobicy/jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'jobTitle'),

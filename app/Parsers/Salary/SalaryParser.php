@@ -148,7 +148,9 @@ final class SalaryParser
     {
         $codes = implode('|', self::CODES);
         $symbols = '(?<![A-Za-z])(?:AU|NZ|CA|US|HK|SG|A|C|S|R)\$|\$|€|£|¥|₹|₱';
-        $pattern = '/(?<pre>(?:'.$symbols.')|\b(?:'.$codes.')\s?)?'
+        // A code before a symbol belongs to the same amount: "USD $167,258.30".
+        $pattern = '/(?<lead>\b(?:'.$codes.')\s?(?='.$symbols.'))?'
+            .'(?<pre>(?:'.$symbols.')|\b(?:'.$codes.')\s?)?'
             .'(?<![\d.,\'’])(?<num>\d{1,3}(?:[.,\'’]\d{3})+(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?)(?![\d])'
             .'(?<k>\s?[kK]\b)?'
             .'(?<post>\s?(?:'.$codes.')\b)?/u';
@@ -176,10 +178,14 @@ final class SalaryParser
                 $pre = '';
             }
 
+            // "PHP" before a symbol is the language: "Senior PHP $120k".
+            $lead = trim((string) $match['lead'][0]);
+            $lead = $lead === 'PHP' ? '' : $lead;
+
             $tokens[] = [
                 'value' => $value,
                 'k' => $k,
-                'markers' => array_values(array_filter([$pre, trim((string) $match['post'][0])])),
+                'markers' => array_values(array_filter([$lead, $pre, trim((string) $match['post'][0])])),
                 'start' => $match[0][1],
                 'end' => $match[0][1] + strlen($match[0][0]),
             ];
