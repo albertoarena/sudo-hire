@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+     xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+     xmlns:job="https://larajobs.com"
+>
+
+    <channel>
+        <title>LaraJobs</title>
+        <atom:link href="https://larajobs.com" rel="self" type="application/rss+xml" />
+        <link>https://larajobs.com</link>
+        <description>Your Laravel Jobs source.</description>
+        <lastBuildDate>Fri, 13 Nov 2026 19:00:11 +0000</lastBuildDate>
+        <language>en-US</language>
+        <sy:updatePeriod>hourly</sy:updatePeriod>
+        <sy:updateFrequency>1</sy:updateFrequency>
+        <generator>https://larajobs.com</generator>
+
+                    <item>
+                <title>Product Engineer (Laravel - Remote)</title>
+                <link>https://larajobs.com/job/3955</link>
+                <pubDate>Tue, 10 Nov 2026 17:34:54 +0000</pubDate>
+                <dc:creator><![CDATA[Hospitable]]></dc:creator>
+                <category><![CDATA[Job]]></category>
+                <job:location><![CDATA[Remote]]></job:location>
+                <job:job_type><![CDATA[FULL_TIME]]></job:job_type>
+                <job:salary><![CDATA[USD$134,450.00 - USD $167,258.30]]></job:salary>
+                <job:company><![CDATA[Hospitable]]></job:company>
+                <job:company_logo>https://larajobs.com/logos/TRyBA5X4xoEheyb3oiAownI58GWO8NDnAwXeOjRC.png</job:company_logo>
+                <job:tags><![CDATA[Backend,Laravel,MySQL,PHP,Senior]]></job:tags>
+                <guid isPermaLink="false">https://larajobs.com/job/3955</guid>
+                <description><![CDATA[
+
+                    ]]></description>
+                <content:encoded><![CDATA[
+
+                    ]]></content:encoded>
+            </item>
+    </channel>
+</rss>

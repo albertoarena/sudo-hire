@@ -57,6 +57,16 @@ it('reads the examples of the requirements (not from a fixture)', function (stri
     'dollars per hour' => ['$60/hour', 60.0, null, 'USD', 'hour'],
 ]);
 
+it('reads a code with a space before a symbol', function (string $text, ?float $min, ?float $max, ?string $currency) {
+    expectSalary((new SalaryParser)->parse($text), $min, $max, $currency, $currency === null ? null : 'unknown', $text);
+})->with([
+    'code and dollar, one amount' => ['USD $90,000', 90000.0, null, 'USD'],
+    'Canadian code and dollar' => ['CAD $80,000 - CAD $95,000', 80000.0, 95000.0, 'CAD'],
+    'code that does not fit the symbol' => ['EUR $80,000 - EUR $95,000', null, null, null],
+    'the language before dollars' => ['Senior PHP $120k', 120000.0, null, 'USD'],
+    'the language before a dollar range' => ['PHP $100k - $120k', 100000.0, 120000.0, 'USD'],
+]);
+
 it('keeps the input text as raw', function () {
     $text = '  OTE $25k - $35k  ';
 
