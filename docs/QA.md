@@ -525,6 +525,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Turn on Wi-Fi. In Terminal: `spctl -a -vv /Applications/Sudo\ Hire.app` and `spctl -a -vv -t open --context context:primary-signature ~/Downloads/sudo-hire-*-arm64.dmg`.
 - Expected: in step 2 the DMG opens and the app starts with no warning that it cannot be checked or is from an unknown developer. macOS can ask once to open an app downloaded from the internet. Both commands in step 3 say "accepted" and "source=Notarized Developer ID".
 - Result: passed 2026-11-13, on `v1.0.0-rc.1` built from 1f1e12e: the DMG from the draft had the quarantine flag (Chrome), the app opened with no network and only the question about an app from the internet, and after it ran, both commands said "accepted" and "source=Notarized Developer ID". The bundle cache had only packages.php and services.php. Before that: failed 2026-11-13 on the first `v1.0.0-rc.1` build. In step 3 `spctl` on the app gave "a sealed resource is missing or invalid": at its first start the app wrote config.php, routes-v7.php and events.php into bootstrap/cache inside its bundle. See DECISIONS "The bootstrap cache stays outside the signed app".
+- Result: passed 2026-11-14, on `v1.0.0`: downloaded from sudohire.dev with Chrome (quarantine flag set) and dragged over `v1.0.0-rc.3`. The app opened, the Info.plist showed 1.0.0, `codesign --verify --deep --strict` passed and `spctl` said "accepted" and "source=Notarized Developer ID". The data folder was kept. The rc.3 app did not offer 1.0.0, as DECISIONS "Release candidates and the updater" says.
 
 ## M9b: The signed app sends only the requests in PRIVACY.md
 
@@ -562,7 +563,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Open Settings, Troubleshooting and press "Report a problem".
   3. Open the releases page from the README.
 - Expected: step 1 opens https://sudohire.dev/privacy/. Step 2 opens a new issue form on the public repository, then https://sudohire.dev/help/. These are the three addresses in `resources/js/shared/links.ts`. Each page loads with no error.
-- Result: not run
+- Result: passed 2026-11-14, on `v1.0.0` installed from the DMG of sudohire.dev, with the site live since 12:43 Rome. Steps 1 and 2 opened the pages. The three addresses in `links.ts` and the releases page answer 200. With no GitHub sign-in, the issue form asks to sign in first.
 
 ## M9b: The first run asks macOS for notifications
 
