@@ -500,7 +500,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   3. Read the list of hosts that Sudo Hire and its helper processes connected to.
 - Expected: the hosts are only the job boards that are on, the ATS providers of the companies in the list, the ECB for the exchange rates, and GitHub (`github.com` and its download hosts, for example `objects.githubusercontent.com`) for the update check. There is no other host: no analytics, no crash report, no Electron host. Connections to 127.0.0.1 are the app talking to itself.
 - Note: a first try on 2026-11-03 used `nettop`, with the local unsigned build. It saw only expected hosts: the ECB, Jobicy, Himalayas and We Work Remotely, from the PHP process of the app. It saw no outside connection of the Electron processes. But `nettop` samples once a second and missed short connections: LaraJobs and Remotive were read and not seen, and the update check at the start was not seen. So it cannot show that there is no other host. M9b runs this check again on the signed build, with LuLu or Little Snitch, when the repository is public and the update check gets a real answer.
-- Result: not run
+- Result: not run on the unsigned build. The signed build passed the same check on 2026-11-15, see "M9b: The signed app sends only the requests in PRIVACY.md".
 
 ## M9a follow-up: A scheduled scan reads the ECB rates
 
@@ -537,7 +537,8 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   2. Wait for one scan that reads the sources, and for the update check at the start.
   3. Read the list of hosts that Sudo Hire and its helper processes connected to.
 - Expected: as in "M9a: The built app sends only the requests in PRIVACY.md": only the job boards that are on, the ATS providers of the companies in the list, the ECB, and GitHub for the update check. No other host.
-- Result: not run
+- Result: passed 2026-11-15, on `v1.0.1`, with LuLu set to ask about every new connection of a program not signed by Apple. Apple programs were allowed. The app runs only two of them, `defaults` and `sw_vers`, and neither connects. After a restart, the Electron helper connected to `github.com` and `release-assets.githubusercontent.com` for the update check. The bundled `php` connected to `www.ecb.europa.eu` and to the five job boards that are on: `larajobs.com`, `jobicy.com`, `remotive.com`, `himalayas.app` and `weworkremotely.com`. All connections used port 443. The main process connected to no outside host. The list had no companies, so no ATS provider was read. No other host asked. Every process that connected is signed with the Developer ID of the app.
+- Note: LuLu holds a connection while its alert waits, and the app gives up after 10 seconds. So the first scan under LuLu failed with "No answer" for every source, and a failed source waits its full interval. The five failed runs were deleted from `source_runs`, and the next scan read every source.
 
 ## M9b: The app updates to the next release
 
