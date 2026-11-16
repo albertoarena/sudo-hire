@@ -63,11 +63,11 @@ onMounted(loadHidden);
             <ChipField
                 :model-value="settings.keywordsInclude"
                 label="Add a keyword"
-                placeholder="Add a keyword"
+                placeholder="Type a keyword, press Enter"
                 describedby="include-hint"
                 @update:model-value="store.save('keywordsInclude', $event)"
             />
-            <span id="include-hint" class="hint">The notification groups jobs by these, in this order: "6 new jobs: 4 Laravel, 2 PHP".</span>
+            <span id="include-hint" class="hint">Press Enter after each keyword. The notification groups jobs by these, in this order: "6 new jobs: 4 Laravel, 2 PHP".</span>
             <FieldError id="keywordsInclude-error" :message="store.errors.keywordsInclude" />
         </div>
 
@@ -76,9 +76,11 @@ onMounted(loadHidden);
             <ChipField
                 :model-value="settings.keywordsExclude"
                 label="Add a keyword to exclude"
-                placeholder="Add a keyword"
+                placeholder="Type a keyword, press Enter"
+                describedby="exclude-hint"
                 @update:model-value="store.save('keywordsExclude', $event)"
             />
+            <span id="exclude-hint" class="hint">Press Enter after each keyword. Jobs that match any of these are left out.</span>
             <FieldError id="keywordsExclude-error" :message="store.errors.keywordsExclude" />
         </div>
 
