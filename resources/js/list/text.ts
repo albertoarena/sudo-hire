@@ -8,6 +8,13 @@ export function terms(row: Row): string {
     return [CONTRACT[row.terms.contractType], SENIORITY[row.terms.seniority]].filter(Boolean).join(', ');
 }
 
+/** 'Matched "php" in the tags from Remotive'. Only a tag names its source: the board adds tags, the job page may not show them. */
+export function matchText(match: NonNullable<Row['match']>): string {
+    const where = match.field === 'tags' ? `the tags from ${match.from}` : `the ${match.field}`;
+
+    return `Matched "${match.keyword}" in ${where}`;
+}
+
 /** "2 days ago", from the posted time. */
 export function age(postedAt: string, now: Date = new Date()): string {
     const minutes = Math.max(0, Math.floor((now.getTime() - new Date(postedAt).getTime()) / 60000));

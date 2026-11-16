@@ -260,6 +260,12 @@
         white-space: nowrap;
     }
 
+    .job .why {
+        clear: right;
+        font-size: 11px;
+        color: var(--ink-3);
+    }
+
     .job .pay {
         clear: right;
         font-size: 12px;

@@ -3,9 +3,11 @@
 namespace App\List;
 
 use App\Currency\CurrencyConverter;
+use App\Filters\KeywordFilter;
 use App\Models\Job;
 use App\Scan\SalaryText;
 use App\Scan\ScanMatch;
+use App\Schema\NormalisedJob;
 use App\Settings\Settings;
 
 /**
@@ -41,7 +43,21 @@ final class ListRow
             'applyUrl' => $match->applyUrl,
             'seen' => $job->seen_at !== null,
             'state' => $job->state?->value,
+            'match' => self::match($job, $normalised, $settings),
         ];
+    }
+
+    /**
+     * The include keyword the job matched, the field it matched and the source that gave
+     * that field: "from" is the stored job's source, which may not be the shown one.
+     *
+     * @return array{keyword: string, field: string, from: string}|null
+     */
+    private static function match(Job $job, NormalisedJob $normalised, Settings $settings): ?array
+    {
+        $match = KeywordFilter::includeMatch($normalised, $settings);
+
+        return $match === null ? null : [...$match, 'from' => self::name($job->attribution)];
     }
 
     /**

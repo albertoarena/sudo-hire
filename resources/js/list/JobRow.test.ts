@@ -17,6 +17,18 @@ describe('JobRow', () => {
         expect(wrapper.find('.stamp').attributes('aria-label')).toBe('IT Admitted');
     });
 
+    it('says where the include keyword matched, and names the source of a tag', () => {
+        const title = mount(JobRow, { props: { row: row({ match: { keyword: 'laravel', field: 'title', from: 'Himalayas' } }) } });
+        const tag = mount(JobRow, { props: { row: row({ match: { keyword: 'php', field: 'tags', from: 'Remotive' } }) } });
+        const description = mount(JobRow, { props: { row: row({ match: { keyword: 'php', field: 'description', from: 'Remotive' } }) } });
+        const none = mount(JobRow, { props: { row: row({ match: null }) } });
+
+        expect(title.find('.why').text()).toBe('Matched "laravel" in the title');
+        expect(tag.find('.why').text()).toBe('Matched "php" in the tags from Remotive');
+        expect(description.find('.why').text()).toBe('Matched "php" in the description');
+        expect(none.find('.why').exists()).toBe(false);
+    });
+
     it('shows the salary, the converted salary and the OTE badge', () => {
         const wrapper = mount(JobRow, {
             props: { row: row({ salary: { original: '$150k OTE', converted: '≈ €120k / year', unknown: false, ote: true } }) },

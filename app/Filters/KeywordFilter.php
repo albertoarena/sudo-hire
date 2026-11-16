@@ -34,6 +34,18 @@ final class KeywordFilter
      */
     public static function firstInclude(NormalisedJob $job, Settings $settings): ?string
     {
+        return self::firstMatch($job, $settings, $settings->keywordsInclude)['keyword'] ?? null;
+    }
+
+    /**
+     * The first include keyword, as firstInclude gives it, and the field it matched:
+     * "title", "tags" or "description", in that order. The list row shows it, so a
+     * job that matched only a tag the board added does not look like a wrong match.
+     *
+     * @return array{keyword: string, field: string}|null
+     */
+    public static function includeMatch(NormalisedJob $job, Settings $settings): ?array
+    {
         return self::firstMatch($job, $settings, $settings->keywordsInclude);
     }
 
@@ -47,21 +59,22 @@ final class KeywordFilter
 
     /**
      * @param  list<string>  $keywords
+     * @return array{keyword: string, field: string}|null
      */
-    private static function firstMatch(NormalisedJob $job, Settings $settings, array $keywords): ?string
+    private static function firstMatch(NormalisedJob $job, Settings $settings, array $keywords): ?array
     {
-        $texts = [$job->title, ...$job->tags];
+        $fields = [['title', $job->title], ...array_map(fn (string $tag) => ['tags', $tag], $job->tags)];
 
         if ($settings->matchDescription && $job->description !== null) {
-            $texts[] = $job->description;
+            $fields[] = ['description', $job->description];
         }
 
         foreach ($keywords as $keyword) {
             $pattern = '/(?<!'.self::WORD.')'.preg_quote($keyword, '/').'(?!'.self::WORD.')/iu';
 
-            foreach ($texts as $text) {
+            foreach ($fields as [$field, $text]) {
                 if (preg_match($pattern, $text) === 1) {
-                    return $keyword;
+                    return ['keyword' => $keyword, 'field' => $field];
                 }
             }
         }
