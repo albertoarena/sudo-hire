@@ -196,8 +196,8 @@ onBeforeUnmount(() => clearTimeout(timer));
 
             <template v-else-if="step === 2">
                 <h1 ref="heading" tabindex="-1">What do you look for?</h1>
-                <p>Keywords match job titles. The first ones also name the groups in the notification.</p>
-                <ChipField v-model="keywords" label="Add a keyword" placeholder="Add a keyword" />
+                <p>Type a keyword and press Enter to add it. Keywords match job titles and tags. The first ones also name the groups in the notification.</p>
+                <ChipField v-model="keywords" label="Add a keyword" placeholder="Type a keyword, press Enter" />
                 <div class="line" role="group" aria-label="Work mode">
                     <label v-for="[value, text] in MODES" :key="value" class="check">
                         <input type="checkbox" :checked="workModes.includes(value)" @change="setMode(value, ($event.target as HTMLInputElement).checked)" />{{ text }}
