@@ -18,6 +18,7 @@ export function row(overrides: Partial<Row> = {}): Row {
         applyUrl: 'https://example.com/jobs/7/apply',
         seen: false,
         state: null,
+        match: null,
         ...overrides,
     };
 }

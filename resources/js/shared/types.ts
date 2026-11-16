@@ -22,6 +22,7 @@ export interface Row {
     applyUrl: string;
     seen: boolean;
     state: JobState | null;
+    match: { keyword: string; field: 'title' | 'tags' | 'description'; from: string } | null;
 }
 
 export interface Counts {

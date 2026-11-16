@@ -96,3 +96,17 @@ it('gives the first include keyword in the description only when the setting is 
     'setting off' => [false, null],
     'setting on' => [true, 'sales'],
 ]);
+
+it('gives where the first include keyword matched, the title before the tags before the description', function (array $include, bool $matchDescription, ?array $match) {
+    $job = Make::job(['title' => BACKEND_TITLE, 'tags' => BACKEND_TAGS, 'description' => OTE_TEXT.' Engineer']);
+
+    expect(KeywordFilter::includeMatch($job, Make::settings(['keywordsInclude' => $include, 'matchDescription' => $matchDescription])))->toBe($match);
+})->with([
+    'no include keywords' => [[], true, null],
+    'no keyword matches' => [['rails'], true, null],
+    'in the title' => [['engineer'], true, ['keyword' => 'engineer', 'field' => 'title']],
+    'in a tag' => [['node.js'], true, ['keyword' => 'node.js', 'field' => 'tags']],
+    'in the description' => [['sales'], true, ['keyword' => 'sales', 'field' => 'description']],
+    'description off' => [['sales'], false, null],
+    'the first keyword in the settings wins over a better field' => [['sales', 'engineer'], true, ['keyword' => 'sales', 'field' => 'description']],
+]);

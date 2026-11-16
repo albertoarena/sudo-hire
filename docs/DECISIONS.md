@@ -1232,3 +1232,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: "PHP" before a symbol is the language, not pesos: "Senior PHP $120k" is 120,000 USD.
 - Reason: in `v1.0.0` a LaraJobs salary with "USD $" before the second amount lost its maximum, so the list converted only the minimum ("≈ €122k"). Found by Alberto on 2026-11-14.
 - Replaces: none
+
+## 2026-11-16: A row says where its include keyword matched
+
+- Milestone: post-v1
+- Decision: each list row has `match`: the first include keyword the job matches, in the order of the settings, the field it matched ("title", then "tags", then "description" when that setting is on) and `from`, the source of the stored job. It is null when the include list is empty or no keyword matches.
+- Decision: the row shows it under the salary line, as 'Matched "php" in the title'. Only a tag match names its source: 'Matched "php" in the tags from Remotive'.
+- Reason: approved by Alberto (2026-11-16). Some boards add tags for the company, not the job. A Remotive office assistant job passed the "php" keyword with a tag only, and its job page does not show the word, so the match looked wrong.
+- Replaces: none

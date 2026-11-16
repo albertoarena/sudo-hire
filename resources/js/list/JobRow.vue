@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import EntryStamp from '../shared/EntryStamp.vue';
 import Icon from '../shared/Icon.vue';
-import { age, terms } from './text';
+import { age, matchText, terms } from './text';
 import type { JobState, Row } from '../shared/types';
 
 const props = defineProps<{ row: Row; group?: boolean }>();
@@ -41,6 +41,7 @@ const termText = computed(() => terms(props.row));
                 <span class="terms">{{ termText }}</span>
             </template>
         </div>
+        <div v-if="row.match" class="why">{{ matchText(row.match) }}</div>
         <div class="acts">
             <button type="button" class="act" :aria-pressed="row.state === 'saved'" @click="emit('act', row, 'saved')">
                 <Icon :name="row.state === 'saved' ? 'saved' : 'save'" />{{ row.state === 'saved' ? 'Saved' : 'Save' }}

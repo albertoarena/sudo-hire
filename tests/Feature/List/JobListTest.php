@@ -164,7 +164,19 @@ it('gives every field of a row', function () {
         'applyUrl' => 'https://example.com/jobs/1/apply',
         'seen' => false,
         'state' => null,
+        'match' => null,
     ]);
+});
+
+it('says where the include keyword matched, and gives no match without include keywords', function () {
+    listSettings(['keywordsInclude' => ['php']]);
+    listJob('1', ['title' => 'Office Assistant', 'tags' => ['css', 'php'], 'attribution' => 'via Remotive']);
+
+    expect(jobList()['new'][0]['match'])->toBe(['keyword' => 'php', 'field' => 'tags', 'from' => 'Remotive']);
+
+    listSettings(['keywordsInclude' => []]);
+
+    expect(jobList()['new'][0]['match'])->toBeNull();
 });
 
 it('gives the "?" and OTE flags of the salary', function () {
