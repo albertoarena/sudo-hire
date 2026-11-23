@@ -24,6 +24,10 @@ return [
     'greenhouse engineering manager' => ['greenhouse/jobs.json', 'Engineering Manager - Git & Gitaly Operations', 'lead', 'unknown'],
     'greenhouse manager and mid-level' => ['greenhouse/twilio-levels.json', 'Product Manager L2 (mid-level)', 'mid', 'unknown'],
 
+    'workable no level' => ['workable/jobs.json', 'Database Migrations Engineer', 'unknown', 'unknown'],
+    'workable senior' => ['workable/jobs.json', 'Senior Site Reliability Engineer', 'senior', 'unknown'],
+    'workable support engineer with a region' => ['workable/jobs.json', 'Technical Support Engineer (APAC)', 'unknown', 'unknown'],
+
     'lever roman level' => ['lever/postings-salary.json', 'Android Engineer III', 'unknown', 'unknown'],
     'lever no level' => ['lever/postings-salary.json', 'AI Product Engineer', 'unknown', 'unknown'],
     'lever senior' => ['lever/postings.json', 'Senior Software Engineer - Enterprise AI', 'senior', 'unknown'],

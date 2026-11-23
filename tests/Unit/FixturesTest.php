@@ -24,7 +24,7 @@ function fixtureFiles(): array
 it('has a fixture folder for every v1 source', function (string $source) {
     expect(glob(FIXTURES_DIR."/{$source}/*"))->not->toBeEmpty();
 })->with([
-    'greenhouse', 'lever', 'ashby', 'personio',
+    'greenhouse', 'lever', 'ashby', 'personio', 'workable',
     'larajobs', 'jobicy', 'remotive', 'himalayas', 'weworkremotely',
 ]);
 

@@ -11,4 +11,5 @@ enum Ats: string
     case Lever = 'lever';
     case Ashby = 'ashby';
     case Personio = 'personio';
+    case Workable = 'workable';
 }

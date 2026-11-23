@@ -15,7 +15,7 @@ it('parses an entry in the form <ats>:<slug>', function () {
 
 it('accepts every supported ATS', function (string $ats) {
     expect(CompanyEntry::parse("{$ats}:acme")->ats->value)->toBe($ats);
-})->with(['greenhouse', 'lever', 'ashby', 'personio']);
+})->with(['greenhouse', 'lever', 'ashby', 'personio', 'workable']);
 
 it('ignores spaces and the case of the ATS name', function () {
     $entry = CompanyEntry::parse('  Lever:spotify ');

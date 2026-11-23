@@ -10,6 +10,7 @@
 return [
     'ashby eu after a dash' => ['ashby/job-board.json', 'Senior Software Engineer, Product Engineering - EU', ['eu'], []],
     'ashby apac after a dash' => ['ashby/job-board.json', 'Product Support Engineer - APAC', ['apac'], []],
+    'workable apac in brackets' => ['workable/jobs.json', 'Technical Support Engineer (APAC)', ['apac'], []],
     'larajobs us only' => ['larajobs/feed.xml', 'Senior Full Stack Software Engineer (PHP/Laravel) - US Only', [], ['US']],
     'himalayas europe and remote in brackets' => ['himalayas/jobs.json', 'Product Analyst - Pendo (Europe, Remote)', ['europe'], []],
 ];

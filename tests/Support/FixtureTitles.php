@@ -31,6 +31,7 @@ final class FixtureTitles
             'lever/postings-salary.json' => fn ($file) => array_column($json($file), 'text'),
             'ashby/job-board.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'personio/positions.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('/workzag-jobs/position/name') ?: []),
+            'workable/jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'personio/positions-empty.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('/workzag-jobs/position/name') ?: []),
             'larajobs/feed.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('//item/title') ?: []),
             'larajobs/feed-code-and-symbol.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('//item/title') ?: []),

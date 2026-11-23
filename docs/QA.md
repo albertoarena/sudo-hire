@@ -589,3 +589,16 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   1. In Finder, select Sudo Hire in Applications and open Get Info.
 - Expected: the name "Sudo Hire", the version of the tag with no `v` (for example 1.0.0-rc.1), "Copyright (c) 2026 Alberto Arena. MIT license.", and the app icon.
 - Result: passed 2026-11-14, on `v1.0.0-rc.3`: "Sudo Hire", version 1.0.0-rc.3, "Copyright (c) 2026 Alberto Arena. MIT license." The icon was not checked.
+
+## Post-v1: A Workable company in the settings window
+
+- Added: 2026-11-23, branch feat/workable-reader
+- Why manual: tests use a fixture only, and only the app shows the settings window and the list.
+- Setup: the branch checked out on a Mac, `composer setup`, then `composer native:dev`.
+- Steps:
+  1. Open Settings, Companies. Choose the provider Workable, enter the slug `laravel` and add the company.
+  2. Add a second Workable company with the slug `no-such-company-sudo-hire`.
+  3. Start a scan and open the list.
+  4. Open the link of one Workable job, then its apply link.
+- Expected: after step 3, the company "Laravel" shows a green dot and the time of the read, and the unknown company shows "No answer" (the stored error is HTTP 404). The list shows the Workable jobs that match the filters, with "via Laravel careers". Each link opens the job at `apply.workable.com`.
+- Result: passed 2026-11-23, on branch feat/workable-reader with `composer native:dev`: "Laravel" showed a green dot at 18:35 (7 jobs read), and the unknown company showed "No answer", with the error HTTP 404. With the country Italy, no Laravel job was in the list, because no job lists IT in `locations`. The eligibility rule for jobs with several countries changes after this check, so the list needs a new check then. The apply link of "Senior Site Reliability Engineer" opened the application form at `apply.workable.com/laravel/j/6C1E9F512C/apply`, with the job overview in the same page. Before the app run, the reader read `workable:laravel` with live data from the command line: 7 jobs, 0 skipped.

@@ -1240,3 +1240,40 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: the row shows it under the salary line, as 'Matched "php" in the title'. Only a tag match names its source: 'Matched "php" in the tags from Remotive'.
 - Reason: approved by Alberto (2026-11-16). Some boards add tags for the company, not the job. A Remotive office assistant job passed the "php" keyword with a tag only, and its job page does not show the word, so the match looked wrong.
 - Replaces: none
+
+## 2026-11-23: Workable reader
+
+- Milestone: post-v1
+- Decision: the ATS reader has a fifth reader, for Workable. An entry is `workable:<slug>`, where the slug is the account subdomain. The reader makes one request for each company, to `https://www.workable.com/api/accounts/<slug>?details=true`. The job schema and the `JobSource` interface are unchanged.
+- Decision: the endpoint answers with a redirect to `https://apply.workable.com/api/v1/widget/accounts/<slug>`. The reader uses the documented address and follows the redirect. An unknown slug gives HTTP 404.
+- Decision: `telecommuting` true gives `remote`. False gives `unknown`, because the response does not tell hybrid from on-site. Only a remote job gets an eligibility: the `countryCode` of each entry in `locations`. With no entry, the reader uses the `country` name.
+- Decision: the response has no salary field and no level field that maps to the seniority values. `salary` is `null`, and the seniority comes from the title.
+- Reason: Workable hosts the career pages of companies with Laravel jobs. The fixture is the career page of Laravel, read on 2026-11-23.
+- Replaces: none
+
+### Workable (`workable/jobs.json`, slug `laravel`)
+
+| Source field | Schema field | Rule |
+|---|---|---|
+| `shortcode` | `source_job_id` | `workable:<slug>:<shortcode>` |
+| `url` | `source_url` | unchanged |
+| `application_url` | `apply_url` | unchanged. Without it, `url` |
+| `title` | `title` | as is |
+| company list entry | `company` | as for Lever |
+| `description` | `description` | HTML to plain text |
+| `department`, `function` | `tags` | |
+| `telecommuting` | `work_mode` | `true` gives `remote`, else `unknown` |
+| `locations[].countryCode` | `eligibility` | ISO alpha-2, for remote jobs only. Without a list, the `country` name |
+| `city`, `state`, `country` | `office_location` | joined with commas, for jobs that are not remote |
+| `employment_type` | `contract_type` | "Full-time" gives `full_time`, "Part-time" `part_time`, "Contract" `contract`, other or empty `unknown`, then the title parser |
+| `published_on` | `posted_at` | a date with no time: midnight UTC |
+| none | `seniority` | title parser. `experience` ("Associate", "Mid-Senior level") is not used |
+| none | `salary`, `expires_at` | `null` |
+
+## 2026-11-23: Source terms of the Workable reader
+
+- Milestone: post-v1
+- Decision: the Workable reader uses the public jobs endpoint of Workable. Each job keeps the company's own job link and apply link. The attribution is "via <Company> careers".
+- Reason: REQUIREMENTS section 4 asks each source to check the endpoint and the terms. Approved by Alberto (2026-11-23).
+- Source terms: the Workable help center names `https://www.workable.com/api/accounts/{subdomain}?details=true` among its "public endpoints", "to get the list of your published jobs only". The API reference says it "Returns a collection of the public jobs for an account" and asks for no authentication. Neither states a rate limit or an attribution. The Workable terms of service are written for its customers. No clause about automated reading of public job data was found, and no separate API terms were found. `robots.txt` of both hosts does not disallow the endpoint. Workable describes the endpoint as a way for a company to build its own careers page, so the terms do not state that another app can read it. The app reads each company at most every 6 hours and keeps each company's links.
+- Checked on: 2026-11-23

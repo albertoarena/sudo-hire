@@ -115,7 +115,7 @@ this name, can.
 
 ## A note about job boards and ATS providers
 
-Greenhouse, Lever, Ashby, Personio, LaraJobs, Jobicy, Remotive, Himalayas and We
+Greenhouse, Lever, Ashby, Personio, Workable, LaraJobs, Jobicy, Remotive, Himalayas and We
 Work Remotely are trademarks of their owners and are not covered by this policy.
 Sudo Hire is not affiliated with, endorsed by, or connected to any of them. It uses
 their names only to say where a job comes from, as their terms ask. If you are naming

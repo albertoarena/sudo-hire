@@ -1,0 +1,173 @@
+{
+  "name": "Laravel",
+  "description": null,
+  "jobs": [
+    {
+      "title": "Database Migrations Engineer",
+      "shortcode": "1F39D2C95B",
+      "code": "",
+      "employment_type": "",
+      "telecommuting": true,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/1F39D2C95B",
+      "shortlink": "https://apply.workable.com/j/1F39D2C95B",
+      "application_url": "https://apply.workable.com/j/1F39D2C95B/apply",
+      "published_on": "2026-09-16",
+      "created_at": "2026-09-16",
+      "country": "United Kingdom",
+      "city": "",
+      "state": "",
+      "education": "",
+      "experience": "",
+      "function": "Engineering",
+      "industry": "Computer Software",
+      "locations": [
+        {
+          "country": "United Kingdom",
+          "countryCode": "GB",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Denmark",
+          "countryCode": "DK",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Spain",
+          "countryCode": "ES",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "United States",
+          "countryCode": "US",
+          "city": "",
+          "region": null,
+          "hidden": true
+        }
+      ],
+      "description": "<p>Laravel is the most popular PHP framework in the world. 500M+ lifetime downloads. Thousands of packages. A developer community that shows up at conferences, in forums, on Twitter, in Discord servers, in every \"what framework should I use?\" thread on the internet.</p><p>But Laravel is more than a framework. It's a complete platform. From choosing a stack, to building an app, to deploying it, monitoring it, and scaling it. Laravel Cloud is our managed PaaS, and enterprise customers moving onto it face a common, stubborn blocker: database migration. We need someone who solves that problem directly.</p><h3>Why This Job Is Unique</h3><p><strong>You will be on calls with enterprise customers and you will run the migration with them.</strong> Not routing tickets. Not advising from a distance. Actually owning the technical execution alongside the customer - which matters most when we sign a large, impactful contract and need to deliver.</p><p><strong>You are picking up a real, ongoing function.</strong> There is existing database migration work that needs an owner - including the PlanetScale relationship and recurring ad-hoc requests scattered across channels. You are not starting from zero.</p><p><strong>The brief is to build the muscle, not wait for the full menu.</strong> Rather than first defining every database we will ever offer, you are the one who develops the function in practice. You’ll be learning what customers need, productising the repeatable parts, and making the case for what comes next.</p><p><strong>You will seed what you know.</strong> The model is \"immediate pain relief, then the whole team gets better.\" Documentation, runbooks, and lightweight training so Sales, CS and engineering compound on your expertise rather than staying dependent on it.</p><h3>What the Database Migrations Engineer Will Do</h3><ul><li><strong>Execute database migrations with enterprise and Private Cloud customers.</strong> Sit on calls, own the technical execution, and deliver successful migrations for customers onboarding to Laravel Cloud - primarily MySQL and Postgres.</li><li><strong>Assume ownership of the PlanetScale relationship and migration work.</strong> Take over this function from its current ad-hoc state and run it cleanly and autonomously.</li><li><strong>Productise repeatable migration patterns.</strong> Identify the most common downtime-tolerant migrations and package them - documentation, decision logic, edge cases - so they stop being bespoke. We want repeatability over heroics — and with an eye towards eventually bringing that knowledge in-product, whether through documentation, wizards, or self-serve flows, so that product-led customers can benefit too.</li><li><strong>Automate recurring migration requests.</strong> Map the one-off requests that surface repeatedly across channels and eliminate the manual effort.</li><li><strong>Own broader app and service migrations in the gaps.</strong> Act as a generalist migration resource for application and service migrations onto Private Cloud when database migration work permits.</li><li><strong>Distribute what you learn.</strong> Write clearly. Build runbooks. Create reference material that makes Sales, CS and engineering better without making them dependent on you.</li><li><strong>Keep the database offering competitive.</strong> Stay close to the market — monitoring what alternatives like PlanetScale, Aurora, and Percona offer in terms of pricing, instance classes, and capabilities. Flag proactively when our offering is out of step with what customers are seeing elsewhere, and advise on what needs to change.</li></ul><p><strong>Requirements</strong></p><h3>What We Are Looking For</h3><ul><li><strong>Genuine strength across both MySQL and Postgres.</strong> We are deliberately optimising for ~80% capability in each over 100% in one. Database specialists tend to plant a flag, and we need coverage across both camps.</li><li><strong>Direct experience with database migrations in a customer-facing capacity.</strong> You have been on the calls, you have run the process alongside engineers and customers, and you are comfortable owning the technical execution rather than advising on it.</li><li><strong>A productisation instinct.</strong> You see the repeatable pattern inside bespoke work and know how to package it without over-engineering.</li><li><strong>Strong written and async communication.</strong> We are fully remote and documentation is how knowledge compounds.</li><li><strong>Comfort operating in a role where part of the scope is yours to define.</strong> There is a clear immediate need, and you will also be shaping what the function looks like from here.</li></ul><h3>Nice to Have</h3><ul><li>Experience at a database tooling or infrastructure company - PlanetScale, Percona, Vitess, or similar</li><li>Experience building tooling or automation around migration workflows</li><li>Familiarity with AWS-based infrastructure or PaaS environments</li><li>Experience with AWS DMS or comparable migration tooling — DMS has a role in certain migrations and prior use is a strong signal of hands-on production database migration experience</li><li>A track record of writing, speaking, or teaching publicly about database topics</li><li>Some familiarity with PHP applications</li></ul><p><strong>Benefits</strong></p><ul><li>Work From Home</li><li>Health Care Plan (Medical, Dental &amp; Vision)</li><li>Paid Time Off (Vacation, Sick &amp; Public Holidays)</li><li>Family Leave (Maternity, Paternity)</li><li>Stock Option Plan</li></ul>"
+    },
+    {
+      "title": "Senior Site Reliability Engineer",
+      "shortcode": "6C1E9F512C",
+      "code": "",
+      "employment_type": "Full-time",
+      "telecommuting": true,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/6C1E9F512C",
+      "shortlink": "https://apply.workable.com/j/6C1E9F512C",
+      "application_url": "https://apply.workable.com/j/6C1E9F512C/apply",
+      "published_on": "2026-09-30",
+      "created_at": "2026-09-28",
+      "country": "Argentina",
+      "city": "",
+      "state": "",
+      "education": "",
+      "experience": "Mid-Senior level",
+      "function": "Engineering",
+      "industry": "Computer Software",
+      "locations": [
+        {
+          "country": "Argentina",
+          "countryCode": "AR",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Brazil",
+          "countryCode": "BR",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "United Kingdom",
+          "countryCode": "GB",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Portugal",
+          "countryCode": "PT",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Denmark",
+          "countryCode": "DK",
+          "city": "",
+          "region": null,
+          "hidden": true
+        }
+      ],
+      "description": "<p>At Laravel, we don’t just build tools; we build the foundation that empowers millions of developers to ship their dreams. We are looking for a Senior Site Reliability Engineer to help us scale that mission by ensuring our global infrastructure remains as elegant and reliable as the code we write. If you are energized by the challenge of building robust observability systems, running Kubernetes clusters across multiple regions, and solving complex operational puzzles with code, you’ve found your next home.</p><p>Location / Timezone:&nbsp;<em>Remote, between Central Europe and US East timezones for optimal collaboration with the team.</em></p><h3><strong>Description of the Role</strong> </h3><p>As a Senior Site Reliability Engineer, you will be an early contributor to our dedicated SRE function, reporting directly to Florian Beer. This is a high-impact, autonomous role where you will design and implement the systems that support Laravel Cloud, Nightwatch, and Forge. You will act as a bridge between development and operations, advocating for a blameless culture and shared responsibility for reliability across the entire organization. </p><h3><strong>Your 12-Month Mission </strong></h3><p>Imagine we are all at Laracon in 12 months' time. You are telling the team about your first year, and the impact is undeniable: </p><ul><li><strong>First 30 Days</strong>: You will have selected an SLO monitoring solution. </li><li><strong>Day 60</strong>: You will have guided teams towards identifying SLIs and how/why we work with SLOs at Laravel. </li><li><strong>Day 90</strong>: You have established clear, data-driven SLOs across engineering teams, giving us a unified language for reliability. </li><li><strong>Year One</strong>: You have worked together with our engineering teams to identify SLIs, review existing SLAs, created SLOs, and educated teams on how SLO’s error budgets guide decisions. </li></ul><h3><strong>What You Will Do</strong> </h3><ul><li><strong>Architect Reliability</strong>: Establish SRE as a core function at Laravel, building the fundamentals from the ground up. </li><li><strong>System Design</strong>: Design, build, and maintain multi-region Kubernetes infrastructure and global distributed systems. </li><li><strong>Automation</strong>: Solve operational challenges through software, reducing manual intervention (toil) for our product teams.</li><li><strong>Observability</strong>: Design and implement monitoring, logging, and alerting systems using tools like Prometheus, Grafana, and Loki.</li><li><strong>Collaboration</strong>: Partner with product leads and SecOps to make reliability a shared responsibility.</li></ul><p><strong>Requirements</strong></p><h3><strong>Requirements - What You Will Bring </strong></h3><ul><li><strong>Infrastructure Mastery</strong>: Deep experience with Linux system administration and cloud platforms, specifically AWS.</li><li><strong>Orchestration &amp; IaC</strong>: Proficiency with Kubernetes, Docker, and managing infrastructure via Terraform. </li><li><strong>Programming Skills</strong>: The ability to solve problems with software and scripting using e.g. PHP, Bash, or Go. </li><li><strong>Systems Thinking</strong>: A \"smart and passionate\" approach to troubleshooting, with the ability to deconstruct complex systems into triagable components.</li><li><strong>Reliability Mindset</strong>: Experience with SLO/SLI/SLA definition, capacity planning, and performance tuning. </li><li><strong>Soft Skills</strong>: A commitment to documentation, cross-team collaboration, and an automation-first mindset. </li></ul><h3><strong>Requirements - Bonus Skills</strong> </h3><ul><li><strong>Framework Familiarity</strong>: Previous experience working with the Laravel framework and our existing product suite (Cloud, Forge, Vapor, etc.) is highly preferred. </li><li><strong>Advanced Observability</strong>: Experience with Prometheus, Grafana Mimir, and Grafana Loki for metrics storage and alerting.</li></ul><p><strong>Benefits</strong></p><ul> <li>Small tight-knit team where every developer counts</li> <li>Fully remote and globally distributed working environment</li> <li>Option to attend Laracon conferences around the world</li> <li>Health care plan (Medical, Dental &amp; Vision)</li> <li>Paid time off (Vacation, Sick &amp; Public holidays)</li> <li>Family leave (Maternity, Paternity)</li> <li>Pension plans (As locally applicable)</li> <li>Performance based bonus plan</li> <li>Company equity</li> </ul>"
+    },
+    {
+      "title": "Technical Support Engineer (APAC)",
+      "shortcode": "AF8A58873E",
+      "code": "TSE-R2",
+      "employment_type": "Full-time",
+      "telecommuting": true,
+      "department": "Customer Success",
+      "url": "https://apply.workable.com/j/AF8A58873E",
+      "shortlink": "https://apply.workable.com/j/AF8A58873E",
+      "application_url": "https://apply.workable.com/j/AF8A58873E/apply",
+      "published_on": "2026-11-17",
+      "created_at": "2026-11-16",
+      "country": "Australia",
+      "city": "",
+      "state": "",
+      "education": "Unspecified",
+      "experience": "Associate",
+      "function": "Customer Service",
+      "industry": "Computer Software",
+      "locations": [
+        {
+          "country": "Australia",
+          "countryCode": "AU",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Japan",
+          "countryCode": "JP",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Singapore",
+          "countryCode": "SG",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Indonesia",
+          "countryCode": "ID",
+          "city": "",
+          "region": null,
+          "hidden": true
+        },
+        {
+          "country": "Thailand",
+          "countryCode": "TH",
+          "city": "",
+          "region": null,
+          "hidden": true
+        }
+      ],
+      "description": "<p>At Laravel, we are committed to creating tools that empower developers to build exceptional web applications while nurturing a supportive and inclusive global community. By joining our team, you’ll play a pivotal role in helping developers succeed and thrive in their work.</p><p>We’re seeking experienced and empathetic <strong>Technical Support Engineers</strong> with hands-on knowledge of the Laravel ecosystem, including tools like <strong>Forge</strong>, <strong>Vapor</strong>, <strong>Spark</strong>, <strong>Envoyer</strong>, and <strong>Nova</strong>. While expertise in all these products isn’t required, familiarity with at least one or two is highly valued.</p><p>In this role, you’ll also have the opportunity to assist customers with our newly launched <strong>Laravel</strong> <strong>Cloud</strong> and <strong>Nightwatch</strong>, guiding them through its features and resolving their challenges.</p><p></p><h3>Customer Success &amp; Support at Laravel</h3><p>Our <strong>Customer Success and Support</strong> team is dedicated to making every customer interaction a positive and empowering experience. They are driven by a passion for helping developers succeed and take pride in their ability to:</p><ul><li> <strong>Resolve Issues Efficiently</strong>: Tackle customer challenges with speed and precision, delivering effective solutions that keep projects moving forward.</li><li> <strong>Foster Positive Relationships</strong>: Communicate with warmth, professionalism, and a genuine desire to assist.</li><li> <strong>Apply Technical Expertise</strong>: Dive deep into complex technical issues, leveraging their knowledge to troubleshoot and guide customers to success.</li><li> <strong>Empathize and Support</strong>: Truly listen to customers, understanding their unique needs and ensuring they feel valued and supported.<br> </li></ul><p>As champions of the customer experience, our team plays a crucial role in shaping our products and services. By regularly sharing insights and feedback with the product team, they help ensure Laravel continues to evolve in ways that meet the needs of our vibrant developer community.<br></p><h3>The Role</h3><p>As a Technical Support Engineer, you will play a vital role in delivering exceptional support to our users. Your responsibilities include:</p><ul><li> <strong>Ticket Management</strong>: Use our support tool (currently Plain) to efficiently triage, prioritize, and manage incoming tickets, ensuring timely responses.</li><li> <strong>Customer Support</strong>: Provide empathetic and effective solutions to customer inquiries, aiming for first-contact resolution while being prepared to handle complex or challenging cases.</li><li> <strong>Bug Reporting and Feature Requests</strong>: Identify and document software bugs or feature requests, collaborating with the engineering team to drive resolutions or improvements.</li><li> <strong>Escalation Management</strong>: Recognize and escalate issues that require higher-level intervention, ensuring seamless hand-offs and quick resolutions.</li><li> <strong>Team Collaboration</strong>: Work closely with teammates to resolve intricate customer issues and foster a supportive team environment.</li><li> <strong>Knowledge Sharing</strong>: Contribute to and utilize our knowledge base and saved replies to ensure consistent and high-quality support.</li><li> <strong>Multichannel Support</strong>: While email is our primary channel, be adaptable to future support methods, including chat and phone support.</li></ul><p></p><p>Our goal is to leave every customer delighted with their experience, ensuring that all interactions reflect our commitment to excellent service. Success in this role is measured by:</p><ul><li>Maintaining a <strong>96%+ customer satisfaction</strong> rating.</li><li>Resolving <strong>80% of tickets within the first response</strong>.</li><li>Meeting 1<strong>00% of SLA commitments</strong>, ensuring timely responses and resolutions in line with our service level agreements.<br> </li></ul><p>This role requires availability during <strong>APAC </strong>hours.</p><p><strong>Requirements</strong></p><p><strong>Experience and Skills</strong></p><ul> <li>At least <strong>2 years of experience</strong> in customer support, customer success, or a similar role, supporting technical products.</li> <li>Exceptional <strong>verbal and written communication skills</strong>, with the ability to convey complex ideas clearly and effectively.</li> <li>A c<strong>ustomer-first mindset</strong> with demonstrated patience, empathy, and a genuine desire to help.</li> <li>Experience in <strong>developer content</strong> or <strong>developer relations</strong> is a strong plus, showcasing your ability to effectively engage with a developer audience.</li> <li>Fluency in <strong>English</strong> is required, and proficiency in additional languages is highly desirable to better serve our global customer base.</li> </ul><p></p><p><strong>Technical Expertise</strong></p><ul> <li>Solid understanding of <strong>web application hosting</strong> and infrastructure.</li> <li>Proficiency in installing and troubleshooting technologies such as <strong>Nginx, DNS, SSL, PHP, MySQL,</strong> and <strong>Redis</strong>.</li> <li>Comfortable working in a <strong>terminal environment </strong>to resolve customer issues directly on their servers.</li> <li>Familiarity with <strong>Ubuntu server management</strong> and debugging processes.</li> <li>Knowledge of <strong>PHP</strong> and the <strong>Laravel</strong> <strong>framework</strong>.</li> <li>Understanding of <strong>cloud computing concepts</strong> and providers; experience with <strong>AWS</strong> is a bonus.</li> </ul><p></p><p><strong>All applications, including resumes and cover letters, must be submitted in English.<br>Applications in other languages will not be considered.</strong></p><p><strong>Benefits</strong></p><ul> <li>Fully remote and globally distributed working environment</li> <li>Option to attend Laracon conferences around the world</li> <li>Paid time off (Vacation, Sick &amp; Public holidays)</li> <li>Family leave (Maternity, Paternity)</li> <li>Company equity</li> <li>Welcome kit with custom Laravel swag</li> </ul>"
+    }
+  ]
+}
