@@ -589,3 +589,16 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   1. In Finder, select Sudo Hire in Applications and open Get Info.
 - Expected: the name "Sudo Hire", the version of the tag with no `v` (for example 1.0.0-rc.1), "Copyright (c) 2026 Alberto Arena. MIT license.", and the app icon.
 - Result: passed 2026-11-14, on `v1.0.0-rc.3`: "Sudo Hire", version 1.0.0-rc.3, "Copyright (c) 2026 Alberto Arena. MIT license." The icon was not checked.
+
+## Post-v1: A Workable company in the settings window
+
+- Added: 2026-11-23, branch feat/workable-reader
+- Why manual: tests use a fixture only, and only the app shows the settings window and the list.
+- Setup: the branch checked out on a Mac, `composer setup`, then `composer native:dev`.
+- Steps:
+  1. Open Settings, Companies. Choose the provider Workable, enter the slug `laravel` and add the company.
+  2. Add a second Workable company with the slug `no-such-company-sudo-hire`.
+  3. Start a scan and open the list.
+  4. Open the link of one Workable job, then its apply link.
+- Expected: after step 3, the company "Laravel" shows "N jobs" and the unknown company shows "HTTP 404". The list shows the Workable jobs that match the filters, with "via Laravel careers". Each link opens the job at `apply.workable.com`.
+- Result: not run in the app. On 2026-11-23, on a Mac, the reader read `workable:laravel` with live data from the command line: 7 jobs, 0 skipped, and "HTTP 404" for an unknown slug.
