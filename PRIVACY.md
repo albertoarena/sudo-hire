@@ -11,7 +11,7 @@ The app reads public job lists, one public exchange rate file, and the list of S
 The app sends requests to these places:
 
 - **The job boards that you keep enabled:** LaraJobs, Jobicy, Remotive, Himalayas and We Work Remotely. Each board is read no more often than its terms allow: at most once an hour, and less often for most boards. The search words are fixed (php, laravel). Your keywords never leave your Mac.
-- **The career pages of the companies that you add:** Greenhouse, Lever, Ashby or Personio, one request for each company, at most every 6 hours. The address contains the company name, so that provider can see which of its companies the app reads. It cannot see the other companies on your list.
+- **The career pages of the companies that you add:** Greenhouse, Lever, Ashby, Personio or Workable, one request for each company, at most every 6 hours. Workable forwards the request to its job page host (`apply.workable.com`). The address contains the company name, so that provider can see which of its companies the app reads. It cannot see the other companies on your list.
 - **The European Central Bank:** the daily reference exchange rates, at most once a day, to show salaries in your currency.
 - **GitHub, for updates:** the app asks the releases page of Sudo Hire on GitHub if there is a new version. It asks when it starts, and then at most once a day. The request is an ordinary download that names the app version. It sends no settings, no keywords and no job data. When there is a new version, the app downloads it from GitHub too.
 

@@ -26,11 +26,12 @@ dataset('job sources', [
             'api.lever.co/*' => Http::response(JobFields::fixture('lever/postings.json')),
             'api.ashbyhq.com/*' => Http::response(JobFields::fixture('ashby/job-board.json')),
             '*.jobs.personio.de/*' => Http::response(JobFields::fixture('personio/positions.xml')),
+            'www.workable.com/*' => Http::response(JobFields::fixture('workable/jobs.json')),
         ]);
 
         return new AtsSource(new InMemoryCompanyList(array_map(
             fn (string $entry) => CompanyEntry::parse($entry),
-            ['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova'],
+            ['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova', 'workable:laravel'],
         )));
     },
     'larajobs' => function () {
