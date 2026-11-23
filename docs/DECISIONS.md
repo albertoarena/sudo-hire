@@ -1274,6 +1274,6 @@ Not used: `state` (company headquarters), `media:content`.
 
 - Milestone: post-v1
 - Decision: the Workable reader uses the public jobs endpoint of Workable. Each job keeps the company's own job link and apply link. The attribution is "via <Company> careers".
-- Reason: REQUIREMENTS section 4 asks each source to check the endpoint and the terms.
+- Reason: REQUIREMENTS section 4 asks each source to check the endpoint and the terms. Approved by Alberto (2026-11-23).
 - Source terms: the Workable help center names `https://www.workable.com/api/accounts/{subdomain}?details=true` among its "public endpoints", "to get the list of your published jobs only". The API reference says it "Returns a collection of the public jobs for an account" and asks for no authentication. Neither states a rate limit or an attribution. The Workable terms of service are written for its customers. No clause about automated reading of public job data was found, and no separate API terms were found. `robots.txt` of both hosts does not disallow the endpoint. Workable describes the endpoint as a way for a company to build its own careers page, so the terms do not state that another app can read it. The app reads each company at most every 6 hours and keeps each company's links.
 - Checked on: 2026-11-23
