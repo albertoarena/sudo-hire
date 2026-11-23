@@ -1300,7 +1300,7 @@ Not used: `state` (company headquarters), `media:content`.
 
 | Source field | Schema field | Rule |
 |---|---|---|
-| `id` | `source_job_id` | `smartrecruiters:<slug>:<id>` |
+| `refNumber` | `source_job_id` | `smartrecruiters:<slug>:<refNumber>`. Without it, the `id` |
 | `company.identifier`, `id` | `source_url`, `apply_url` | `https://jobs.smartrecruiters.com/<identifier>/<id>`. Without the identifier, the slug |
 | `name` | `title` | as is |
 | `company.name` | `company` | as is. Without it, the company list entry |
@@ -1313,7 +1313,7 @@ Not used: `state` (company headquarters), `media:content`.
 | `experienceLevel.id` | `seniority` | `entry_level` or `internship` gives `junior`. Other values (`associate`, `mid_senior_level`, `executive`) give `unknown`, then the title parser |
 | `releasedDate` | `posted_at` | ISO |
 
-A company can post one job two times, in two languages, with two ids. The reader keeps both.
+A company can post one job one time for each language, with one `refNumber` and two ids. On 2026-11-23 the fixture company had 174 postings for 92 jobs. The reader keeps one posting for each `refNumber`: the English one (`language.code` starts with `en`), or the first. It does this after it reads all pages, because the two postings can be on two pages. The `refNumber` is in the job id, so the job stays the same job when the kept language changes.
 
 ## 2026-11-23: Source terms of the SmartRecruiters reader
 

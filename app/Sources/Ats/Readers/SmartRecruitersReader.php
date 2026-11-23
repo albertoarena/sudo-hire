@@ -49,7 +49,40 @@ final class SmartRecruitersReader implements AtsReader
             }
         }
 
-        return $jobs;
+        return $this->onePerJob($jobs);
+    }
+
+    /**
+     * A company posts one job one time for each language, with one reference
+     * number and two ids. Keep one posting for each job: the English one,
+     * or the first. A pair can be on two pages, so this runs on the whole list.
+     *
+     * @param  list<array<mixed>>  $postings
+     * @return list<array<mixed>>
+     */
+    private function onePerJob(array $postings): array
+    {
+        $jobs = [];
+
+        foreach ($postings as $index => $posting) {
+            $key = $this->text($posting['refNumber'] ?? null) ?? "#{$index}";
+
+            if (! isset($jobs[$key]) || (! $this->isEnglish($jobs[$key]) && $this->isEnglish($posting))) {
+                $jobs[$key] = $posting;
+            }
+        }
+
+        return array_values($jobs);
+    }
+
+    /**
+     * @param  array<mixed>  $posting
+     */
+    private function isEnglish(array $posting): bool
+    {
+        $language = is_array($posting['language'] ?? null) ? $posting['language'] : [];
+
+        return str_starts_with(strtolower($this->text($language['code'] ?? null) ?? ''), 'en');
     }
 
     public function normalise(AtsItem $item): NormalisedJob
@@ -67,7 +100,7 @@ final class SmartRecruitersReader implements AtsReader
             default => WorkMode::Unknown,
         };
 
-        return $this->job($item, $id, $this->text($company['name'] ?? null) ?? $item->company->displayName, [
+        return $this->job($item, $this->text($raw['refNumber'] ?? null) ?? $id, $this->text($company['name'] ?? null) ?? $item->company->displayName, [
             'sourceUrl' => $url,
             'applyUrl' => $url,
             'title' => $title,

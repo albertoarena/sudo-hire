@@ -25,7 +25,7 @@ it('reads the postings from the posting API', function () {
     $items = (new SmartRecruitersReader)->read($this->company);
 
     expect($items)->toHaveCount(3)
-        ->and($items[0]['id'])->toBe('744000155066379');
+        ->and(array_column($items, 'id'))->toBe(['744000155066262', '744000158738024', '744000161508939']);
 
     Http::assertSentCount(1);
     Http::assertSent(fn (Request $request) => $request->url() === 'https://api.smartrecruiters.com/v1/companies/aboutyougmbh/postings?offset=0&limit=100');
@@ -36,10 +36,33 @@ it('reads the next page when the company has more than 100 postings', function (
 
     Http::fake(['api.smartrecruiters.com/*' => Http::response($page)]);
 
-    expect((new SmartRecruitersReader)->read($this->company))->toHaveCount(6);
+    expect((new SmartRecruitersReader)->read($this->company))->toHaveCount(3);
 
     Http::assertSentCount(2);
     Http::assertSent(fn (Request $request) => $request->url() === 'https://api.smartrecruiters.com/v1/companies/aboutyougmbh/postings?offset=100&limit=100');
+});
+
+it('keeps one posting for each job, the English one', function () {
+    $postings = JobFields::json('smartrecruiters/postings.json')['content'];
+
+    expect(array_column($postings, 'refNumber'))->toBe(['ID2610-00549A', 'ID2610-00549A', 'ID2609-00478A', 'ID2611-00631A'])
+        ->and($postings[0]['language']['code'])->toBe('de')
+        ->and($postings[1]['language']['code'])->toBe('en');
+
+    Http::fake(['api.smartrecruiters.com/*' => Http::response(['offset' => 0, 'limit' => 100, 'totalFound' => 4, 'content' => array_reverse($postings)])]);
+
+    expect(array_column((new SmartRecruitersReader)->read($this->company), 'id'))->toBe(['744000161508939', '744000158738024', '744000155066262']);
+});
+
+it('keeps every posting that has no reference number', function () {
+    $postings = array_map(
+        fn (array $posting) => array_diff_key($posting, ['refNumber' => true]),
+        JobFields::json('smartrecruiters/postings.json')['content'],
+    );
+
+    Http::fake(['api.smartrecruiters.com/*' => Http::response(['offset' => 0, 'limit' => 100, 'totalFound' => 4, 'content' => $postings])]);
+
+    expect((new SmartRecruitersReader)->read($this->company))->toHaveCount(4);
 });
 
 it('gives no jobs for an unknown company, as the API does', function () {
@@ -53,7 +76,7 @@ it('normalises a hybrid job field by field', function () {
 
     expect(JobFields::of($job))->toBe([
         'source' => 'ats',
-        'sourceJobId' => 'smartrecruiters:aboutyougmbh:744000155066379',
+        'sourceJobId' => 'smartrecruiters:aboutyougmbh:ID2610-00549A',
         'sourceUrl' => 'https://jobs.smartrecruiters.com/ABOUTYOUGmbH/744000155066379',
         'applyUrl' => 'https://jobs.smartrecruiters.com/ABOUTYOUGmbH/744000155066379',
         'title' => 'Senior PHP Engineer - Checkout - Pre-Confirmation (all genders)',
@@ -86,12 +109,12 @@ it('reads the place, the contract type and the level of each job', function (int
         'contractType' => 'full_time',
         'seniority' => 'senior',
     ]],
-    'remote in one country' => [1, [
+    'remote in one country' => [2, [
         'workMode' => 'remote',
         'eligibility' => JobFields::restricted(['US']),
         'contractType' => 'full_time',
     ]],
-    'on-site, part-time, entry level' => [2, [
+    'on-site, part-time, entry level' => [3, [
         'workMode' => 'onsite',
         'officeLocation' => 'Hamburg, HH, Germany',
         'contractType' => 'part_time',
@@ -106,6 +129,12 @@ it('uses the slug and the display name when the job has no company', function ()
 
     expect($job->company)->toBe('About You')
         ->and($job->sourceUrl)->toBe('https://jobs.smartrecruiters.com/aboutyougmbh/744000155066379');
+});
+
+it('uses the id when the job has no reference number', function () {
+    $job = (new SmartRecruitersReader)->normalise(new AtsItem($this->company, smartRecruitersItem(0, ['refNumber' => null]), $this->fetchedAt));
+
+    expect($job->sourceJobId)->toBe('smartrecruiters:aboutyougmbh:744000155066379');
 });
 
 it('gives an unknown work mode when the job has no remote and hybrid fields', function () {

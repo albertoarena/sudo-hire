@@ -1,7 +1,7 @@
 {
   "offset": 0,
   "limit": 100,
-  "totalFound": 3,
+  "totalFound": 4,
   "content": [
     {
       "id": "744000155066379",
@@ -77,6 +77,82 @@
         "code": "de",
         "label": "German",
         "labelNative": "Deutsch"
+      }
+    },
+    {
+      "id": "744000155066262",
+      "name": "Senior PHP Engineer - Checkout - Pre-Confirmation (all genders)",
+      "uuid": "22ceb0d2-db90-4af2-bb31-3b7de49abc93",
+      "jobAdId": "17eb20af-ebe2-4a98-a763-9f7232b86717",
+      "defaultJobAd": true,
+      "refNumber": "ID2610-00549A",
+      "company": {
+        "identifier": "ABOUTYOUGmbH",
+        "name": "ABOUT YOU SE & Co. KG"
+      },
+      "releasedDate": "2026-10-12T16:00:12.321Z",
+      "location": {
+        "city": "Hamburg",
+        "region": "HH",
+        "country": "de",
+        "remote": false,
+        "hybrid": true,
+        "latitude": "53.5488282",
+        "longitude": "9.987170299999999",
+        "fullLocation": "Hamburg, HH, Germany"
+      },
+      "industry": {
+        "id": "internet",
+        "label": "Internet"
+      },
+      "department": {
+        "id": "1131221",
+        "label": "Product & Tech"
+      },
+      "function": {
+        "id": "engineering",
+        "label": "Engineering"
+      },
+      "typeOfEmployment": {
+        "id": "permanent",
+        "label": "Full-time"
+      },
+      "experienceLevel": {
+        "id": "mid_senior_level",
+        "label": "Mid-Senior Level"
+      },
+      "customField": [
+        {
+          "fieldId": "5ba0d1ef6d8bc56bc081b5b0",
+          "fieldLabel": "Department",
+          "valueId": "1131221",
+          "valueLabel": "Product & Tech"
+        },
+        {
+          "fieldId": "5ba0d1efb1f60b42f4edc0db",
+          "fieldLabel": "Brands",
+          "valueId": "7fcf7fd3-d61e-4a9e-a097-2413c7b55b6d",
+          "valueLabel": "SCAYLE"
+        },
+        {
+          "fieldId": "5ba39ccbb1f60b42f4edc16a",
+          "fieldLabel": "Unterabteilung",
+          "valueId": "2dc3892c-6ba5-448d-b4a1-aa0e618ca1f1",
+          "valueLabel": "Software Development & Engineering"
+        },
+        {
+          "fieldId": "COUNTRY",
+          "fieldLabel": "Country/Region",
+          "valueId": "de",
+          "valueLabel": "Germany"
+        }
+      ],
+      "visibility": "PUBLIC",
+      "ref": "https://api.smartrecruiters.com/v1/companies/aboutyougmbh/postings/744000155066262",
+      "language": {
+        "code": "en",
+        "label": "English",
+        "labelNative": "English (US)"
       }
     },
     {
