@@ -1285,6 +1285,43 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: approved by Alberto (2026-11-23). Daniele Barbaro checked 216 remote jobs at 10 Workable companies (PR #55). 201 list one country, and most of these companies post the same job once for each country, so one country is correct. A list of several countries can be narrower than the job text: Laravel's "Senior Site Reliability Engineer" lists AR, BR, GB, PT and DK but says "Remote, between Central Europe and US East timezones", and Hospitable's "Product Engineer (Laravel - Remote)" lists US, DE, NL and GB but says "We hire based on timezones, not countries". With the first rule, a user in Italy saw none of these jobs. Now they go to "Location not stated".
 - Replaces: the eligibility from `locations` in "2026-11-23: Workable reader"
 
+## 2026-11-23: SmartRecruiters reader
+
+- Milestone: post-v1, draft
+- Decision: the ATS reader has a reader for SmartRecruiters. An entry is `smartrecruiters:<slug>`, where the slug is the company identifier. The job schema and the `JobSource` interface are unchanged.
+- Decision: the reader reads the posting list only, 100 postings for each request, at most 10 requests for each company. The list has no description, so `description` is `null`. The description needs one more request for each posting: 174 requests for the fixture company. The reader does not make them.
+- Decision: the list has no job link. The reader builds `https://jobs.smartrecruiters.com/<company.identifier>/<id>`, for the source link and the apply link. On 2026-11-23 this link opened the job page.
+- Decision: an unknown slug gives HTTP 200 with an empty list, not an error. The company then shows 0 jobs.
+- Decision: `location.remote` true gives `remote`, `location.hybrid` true gives `hybrid`, both false give `onsite`. A remote job is open to its `location.country`.
+- Reason: a keyword matches the title and the tags, so the list is enough to find a job. One request for each posting is too many for a company list read every 6 hours.
+- Replaces: none
+
+### SmartRecruiters (`smartrecruiters/postings.json`, slug `aboutyougmbh`)
+
+| Source field | Schema field | Rule |
+|---|---|---|
+| `id` | `source_job_id` | `smartrecruiters:<slug>:<id>` |
+| `company.identifier`, `id` | `source_url`, `apply_url` | `https://jobs.smartrecruiters.com/<identifier>/<id>`. Without the identifier, the slug |
+| `name` | `title` | as is |
+| `company.name` | `company` | as is. Without it, the company list entry |
+| none | `description`, `salary`, `expires_at` | `null` |
+| `department.label`, `function.label` | `tags` | |
+| `location.remote`, `location.hybrid` | `work_mode` | see the decision above. Without the two fields, `unknown` |
+| `location.country` | `eligibility` | ISO alpha-2 in lower case, for remote jobs only |
+| `location.fullLocation` | `office_location` | for jobs that are not remote. Without it, city, region and country |
+| `typeOfEmployment.id` | `contract_type` | `permanent` gives `full_time`, `part-time` `part_time`, `contract` `contract`, `intern` or other `unknown`, then the title parser |
+| `experienceLevel.id` | `seniority` | `entry_level` or `internship` gives `junior`. Other values (`associate`, `mid_senior_level`, `executive`) give `unknown`, then the title parser |
+| `releasedDate` | `posted_at` | ISO |
+
+A company can post one job two times, in two languages, with two ids. The reader keeps both.
+
+## 2026-11-23: Source terms of the SmartRecruiters reader
+
+- Milestone: post-v1, draft
+- Decision: the SmartRecruiters reader uses the posting API with no key. Each job keeps the job link at SmartRecruiters. The attribution is "via <Company> careers".
+- Source terms: not checked. The endpoint answers with no authentication. The terms, the rate limit and the attribution rules of SmartRecruiters must be read before this reader ships.
+- Checked on: not checked
+
 ## 2026-11-24: A slug that is a domain name
 
 - Milestone: post-v1

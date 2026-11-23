@@ -36,6 +36,7 @@ function fakeAtsResponses(array $overrides = []): void
         'api.lever.co/v0/postings/spotify*' => Http::response(JobFields::fixture('lever/postings.json')),
         'api.ashbyhq.com/posting-api/job-board/ashby*' => Http::response(JobFields::fixture('ashby/job-board.json')),
         'www.workable.com/api/accounts/laravel*' => Http::response(JobFields::fixture('workable/jobs.json')),
+        'api.smartrecruiters.com/v1/companies/aboutyougmbh/*' => Http::response(JobFields::fixture('smartrecruiters/postings.json')),
         'ottonova.jobs.personio.de/*' => Http::response(JobFields::fixture('personio/positions.xml')),
         'empty.jobs.personio.de/*' => Http::response(JobFields::fixture('personio/positions-empty.xml')),
     ], $overrides));
@@ -60,7 +61,7 @@ it('is a job source with the key ats', function () {
 
 it('reads every company and its items carry the company entry', function () {
     fakeAtsResponses();
-    $companies = companyList(['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova', 'workable:laravel']);
+    $companies = companyList(['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova', 'workable:laravel', 'smartrecruiters:aboutyougmbh']);
 
     $items = iterator_to_array((new AtsSource($companies))->fetch(), false);
 
@@ -70,6 +71,7 @@ it('reads every company and its items carry the company entry', function () {
         'ashby:ashby' => 3,
         'personio:ottonova' => 3,
         'workable:laravel' => 3,
+        'smartrecruiters:aboutyougmbh' => 3,
     ])
         ->and($items[0]->fetchedAt->toIso8601ZuluString())->toBe('2026-10-29T10:00:00Z')
         ->and($companies->jobCounts)->toBe([
@@ -78,19 +80,20 @@ it('reads every company and its items carry the company entry', function () {
             'ashby:ashby' => 3,
             'personio:ottonova' => 3,
             'workable:laravel' => 3,
+            'smartrecruiters:aboutyougmbh' => 3,
         ])
         ->and($companies->errors)->toBe([]);
 });
 
 it('normalises the items of each ATS', function () {
     fakeAtsResponses();
-    $source = new AtsSource(companyList(['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova', 'workable:laravel']));
+    $source = new AtsSource(companyList(['greenhouse:gitlab', 'lever:spotify', 'ashby:ashby', 'personio:ottonova', 'workable:laravel', 'smartrecruiters:aboutyougmbh']));
 
     $batch = (new NormaliseItems)($source);
 
     expect($batch->skipped)->toBe(0)
         ->and(array_map(fn ($job) => explode(':', $job->sourceJobId)[0], $batch->jobs))
-        ->toBe(['greenhouse', 'greenhouse', 'greenhouse', 'lever', 'lever', 'lever', 'ashby', 'ashby', 'ashby', 'personio', 'personio', 'personio', 'workable', 'workable', 'workable']);
+        ->toBe(['greenhouse', 'greenhouse', 'greenhouse', 'lever', 'lever', 'lever', 'ashby', 'ashby', 'ashby', 'personio', 'personio', 'personio', 'workable', 'workable', 'workable', 'smartrecruiters', 'smartrecruiters', 'smartrecruiters']);
 });
 
 it('stores the error of a failing company and still reads the next one', function (string $entry, Closure $response, string $error, RunErrorKind $kind) {

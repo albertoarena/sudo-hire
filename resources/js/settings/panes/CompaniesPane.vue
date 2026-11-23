@@ -14,7 +14,7 @@ const provider = ref('greenhouse');
 const slug = ref('');
 const error = ref<string | undefined>();
 
-const PROVIDERS: Record<string, string> = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', personio: 'Personio', workable: 'Workable' };
+const PROVIDERS: Record<string, string> = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', personio: 'Personio', workable: 'Workable', smartrecruiters: 'SmartRecruiters' };
 
 const load = () =>
     store.run(async () => {

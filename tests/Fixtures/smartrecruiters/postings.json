@@ -1,0 +1,235 @@
+{
+  "offset": 0,
+  "limit": 100,
+  "totalFound": 3,
+  "content": [
+    {
+      "id": "744000155066379",
+      "name": "Senior PHP Engineer - Checkout - Pre-Confirmation (all genders)",
+      "uuid": "fa7dbc73-f494-4d40-9881-80d785ec0b1c",
+      "jobAdId": "d18048d8-0391-4d6f-b1a9-5864eb3eced7",
+      "defaultJobAd": false,
+      "refNumber": "ID2610-00549A",
+      "company": {
+        "identifier": "ABOUTYOUGmbH",
+        "name": "ABOUT YOU SE & Co. KG"
+      },
+      "releasedDate": "2026-10-12T16:00:32.468Z",
+      "location": {
+        "city": "Hamburg",
+        "region": "HH",
+        "country": "de",
+        "remote": false,
+        "hybrid": true,
+        "latitude": "53.5488282",
+        "longitude": "9.987170299999999",
+        "fullLocation": "Hamburg, HH, Germany"
+      },
+      "industry": {
+        "id": "internet",
+        "label": "Internet"
+      },
+      "department": {
+        "id": "1131221",
+        "label": "Product & Tech"
+      },
+      "function": {
+        "id": "engineering",
+        "label": "Engineering"
+      },
+      "typeOfEmployment": {
+        "id": "permanent",
+        "label": "Full-time"
+      },
+      "experienceLevel": {
+        "id": "mid_senior_level",
+        "label": "Mid-Senior Level"
+      },
+      "customField": [
+        {
+          "fieldId": "5ba0d1ef6d8bc56bc081b5b0",
+          "fieldLabel": "Department",
+          "valueId": "1131221",
+          "valueLabel": "Product & Tech"
+        },
+        {
+          "fieldId": "5ba0d1efb1f60b42f4edc0db",
+          "fieldLabel": "Brands",
+          "valueId": "7fcf7fd3-d61e-4a9e-a097-2413c7b55b6d",
+          "valueLabel": "SCAYLE"
+        },
+        {
+          "fieldId": "5ba39ccbb1f60b42f4edc16a",
+          "fieldLabel": "Unterabteilung",
+          "valueId": "2dc3892c-6ba5-448d-b4a1-aa0e618ca1f1",
+          "valueLabel": "Software Development & Engineering"
+        },
+        {
+          "fieldId": "COUNTRY",
+          "fieldLabel": "Country/Region",
+          "valueId": "de",
+          "valueLabel": "Germany"
+        }
+      ],
+      "visibility": "PUBLIC",
+      "ref": "https://api.smartrecruiters.com/v1/companies/aboutyougmbh/postings/744000155066379",
+      "language": {
+        "code": "de",
+        "label": "German",
+        "labelNative": "Deutsch"
+      }
+    },
+    {
+      "id": "744000158738024",
+      "name": "Technical Support Engineer - Customer Support (all genders)",
+      "uuid": "eefa1bcf-68b2-403e-a575-f877edac4c39",
+      "jobAdId": "2ce5e8e0-5f6a-43db-a3bc-acde94d35584",
+      "defaultJobAd": true,
+      "refNumber": "ID2609-00478A",
+      "company": {
+        "identifier": "ABOUTYOUGmbH",
+        "name": "ABOUT YOU SE & Co. KG"
+      },
+      "releasedDate": "2026-10-30T13:06:46.765Z",
+      "location": {
+        "city": "New York",
+        "region": "NY",
+        "country": "us",
+        "remote": true,
+        "hybrid": false,
+        "latitude": "40.7127753",
+        "longitude": "-74.0059728",
+        "fullLocation": "New York, NY, United States"
+      },
+      "industry": {
+        "id": "internet",
+        "label": "Internet"
+      },
+      "department": {
+        "id": "1131221",
+        "label": "Product & Tech"
+      },
+      "function": {
+        "id": "information_technology",
+        "label": "Information Technology"
+      },
+      "typeOfEmployment": {
+        "id": "permanent",
+        "label": "Full-time"
+      },
+      "experienceLevel": {
+        "id": "associate",
+        "label": "Associate"
+      },
+      "customField": [
+        {
+          "fieldId": "5ba0d1ef6d8bc56bc081b5b0",
+          "fieldLabel": "Department",
+          "valueId": "1131221",
+          "valueLabel": "Product & Tech"
+        },
+        {
+          "fieldId": "5ba0d1efb1f60b42f4edc0db",
+          "fieldLabel": "Brands",
+          "valueId": "7fcf7fd3-d61e-4a9e-a097-2413c7b55b6d",
+          "valueLabel": "SCAYLE"
+        },
+        {
+          "fieldId": "5ba39ccbb1f60b42f4edc16a",
+          "fieldLabel": "Unterabteilung",
+          "valueId": "c6853302-1df5-4d68-a6af-9c736a782a7d",
+          "valueLabel": "IT & Infrastructure"
+        },
+        {
+          "fieldId": "COUNTRY",
+          "fieldLabel": "Country/Region",
+          "valueId": "us",
+          "valueLabel": "United States"
+        }
+      ],
+      "visibility": "PUBLIC",
+      "ref": "https://api.smartrecruiters.com/v1/companies/aboutyougmbh/postings/744000158738024",
+      "language": {
+        "code": "en",
+        "label": "English",
+        "labelNative": "English (US)"
+      }
+    },
+    {
+      "id": "744000161508939",
+      "name": "Working Student - IT-Administration (all genders)",
+      "uuid": "83330905-c691-4701-a5bb-edfec69a2246",
+      "jobAdId": "b16ea4c2-9708-4226-aeb3-e5b7128b0085",
+      "defaultJobAd": false,
+      "refNumber": "ID2611-00631A",
+      "company": {
+        "identifier": "ABOUTYOUGmbH",
+        "name": "ABOUT YOU SE & Co. KG"
+      },
+      "releasedDate": "2026-11-13T15:04:04.047Z",
+      "location": {
+        "city": "Hamburg",
+        "region": "HH",
+        "country": "de",
+        "remote": false,
+        "hybrid": false,
+        "latitude": "53.5488282",
+        "longitude": "9.987170299999999",
+        "fullLocation": "Hamburg, HH, Germany"
+      },
+      "industry": {
+        "id": "internet",
+        "label": "Internet"
+      },
+      "department": {
+        "id": "1131221",
+        "label": "Product & Tech"
+      },
+      "function": {
+        "id": "information_technology",
+        "label": "Information Technology"
+      },
+      "typeOfEmployment": {
+        "id": "part-time",
+        "label": "Part-time"
+      },
+      "experienceLevel": {
+        "id": "entry_level",
+        "label": "Entry Level"
+      },
+      "customField": [
+        {
+          "fieldId": "5ba0d1ef6d8bc56bc081b5b0",
+          "fieldLabel": "Department",
+          "valueId": "1131221",
+          "valueLabel": "Product & Tech"
+        },
+        {
+          "fieldId": "5ba0d1efb1f60b42f4edc0db",
+          "fieldLabel": "Brands",
+          "valueId": "fef2f611-842f-46cb-ae7c-bd6816ff3786",
+          "valueLabel": "ABOUT YOU Holding AG"
+        },
+        {
+          "fieldId": "5ba39ccbb1f60b42f4edc16a",
+          "fieldLabel": "Unterabteilung",
+          "valueId": "c6853302-1df5-4d68-a6af-9c736a782a7d",
+          "valueLabel": "IT & Infrastructure"
+        },
+        {
+          "fieldId": "COUNTRY",
+          "fieldLabel": "Country/Region",
+          "valueId": "de",
+          "valueLabel": "Germany"
+        }
+      ],
+      "visibility": "PUBLIC",
+      "ref": "https://api.smartrecruiters.com/v1/companies/aboutyougmbh/postings/744000161508939",
+      "language": {
+        "code": "de",
+        "label": "German",
+        "labelNative": "Deutsch"
+      }
+    }
+  ]
+}
