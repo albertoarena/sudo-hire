@@ -28,6 +28,7 @@ final class FixtureTitles
             'greenhouse/jobs.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'greenhouse/twilio-levels.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'lever/postings.json' => fn ($file) => array_column($json($file), 'text'),
+            'lever/postings-eu.json' => fn ($file) => array_column($json($file), 'text'),
             'lever/postings-salary.json' => fn ($file) => array_column($json($file), 'text'),
             'ashby/job-board.json' => fn ($file) => array_column($json($file)['jobs'], 'title'),
             'personio/positions.xml' => fn ($file) => array_map('strval', $xml($file)->xpath('/workzag-jobs/position/name') ?: []),

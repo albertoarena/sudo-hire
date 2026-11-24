@@ -1277,3 +1277,15 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: REQUIREMENTS section 4 asks each source to check the endpoint and the terms. Approved by Alberto (2026-11-23).
 - Source terms: the Workable help center names `https://www.workable.com/api/accounts/{subdomain}?details=true` among its "public endpoints", "to get the list of your published jobs only". The API reference says it "Returns a collection of the public jobs for an account" and asks for no authentication. Neither states a rate limit or an attribution. The Workable terms of service are written for its customers. No clause about automated reading of public job data was found, and no separate API terms were found. `robots.txt` of both hosts does not disallow the endpoint. Workable describes the endpoint as a way for a company to build its own careers page, so the terms do not state that another app can read it. The app reads each company at most every 6 hours and keeps each company's links.
 - Checked on: 2026-11-23
+
+## 2026-11-24: Lever companies of the EU instance
+
+- Milestone: post-v1
+- Decision: the Lever reader asks `https://api.lever.co/v0/postings/<slug>?mode=json` first. When the answer is HTTP 404, it asks `https://api.eu.lever.co/v0/postings/<slug>?mode=json`. When the EU host also fails, the company keeps the error of the main host. Any other error, and an empty list, do not start the second request.
+- Decision: the entry stays `lever:<slug>`. The user does not need to know the instance of a company.
+- Reason: Lever has a global instance and an EU instance, and a company is on one of them. On 2026-11-24 the main host answered 404 for `coinspaid` and `tomtom`, and the EU host gave 33 and 27 postings. Before this change the app showed "HTTP 404" for these companies. `coinspaid` had a "Senior PHP Backend Engineer" job. Of 20 companies that the main host knows, the EU host answered 404 for 18.
+- Source terms: the Lever postings API documentation names both instances and gives `https://api.eu.lever.co/v0/postings/` as the base address of the EU instance. The terms recorded in "Source terms of the ATS reader" apply to both. The EU job links are on `jobs.eu.lever.co`, and the reader keeps them unchanged.
+- Checked on: 2026-11-24
+- Replaces: none
+
+`lever/postings-eu.json` is a real response of the EU host, slug `coinspaid`, trimmed to three postings. The fields are the same as in the Lever mapping above.

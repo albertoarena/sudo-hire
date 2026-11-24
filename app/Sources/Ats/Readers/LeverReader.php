@@ -14,10 +14,12 @@ use App\Sources\Ats\Ats;
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\AtsReader;
 use App\Sources\Ats\CompanyEntry;
+use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
 use App\Sources\Support\HtmlToText;
 use App\Sources\Support\TitleFallback;
 use Carbon\CarbonImmutable;
+use Illuminate\Http\Client\RequestException;
 
 /**
  * Lever postings API. See the field mapping in docs/DECISIONS.md.
@@ -38,9 +40,37 @@ final class LeverReader implements AtsReader
         return Ats::Lever;
     }
 
+    /**
+     * Lever has two instances, and a company is on one of them. The main host
+     * answers 404 for a company of the EU instance, so the EU host is asked then.
+     */
     public function read(CompanyEntry $company): array
     {
-        return $this->jobList($this->getJson('https://api.lever.co/v0/postings/'.rawurlencode($company->slug).'?mode=json'));
+        try {
+            return $this->postings('api.lever.co', $company);
+        } catch (ReadFailed $failed) {
+            $cause = $failed->getPrevious();
+
+            if (! $cause instanceof RequestException || $cause->response->status() !== 404) {
+                throw $failed;
+            }
+        }
+
+        try {
+            return $this->postings('api.eu.lever.co', $company);
+        } catch (ReadFailed) {
+            throw $failed;
+        }
+    }
+
+    /**
+     * @return list<array<mixed>>
+     *
+     * @throws ReadFailed
+     */
+    private function postings(string $host, CompanyEntry $company): array
+    {
+        return $this->jobList($this->getJson("https://{$host}/v0/postings/".rawurlencode($company->slug).'?mode=json'));
     }
 
     public function normalise(AtsItem $item): NormalisedJob

@@ -30,6 +30,9 @@ return [
 
     'lever roman level' => ['lever/postings-salary.json', 'Android Engineer III', 'unknown', 'unknown'],
     'lever no level' => ['lever/postings-salary.json', 'AI Product Engineer', 'unknown', 'unknown'],
+    'lever eu senior php' => ['lever/postings-eu.json', 'Senior PHP Backend Engineer', 'senior', 'unknown'],
+    'lever eu senior with a country in brackets' => ['lever/postings-eu.json', 'Senior Account Sales Executive (USA)', 'senior', 'unknown'],
+    'lever eu no level' => ['lever/postings-eu.json', 'Security Engineer', 'unknown', 'unknown'],
     'lever senior' => ['lever/postings.json', 'Senior Software Engineer - Enterprise AI', 'senior', 'unknown'],
     'lever senior backend' => ['lever/postings.json', 'Senior Backend Engineer - Content Platform', 'senior', 'unknown'],
     'lever no level with dash' => ['lever/postings.json', 'AV Engineer - Platform', 'unknown', 'unknown'],
