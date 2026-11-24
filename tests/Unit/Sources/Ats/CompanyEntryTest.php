@@ -32,6 +32,19 @@ it('gives the slug in title case as the default display name', function (string 
     ['big_data_co', 'Big Data Co'],
 ]);
 
+it('leaves a domain ending out of the default display name', function (string $slug, string $name) {
+    $entry = CompanyEntry::parse("ashby:{$slug}");
+
+    expect($entry->displayName)->toBe($name)
+        ->and($entry->slug)->toBe($slug);
+})->with([
+    'a real Ashby slug with .com' => ['jimdo.com', 'Jimdo'],
+    'a second real Ashby slug with .com' => ['kraken.com', 'Kraken'],
+    '.io' => ['acme.io', 'Acme'],
+    'a dot that is not a domain ending' => ['acme.labs', 'Acme.labs'],
+    'the ending alone is not a name' => ['com', 'Com'],
+]);
+
 it('keeps a display name that is given', function () {
     expect(CompanyEntry::parse('lever:spotify', 'Spotify AB')->displayName)->toBe('Spotify AB');
 });

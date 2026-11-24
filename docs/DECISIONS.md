@@ -1277,3 +1277,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Reason: REQUIREMENTS section 4 asks each source to check the endpoint and the terms. Approved by Alberto (2026-11-23).
 - Source terms: the Workable help center names `https://www.workable.com/api/accounts/{subdomain}?details=true` among its "public endpoints", "to get the list of your published jobs only". The API reference says it "Returns a collection of the public jobs for an account" and asks for no authentication. Neither states a rate limit or an attribution. The Workable terms of service are written for its customers. No clause about automated reading of public job data was found, and no separate API terms were found. `robots.txt` of both hosts does not disallow the endpoint. Workable describes the endpoint as a way for a company to build its own careers page, so the terms do not state that another app can read it. The app reads each company at most every 6 hours and keeps each company's links.
 - Checked on: 2026-11-23
+
+## 2026-11-24: A slug that is a domain name
+
+- Milestone: post-v1
+- Decision: the default display name leaves out a domain ending of the slug: `.com`, `.io`, `.co`, `.org` or `.net`. `jimdo.com` gives "Jimdo", not "Jimdo.com". The slug is unchanged. A name that the user gives is unchanged.
+- Decision: a company that is already in the list keeps its stored name. The user can remove it and add it again.
+- Reason: some Ashby slugs are a domain name. On 2026-11-24, `jimdo.com` and `kraken.com` were real Ashby job boards. The attribution was "via Jimdo.com careers".
+- Replaces: none
