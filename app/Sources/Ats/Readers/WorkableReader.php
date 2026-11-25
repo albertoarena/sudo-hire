@@ -66,7 +66,9 @@ final class WorkableReader implements AtsReader
     }
 
     /**
-     * A remote job lists the countries it is open to, as ISO alpha-2 codes.
+     * A remote job lists its countries as ISO alpha-2 codes. One country is the
+     * country of the job. A list of several countries can be narrower than the
+     * job text, so it gives unknown, and the title can narrow it.
      * With no list, the country name of the job is used.
      *
      * @param  array<mixed>  $raw
@@ -78,10 +80,14 @@ final class WorkableReader implements AtsReader
             fn (mixed $location) => strtoupper($this->text(is_array($location) ? ($location['countryCode'] ?? null) : null) ?? ''),
             $locations,
         );
-        $codes = array_values(array_filter($codes, fn (string $code) => preg_match('/^[A-Z]{2}$/', $code) === 1));
+        $codes = array_values(array_unique(array_filter($codes, fn (string $code) => preg_match('/^[A-Z]{2}$/', $code) === 1)));
+
+        if (count($codes) === 1) {
+            return Eligibility::restricted(countries: $codes);
+        }
 
         if ($codes !== []) {
-            return Eligibility::restricted(countries: $codes);
+            return Eligibility::unknown();
         }
 
         return (new LocationParser)->countryList($this->texts([$raw['country'] ?? null]));
