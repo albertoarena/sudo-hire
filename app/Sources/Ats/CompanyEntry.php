@@ -41,9 +41,14 @@ final readonly class CompanyEntry
         return new self($ats, trim($parts[1]), $displayName);
     }
 
+    /**
+     * Some slugs are a domain name, e.g. "jimdo.com" on Ashby: the name is "Jimdo".
+     */
     public static function defaultDisplayName(string $slug): string
     {
-        return ucwords(strtolower(str_replace(['-', '_'], ' ', $slug)));
+        $name = (string) preg_replace('/\\.(com|io|co|org|net)$/i', '', $slug);
+
+        return ucwords(strtolower(str_replace(['-', '_'], ' ', $name)));
     }
 
     public function key(): string
