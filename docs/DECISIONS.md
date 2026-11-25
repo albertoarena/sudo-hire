@@ -1292,3 +1292,15 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: a company that is already in the list keeps its stored name. The user can remove it and add it again.
 - Reason: some Ashby slugs are a domain name. On 2026-11-24, `jimdo.com` and `kraken.com` were real Ashby job boards. The attribution was "via Jimdo.com careers".
 - Replaces: none
+
+## 2026-11-24: Lever companies of the EU instance
+
+- Milestone: post-v1
+- Decision: the Lever reader asks `https://api.lever.co/v0/postings/<slug>?mode=json` first. When the answer is HTTP 404, it asks `https://api.eu.lever.co/v0/postings/<slug>?mode=json`. When the EU host also fails, the company keeps the error of the main host. Any other error, and an empty list, do not start the second request.
+- Decision: the entry stays `lever:<slug>`. The user does not need to know the instance of a company.
+- Reason: Lever has a global instance and an EU instance, and a company is on one of them. On 2026-11-24 the main host answered 404 for `coinspaid` and `tomtom`, and the EU host gave 33 and 27 postings. Before this change the app showed "HTTP 404" for these companies. `coinspaid` had a "Senior PHP Backend Engineer" job. Of 20 companies that the main host knows, the EU host answered 404 for 18.
+- Source terms: the Lever postings API documentation names both instances and gives `https://api.eu.lever.co/v0/postings/` as the base address of the EU instance. The terms recorded in "Source terms of the ATS reader" apply to both. The EU job links are on `jobs.eu.lever.co`, and the reader keeps them unchanged.
+- Checked on: 2026-11-24
+- Replaces: none
+
+`lever/postings-eu.json` is a real response of the EU host, slug `coinspaid`, trimmed to three postings. The fields are the same as in the Lever mapping above.

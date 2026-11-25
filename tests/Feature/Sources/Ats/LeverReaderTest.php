@@ -3,6 +3,7 @@
 use App\Sources\Ats\AtsItem;
 use App\Sources\Ats\CompanyEntry;
 use App\Sources\Ats\Readers\LeverReader;
+use App\Sources\Ats\ReadFailed;
 use App\Sources\SkipItem;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\Request;
@@ -219,4 +220,62 @@ it('gives unknown when the title and the country have no place in common', funct
     $item = leverItem(0, ['text' => 'Backend Engineer (Remote, Europe)']);
 
     expect((new LeverReader)->normalise(new AtsItem($this->company, $item, $this->fetchedAt))->eligibility->type->value)->toBe('unknown');
+});
+
+describe('EU instance', function () {
+    beforeEach(function () {
+        $this->company = CompanyEntry::parse('lever:coinspaid', 'CoinsPaid');
+    });
+
+    it('reads a company from the EU host when the main host has no such company', function () {
+        Http::fake([
+            'api.lever.co/*' => Http::response('{"ok":false,"error":"Document not found"}', 404),
+            'api.eu.lever.co/*' => Http::response(JobFields::fixture('lever/postings-eu.json')),
+        ]);
+
+        $items = (new LeverReader)->read($this->company);
+
+        expect($items)->toHaveCount(3)
+            ->and($items[0]['text'])->toBe('Senior PHP Backend Engineer');
+
+        Http::assertSentInOrder([
+            fn (Request $request) => $request->url() === 'https://api.lever.co/v0/postings/coinspaid?mode=json',
+            fn (Request $request) => $request->url() === 'https://api.eu.lever.co/v0/postings/coinspaid?mode=json',
+        ]);
+    });
+
+    it('does not ask the EU host when the main host has the company', function () {
+        Http::fake(['api.lever.co/*' => Http::response(JobFields::fixture('lever/postings.json'))]);
+
+        (new LeverReader)->read($this->company);
+
+        Http::assertSentCount(1);
+    });
+
+    it('gives the error of the main host when the EU host has no such company', function () {
+        Http::fake(['*.lever.co/*' => Http::response('{"ok":false,"error":"Document not found"}', 404)]);
+
+        expect(fn () => (new LeverReader)->read($this->company))->toThrow(ReadFailed::class, 'HTTP 404');
+
+        Http::assertSentCount(2);
+    });
+
+    it('does not ask the EU host after another error', function () {
+        Http::fake(['api.lever.co/*' => Http::response('', 500)]);
+
+        expect(fn () => (new LeverReader)->read($this->company))->toThrow(ReadFailed::class, 'HTTP 500');
+
+        Http::assertSentCount(1);
+    });
+
+    it('keeps the links of the EU job site', function () {
+        $job = (new LeverReader)->normalise(new AtsItem($this->company, JobFields::json('lever/postings-eu.json')[0], $this->fetchedAt));
+
+        expect($job->sourceJobId)->toBe('lever:coinspaid:26722aa2-0788-4cd5-94af-9030c3bdb7ca')
+            ->and($job->sourceUrl)->toBe('https://jobs.eu.lever.co/coinspaid/26722aa2-0788-4cd5-94af-9030c3bdb7ca')
+            ->and($job->applyUrl)->toBe('https://jobs.eu.lever.co/coinspaid/26722aa2-0788-4cd5-94af-9030c3bdb7ca/apply')
+            ->and($job->title)->toBe('Senior PHP Backend Engineer')
+            ->and($job->workMode->value)->toBe('hybrid')
+            ->and($job->officeLocation)->toBe('Remote - European Region');
+    });
 });

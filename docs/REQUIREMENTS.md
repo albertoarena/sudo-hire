@@ -53,7 +53,7 @@ One source class that reads a list of companies set by the user. Each entry is `
 | ATS | Endpoint | Format | Status 2026-10-28 |
 |---|---|---|---|
 | Greenhouse | `https://boards-api.greenhouse.io/v1/boards/<slug>/jobs` | JSON | 200 |
-| Lever | `https://api.lever.co/v0/postings/<slug>?mode=json` | JSON | 200 |
+| Lever | `https://api.lever.co/v0/postings/<slug>?mode=json`. For a company of the EU instance, `https://api.eu.lever.co/v0/postings/<slug>?mode=json` | JSON | 200 |
 | Ashby | `https://api.ashbyhq.com/posting-api/job-board/<slug>` | JSON | 200 |
 | Personio | `https://<slug>.jobs.personio.de/xml` | XML | 200, shape checked with a real company in M1. No link field: the built job link was checked on 2026-10-29 (see `docs/DECISIONS.md`) |
 | Workable | `https://www.workable.com/api/accounts/<slug>?details=true` | JSON | 200 on 2026-11-23, after a redirect to `apply.workable.com` |
