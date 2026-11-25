@@ -526,6 +526,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Expected: in step 2 the DMG opens and the app starts with no warning that it cannot be checked or is from an unknown developer. macOS can ask once to open an app downloaded from the internet. Both commands in step 3 say "accepted" and "source=Notarized Developer ID".
 - Result: passed 2026-11-13, on `v1.0.0-rc.1` built from 1f1e12e: the DMG from the draft had the quarantine flag (Chrome), the app opened with no network and only the question about an app from the internet, and after it ran, both commands said "accepted" and "source=Notarized Developer ID". The bundle cache had only packages.php and services.php. Before that: failed 2026-11-13 on the first `v1.0.0-rc.1` build. In step 3 `spctl` on the app gave "a sealed resource is missing or invalid": at its first start the app wrote config.php, routes-v7.php and events.php into bootstrap/cache inside its bundle. See DECISIONS "The bootstrap cache stays outside the signed app".
 - Result: passed 2026-11-14, on `v1.0.0`: downloaded from sudohire.dev with Chrome (quarantine flag set) and dragged over `v1.0.0-rc.3`. The app opened, the Info.plist showed 1.0.0, `codesign --verify --deep --strict` passed and `spctl` said "accepted" and "source=Notarized Developer ID". The data folder was kept. The rc.3 app did not offer 1.0.0, as DECISIONS "Release candidates and the updater" says.
+- Result: passed 2026-11-25, on `v1.1.0`: the DMG from the draft had the quarantine flag (Chrome) and was installed over 1.0.2. `spctl` on the app and on the DMG said "accepted" and "source=Notarized Developer ID", origin "Developer ID Application: Alberto Arena (HP9YBZNSCB)". The data folder was kept.
 
 ## M9b: The signed app sends only the requests in PRIVACY.md
 
@@ -555,6 +556,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Result: passed 2026-11-14, from `v1.0.0-rc.2` to `v1.0.0-rc.3`, both published as pre-releases, with notifications on. After a restart the app downloaded rc.3 and staged it. The Electron notice "A new update is ready to install" showed. The notice of step 2 did not show, although the app created it and recorded it as shown. See DECISIONS "The updater". The first Quit was followed by a start 4 seconds later: ShipIt logged "App Still Running Error", kept rc.2 and staged rc.3 again. After a second Quit and a wait, ShipIt logged "Installation completed successfully", the Info.plist showed 1.0.0-rc.3, `codesign --verify --deep --strict` passed and `spctl` said "accepted". After the next start, bootstrap/cache in the bundle had only packages.php and services.php, and the signature still passed.
 - Result: passed 2026-11-14, from `v1.0.0` to `v1.0.1`, both published as the latest release. After a restart the app downloaded 1.0.1. Both notices showed: "A new update is ready to install" from Electron and "Sudo Hire 1.0.1 is ready. It installs when you quit Sudo Hire." from the app. After Quit and a wait, ShipIt logged "Installation completed successfully", the Info.plist showed 1.0.1, `codesign --verify --deep --strict` passed and `spctl` said "accepted". The app started again with no warning.
 - Result: passed 2026-11-17, from `v1.0.1` to `v1.0.2`, both published as the latest release. After a restart the app downloaded 1.0.2. Both notices showed: "A new update is ready to install" from Electron and "Sudo Hire 1.0.2 is ready. It installs when you quit Sudo Hire." from the app. After Quit and a wait, ShipIt logged "Installation completed successfully", the Info.plist showed 1.0.2, `codesign --verify --deep --strict` passed and `spctl` said "accepted" and "source=Notarized Developer ID". The app started again with no warning.
+- Result: passed 2026-11-25, from `v1.0.2` to `v1.1.0`, both published as the latest release. 1.0.2 was installed again over the 1.1.0 draft, with the same data folder (1.1.0 has no new migration). At start it downloaded 1.1.0. Both notices showed: "A new update is ready to install" from Electron and "Sudo Hire 1.1.0 is ready. It installs when you quit Sudo Hire." from the app. After Quit, ShipIt logged "Installation completed successfully" at 16:35:38. The app started with no warning, Get Info and the Info.plist showed 1.1.0, `codesign --verify --deep --strict` passed, `spctl` said "accepted", and the companies were kept.
 
 ## M9b: Every link of the app opens a live page
 
@@ -589,6 +591,7 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   1. In Finder, select Sudo Hire in Applications and open Get Info.
 - Expected: the name "Sudo Hire", the version of the tag with no `v` (for example 1.0.0-rc.1), "Copyright (c) 2026 Alberto Arena. MIT license.", and the app icon.
 - Result: passed 2026-11-14, on `v1.0.0-rc.3`: "Sudo Hire", version 1.0.0-rc.3, "Copyright (c) 2026 Alberto Arena. MIT license." The icon was not checked.
+- Result: passed 2026-11-25, on `v1.1.0`: "Sudo Hire.app", Application (Apple silicon), version 1.1.0, "Copyright (c) 2026 Alberto Arena. MIT license."
 
 ## Post-v1: A Workable company in the settings window
 
@@ -602,3 +605,16 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
   4. Open the link of one Workable job, then its apply link.
 - Expected: after step 3, the company "Laravel" shows a green dot and the time of the read, and the unknown company shows "No answer" (the stored error is HTTP 404). The list shows the Workable jobs that match the filters, with "via Laravel careers". Each link opens the job at `apply.workable.com`.
 - Result: passed 2026-11-23, on branch feat/workable-reader with `composer native:dev`: "Laravel" showed a green dot at 18:35 (7 jobs read), and the unknown company showed "No answer", with the error HTTP 404. With the country Italy, no Laravel job was in the list, because no job lists IT in `locations`. The eligibility rule for jobs with several countries changes after this check, so the list needs a new check then. The apply link of "Senior Site Reliability Engineer" opened the application form at `apply.workable.com/laravel/j/6C1E9F512C/apply`, with the job overview in the same page. Before the app run, the reader read `workable:laravel` with live data from the command line: 7 jobs, 0 skipped.
+- Result: passed 2026-11-25, on the signed `v1.1.0`, after the eligibility change for jobs with several countries: "Laravel" showed a green dot at 16:20, with 7 jobs read. The stored "Database Migrations Engineer", which lists GB, DK, ES and US, had unknown eligibility, so it goes to "Location not stated". With the keywords "laravel" and "php" on the title and tags only, and "Posted within" 7 days, no Laravel job was in the list, so the list itself was not checked.
+
+## Post-v1: A Lever company of the EU instance
+
+- Added: 2026-11-25, branch docs/qa-1.1.0
+- Why manual: tests use fixtures only, and only the app shows the settings window.
+- Setup: the app with the Lever EU change (#57): `composer native:dev` on its branch, or a signed build from `v1.1.0`.
+- Steps:
+  1. Open Settings, Companies. Choose the provider Lever, enter the slug `coinspaid` and add the company.
+  2. Wait for the next scan that reads the career pages, then open Companies.
+- Expected: "Coinspaid" shows a green dot and the time of the read. Its job links are on `jobs.eu.lever.co`. A slug that neither Lever host knows, for example `laravel`, shows "No answer".
+- Result: passed 2026-11-25, on branch fix/lever-eu-host with `composer native:dev`: "Coinspaid" showed a green dot at 15:55, with 33 jobs read and no error. The stored job links were on `jobs.eu.lever.co/coinspaid/`. The main host answers 404 for this company, so the jobs came from the EU host.
+- Result: passed 2026-11-25, on the signed `v1.1.0`: "Coinspaid" showed a green dot at 16:30, with 33 jobs read and job links on `jobs.eu.lever.co/coinspaid/`. `lever:laravel` showed "No answer": both hosts answer 404 for it.
