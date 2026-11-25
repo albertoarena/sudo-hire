@@ -1284,3 +1284,11 @@ Not used: `state` (company headquarters), `media:content`.
 - Decision: for a remote Workable job, one country in `locations` gives that country. Several countries give `unknown`, and the title can narrow it, as for every source ("APAC" gives the region APAC). A country listed twice counts once. With no list, the reader uses the `country` name, as before.
 - Reason: approved by Alberto (2026-11-23). Daniele Barbaro checked 216 remote jobs at 10 Workable companies (PR #55). 201 list one country, and most of these companies post the same job once for each country, so one country is correct. A list of several countries can be narrower than the job text: Laravel's "Senior Site Reliability Engineer" lists AR, BR, GB, PT and DK but says "Remote, between Central Europe and US East timezones", and Hospitable's "Product Engineer (Laravel - Remote)" lists US, DE, NL and GB but says "We hire based on timezones, not countries". With the first rule, a user in Italy saw none of these jobs. Now they go to "Location not stated".
 - Replaces: the eligibility from `locations` in "2026-11-23: Workable reader"
+
+## 2026-11-24: A slug that is a domain name
+
+- Milestone: post-v1
+- Decision: the default display name leaves out a domain ending of the slug: `.com`, `.io`, `.co`, `.org` or `.net`. `jimdo.com` gives "Jimdo", not "Jimdo.com". The slug is unchanged. A name that the user gives is unchanged.
+- Decision: a company that is already in the list keeps its stored name. The user can remove it and add it again.
+- Reason: some Ashby slugs are a domain name. On 2026-11-24, `jimdo.com` and `kraken.com` were real Ashby job boards. The attribution was "via Jimdo.com careers".
+- Replaces: none
