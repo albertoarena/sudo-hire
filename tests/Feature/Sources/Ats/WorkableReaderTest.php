@@ -42,7 +42,7 @@ it('normalises a remote job field by field', function () {
         'company' => 'Laravel',
         'tags' => ['engineering'],
         'workMode' => 'remote',
-        'eligibility' => ['type' => 'restricted', 'regions' => [], 'countries' => ['AR', 'BR', 'GB', 'PT', 'DK']],
+        'eligibility' => ['type' => 'unknown', 'regions' => [], 'countries' => []],
         'officeLocation' => null,
         'timezoneMin' => null,
         'timezoneMax' => null,
@@ -63,17 +63,15 @@ it('reads the countries, the contract type and the title of each job', function 
 })->with([
     'no employment type and no level' => [0, [
         'workMode' => 'remote',
-        'eligibility' => JobFields::restricted(['GB', 'DK', 'ES', 'US']),
     ]],
     'full-time, senior' => [1, [
         'workMode' => 'remote',
-        'eligibility' => JobFields::restricted(['AR', 'BR', 'GB', 'PT', 'DK']),
         'contractType' => 'full_time',
         'seniority' => 'senior',
     ]],
-    'a region in the title keeps the listed countries' => [2, [
+    'several countries and a region in the title' => [2, [
         'workMode' => 'remote',
-        'eligibility' => JobFields::restricted(['AU', 'JP', 'SG', 'ID', 'TH']),
+        'eligibility' => JobFields::restricted([], ['apac']),
         'contractType' => 'full_time',
     ]],
 ]);
@@ -116,6 +114,36 @@ it('gives the office and no eligibility for a job that is not remote', function 
         'contractType' => 'full_time',
         'seniority' => 'senior',
     ]));
+});
+
+it('gives a remote job with one country only that country', function () {
+    $job = (new WorkableReader)->normalise(new AtsItem(
+        $this->company,
+        workableItem(1, ['locations' => [['countryCode' => 'PL']]]),
+        $this->fetchedAt,
+    ));
+
+    expect(JobFields::of($job)['eligibility'])->toBe(JobFields::restricted(['PL']));
+});
+
+it('gives unknown to a remote job with several countries, because the list can be narrower than the job text', function () {
+    $job = (new WorkableReader)->normalise(new AtsItem(
+        $this->company,
+        workableItem(1, ['title' => 'Product Engineer (Laravel - Remote)', 'locations' => [['countryCode' => 'US'], ['countryCode' => 'DE'], ['countryCode' => 'NL'], ['countryCode' => 'GB']]]),
+        $this->fetchedAt,
+    ));
+
+    expect(JobFields::of($job)['eligibility'])->toBe(['type' => 'unknown', 'regions' => [], 'countries' => []]);
+});
+
+it('counts a country listed twice once', function () {
+    $job = (new WorkableReader)->normalise(new AtsItem(
+        $this->company,
+        workableItem(1, ['locations' => [['countryCode' => 'US'], ['countryCode' => 'us']]]),
+        $this->fetchedAt,
+    ));
+
+    expect(JobFields::of($job)['eligibility'])->toBe(JobFields::restricted(['US']));
 });
 
 it('uses the country name when a remote job has no location list', function () {
