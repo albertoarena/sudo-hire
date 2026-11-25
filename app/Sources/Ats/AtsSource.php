@@ -7,6 +7,7 @@ use App\Sources\Ats\Readers\AshbyReader;
 use App\Sources\Ats\Readers\GreenhouseReader;
 use App\Sources\Ats\Readers\LeverReader;
 use App\Sources\Ats\Readers\PersonioReader;
+use App\Sources\Ats\Readers\SmartRecruitersReader;
 use App\Sources\Ats\Readers\WorkableReader;
 use App\Sources\JobSource;
 use App\Sources\SkipItem;
@@ -34,7 +35,7 @@ final class AtsSource implements JobSource
      */
     public function __construct(private CompanyList $companies, ?array $readers = null)
     {
-        foreach ($readers ?? [new GreenhouseReader, new LeverReader, new AshbyReader, new PersonioReader, new WorkableReader] as $reader) {
+        foreach ($readers ?? [new GreenhouseReader, new LeverReader, new AshbyReader, new PersonioReader, new WorkableReader, new SmartRecruitersReader] as $reader) {
             $this->readers[$reader->ats()->value] = $reader;
         }
     }

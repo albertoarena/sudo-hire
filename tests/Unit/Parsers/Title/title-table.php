@@ -28,6 +28,10 @@ return [
     'workable senior' => ['workable/jobs.json', 'Senior Site Reliability Engineer', 'senior', 'unknown'],
     'workable support engineer with a region' => ['workable/jobs.json', 'Technical Support Engineer (APAC)', 'unknown', 'unknown'],
 
+    'smartrecruiters senior with all genders' => ['smartrecruiters/postings.json', 'Senior PHP Engineer - Checkout - Pre-Confirmation (all genders)', 'senior', 'unknown'],
+    'smartrecruiters support engineer' => ['smartrecruiters/postings.json', 'Technical Support Engineer - Customer Support (all genders)', 'unknown', 'unknown'],
+    'smartrecruiters working student' => ['smartrecruiters/postings.json', 'Working Student - IT-Administration (all genders)', 'unknown', 'unknown'],
+
     'lever roman level' => ['lever/postings-salary.json', 'Android Engineer III', 'unknown', 'unknown'],
     'lever no level' => ['lever/postings-salary.json', 'AI Product Engineer', 'unknown', 'unknown'],
     'lever eu senior php' => ['lever/postings-eu.json', 'Senior PHP Backend Engineer', 'senior', 'unknown'],

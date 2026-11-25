@@ -16,7 +16,7 @@ PHP and Laravel developers in Europe who want a remote job, or a better one. The
 
 ## Product Purpose
 
-Sudo Hire runs in the macOS menu bar. It reads company career pages (Greenhouse, Lever, Ashby, Personio, Workable) and public job boards (LaraJobs, Jobicy, Remotive, Himalayas, We Work Remotely). It keeps only the jobs that match the user's filters. Every few hours it sends one summary notification, for example "6 new jobs: 4 Laravel, 2 PHP".
+Sudo Hire runs in the macOS menu bar. It reads company career pages (Greenhouse, Lever, Ashby, Personio, Workable, SmartRecruiters) and public job boards (LaraJobs, Jobicy, Remotive, Himalayas, We Work Remotely). It keeps only the jobs that match the user's filters. Every few hours it sends one summary notification, for example "6 new jobs: 4 Laravel, 2 PHP".
 
 Success: the user trusts the list. Every job in it accepts people from where they live, at a salary they accept, and nothing important is missing.
 

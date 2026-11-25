@@ -618,3 +618,16 @@ Add entries in date order. Do not delete entries: mark them passed or failed, wi
 - Expected: "Coinspaid" shows a green dot and the time of the read. Its job links are on `jobs.eu.lever.co`. A slug that neither Lever host knows, for example `laravel`, shows "No answer".
 - Result: passed 2026-11-25, on branch fix/lever-eu-host with `composer native:dev`: "Coinspaid" showed a green dot at 15:55, with 33 jobs read and no error. The stored job links were on `jobs.eu.lever.co/coinspaid/`. The main host answers 404 for this company, so the jobs came from the EU host.
 - Result: passed 2026-11-25, on the signed `v1.1.0`: "Coinspaid" showed a green dot at 16:30, with 33 jobs read and job links on `jobs.eu.lever.co/coinspaid/`. `lever:laravel` showed "No answer": both hosts answer 404 for it.
+
+## Post-v1: A SmartRecruiters company in the settings window
+
+- Added: 2026-11-25, branch feat/smartrecruiters-reader
+- Why manual: tests use a fixture only, and only the app shows the settings window and the list.
+- Setup: the branch checked out on a Mac, `composer setup`, then `composer native:dev`.
+- Steps:
+  1. Open Settings, Companies. Choose the provider SmartRecruiters, enter the slug `aboutyougmbh` and add the company.
+  2. Add a second SmartRecruiters company with the slug `no-such-company-sudo-hire`.
+  3. Wait for the next scan that reads the career pages, then open Companies and the list.
+  4. Open the link of one SmartRecruiters job.
+- Expected: after step 3, the company "Aboutyougmbh" shows a green dot and the time of the read. The unknown company also shows a green dot and the time of the read, not "No answer": SmartRecruiters answers HTTP 200 with an empty list for an unknown slug, so the app cannot tell it from a company with no jobs. The list shows the SmartRecruiters jobs that match the filters, with "via ABOUT YOU SE & Co. KG careers", and each job shows one time, not one time for each language. The link opens the job at `jobs.smartrecruiters.com`.
+- Result: not run in the app. On 2026-11-25 the reader read `smartrecruiters:aboutyougmbh` with live data from the command line: 2 requests, 181 postings, 95 jobs, 0 skipped. The built link of "Senior PHP Engineer - Checkout - Pre-Confirmation (all genders)" answered HTTP 200 at `jobs.smartrecruiters.com/ABOUTYOUGmbH/744000163509728`. The slug `no-such-company-sudo-hire` gave 0 jobs and no error.

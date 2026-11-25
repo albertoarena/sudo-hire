@@ -6,7 +6,7 @@ The main problem it solves: "remote" often does not mean "remote from anywhere".
 
 ## Features
 
-- Reads jobs from company career pages (Greenhouse, Lever, Ashby, Personio, Workable) and from job boards (LaraJobs, Jobicy, Remotive, Himalayas, We Work Remotely).
+- Reads jobs from company career pages (Greenhouse, Lever, Ashby, Personio, Workable, SmartRecruiters) and from job boards (LaraJobs, Jobicy, Remotive, Himalayas, We Work Remotely).
 - Filters by country eligibility, work mode, salary, day rate, contract type, seniority, keywords and timezone.
 - Shows salaries in the original currency and in your currency.
 - One summary notification every N hours. No notification when there is nothing new.

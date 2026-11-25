@@ -57,6 +57,7 @@ One source class that reads a list of companies set by the user. Each entry is `
 | Ashby | `https://api.ashbyhq.com/posting-api/job-board/<slug>` | JSON | 200 |
 | Personio | `https://<slug>.jobs.personio.de/xml` | XML | 200, shape checked with a real company in M1. No link field: the built job link was checked on 2026-10-29 (see `docs/DECISIONS.md`) |
 | Workable | `https://www.workable.com/api/accounts/<slug>?details=true` | JSON | 200 on 2026-11-23, after a redirect to `apply.workable.com` |
+| SmartRecruiters | `https://api.smartrecruiters.com/v1/companies/<slug>/postings` | JSON, 100 postings for each page | 200 on 2026-11-23 |
 
 - Min interval: 6 hours per company.
 - Attribution: "via <Company> careers". `source_url` and `apply_url` are the company's own links.

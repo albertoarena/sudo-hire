@@ -54,7 +54,7 @@ it('gives 422 with the ats:add message', function (array $body, string $message)
     expect(AtsCompany::query()->count())->toBe(1);
 })->with([
     'already in the list' => [['provider' => 'greenhouse', 'slug' => 'acme'], 'greenhouse:acme is already in the list.'],
-    'unknown provider' => [['provider' => 'workday', 'slug' => 'acme'], 'Unknown ATS "workday". Use one of: greenhouse, lever, ashby, personio, workable.'],
+    'unknown provider' => [['provider' => 'workday', 'slug' => 'acme'], 'Unknown ATS "workday". Use one of: greenhouse, lever, ashby, personio, workable, smartrecruiters.'],
     'bad slug' => [['provider' => 'lever', 'slug' => 'a b'], 'The slug "a b" can only have letters, digits, dots, dashes and underscores.'],
 ]);
 
